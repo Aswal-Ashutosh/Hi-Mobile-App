@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hi/screens/sign_in_screen.dart';
+import 'package:hi/screens/sign_up_screen.dart';
 import 'package:hi/screens/welcome_screen.dart';
 
 void main() {
@@ -14,7 +16,12 @@ class Hi extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: WelcomeScreen(),
+      routes: {
+        WelcomeScreen.id : (context) => WelcomeScreen(),
+        SignInScreen.id : (context) => SignInScreen(),
+        SignUpScreen.id : (context) => SignUpScreen(),
+      },
+      initialRoute: WelcomeScreen.id,
     );
   }
 }
