@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hi/screens/welcome_screen.dart';
 
 void main() {
   runApp(Hi());
@@ -13,16 +14,7 @@ class Hi extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      
+      home: WelcomeScreen(),
     );
   }
 }
