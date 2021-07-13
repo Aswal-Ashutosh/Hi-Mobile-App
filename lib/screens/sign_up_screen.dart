@@ -1,7 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
+import 'package:hi/screens/email_verification_screen.dart';
 import 'package:hi/screens/sign_in_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpScreen extends StatelessWidget {
   static const id = 'sign_up_screen';
@@ -56,6 +59,14 @@ class SignUpScreen extends StatelessWidget {
 }
 
 class SignUpForm extends StatefulWidget {
+  final formKey = GlobalKey<FormState>();
+  final nameTextController = TextEditingController();
+  final emailTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
+  
+  //TODO:Check if value can be null or not
+  final nameValidator = (String? value) => value!.trim().isEmpty ? "Name can't be empty!" : null;
+
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }
@@ -68,17 +79,29 @@ class _SignUpFormState extends State<SignUpForm> {
   );
 
   @override
+  void initState() {
+    Firebase.initializeApp();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
+      key: widget.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
+            controller: widget.nameTextController,
+            validator: widget.nameValidator,
+            maxLength: 20,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
+              counterText: '',
               filled: true,
-              fillColor: const Color(0x331F6FEB),
-              hintText: 'Your Name',
+              fillColor: const Color(0x111F6FEB),
+              labelText: 'Name',
+              labelStyle: TextStyle(color: Colors.grey[650]),
               enabledBorder: borderRadius,
               focusedBorder: borderRadius,
               errorBorder: borderRadius,
@@ -88,11 +111,12 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           SizedBox(height: kDefaultPadding),
           TextFormField(
+            controller: widget.emailTextController,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0x331F6FEB),
-              hintText: 'Your Email',
+              fillColor: const Color(0x111F6FEB),
+              labelText: 'Email',
               enabledBorder: borderRadius,
               focusedBorder: borderRadius,
               errorBorder: borderRadius,
@@ -102,12 +126,13 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           SizedBox(height: kDefaultPadding),
           TextFormField(
+            controller: widget.passwordTextController,
             obscureText: obscureText,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0x331F6FEB),
-              hintText: 'Password',
+              fillColor: const Color(0x111F6FEB),
+              labelText: 'Password',
               enabledBorder: borderRadius,
               focusedBorder: borderRadius,
               errorBorder: borderRadius,
@@ -124,7 +149,19 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
           ),
           SizedBox(height: kDefaultPadding),
-          PrimaryButton(displayText: 'Sign Up', color: kSecondaryButtonColor,onPressed: () {}),
+          PrimaryButton(displayText: 'Sign Up', color: kSecondaryButtonColor,onPressed: () async{
+            //TODO:Remove print and Complete all validations
+            print(widget.nameTextController.text);
+            print(widget.emailTextController.text);
+            print(widget.passwordTextController.text);
+            widget.formKey.currentState!.validate();
+            try{
+              await FirebaseAuth.instance.createUserWithEmailAndPassword(email: widget.emailTextController.text, password: widget.passwordTextController.text);
+              Navigator.pushNamed(context, EmailVerificatoinScreen.id);
+            }catch(e){
+              print(e.toString());
+            }
+          }),
         ],
       ),
     );
