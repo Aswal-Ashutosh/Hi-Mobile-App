@@ -77,8 +77,8 @@ class _SignInFormState extends State<SignInForm> {
             textAlign: TextAlign.center,
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0x332EA043),
-              hintText: 'Your Email',
+              fillColor: const Color(0x112EA043),
+              labelText: 'Email',
               enabledBorder: borderRadius,
               focusedBorder: borderRadius,
               errorBorder: borderRadius,
@@ -92,8 +92,8 @@ class _SignInFormState extends State<SignInForm> {
             textAlign: TextAlign.center,
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0x332EA043),
-              hintText: 'Password',
+              fillColor: const Color(0x112EA043),
+              labelText: 'Password',
               enabledBorder: borderRadius,
               focusedBorder: borderRadius,
               errorBorder: borderRadius,
