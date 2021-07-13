@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hi/screens/email_verification_screen.dart';
 import 'package:hi/screens/sign_in_screen.dart';
 import 'package:hi/screens/sign_up_screen.dart';
 import 'package:hi/screens/welcome_screen.dart';
@@ -20,6 +21,7 @@ class Hi extends StatelessWidget {
         WelcomeScreen.id : (context) => WelcomeScreen(),
         SignInScreen.id : (context) => SignInScreen(),
         SignUpScreen.id : (context) => SignUpScreen(),
+        EmailVerificatoinScreen.id : (context) => EmailVerificatoinScreen(),
       },
       initialRoute: WelcomeScreen.id,
     );
