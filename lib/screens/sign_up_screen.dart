@@ -1,6 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
+import 'package:hi/constants/error.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/screens/email_verification_screen.dart';
 import 'package:hi/screens/sign_in_screen.dart';
@@ -76,17 +76,11 @@ class _SignUpFormState extends State<SignUpForm> {
 
   bool obscureText = true;
   String? firebaseEmailError;
+
   final borderRadius = OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(40)),
     borderSide: BorderSide(color: kSecondaryButtonColor),
   );
-
-  @override
-  void initState() {
-    //TODO: Move this to loading
-    Firebase.initializeApp();
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -171,12 +165,13 @@ class _SignUpFormState extends State<SignUpForm> {
               firebaseEmailError = null;
               if (formKey.currentState!.validate()) {
                 await FirebaseAuth.instance
-                .createUserWithEmailAndPassword(email: emailTextController.text, password: passwordTextController.text)
+                .createUserWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
                 .then((value) => Navigator.pushNamed(context, EmailVerificatoinScreen.id))
                 .catchError((error) {
                   switch(error.code){
-                    case 'email-already-in-use': setState(() {firebaseEmailError = error.message;}); break;
-                    case 'invalid-email': setState(() {firebaseEmailError = error.message;}); break;
+                    case 'email-already-in-use': setState(() {firebaseEmailError = email_already_in_use;}); break;
+                    case 'invalid-email': setState(() {firebaseEmailError = invalid_email;}); break;
+                    default: assert(false);
                   }
                 });
               }
