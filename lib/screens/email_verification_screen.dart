@@ -81,8 +81,8 @@ class _EmailVerificatoinScreenState extends State<EmailVerificatoinScreen> {
                 displayText: 'Resend',
                 color: resendButtonEnabled ? kPrimaryButtonColor : Colors.grey,
                 onPressed: resendButtonEnabled
-                    ? () async{
-                        await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+                    ? () {
+                        FirebaseAuth.instance.currentUser?.sendEmailVerification();
                         setState(() {
                           resendButtonEnabled = false;
                         });
