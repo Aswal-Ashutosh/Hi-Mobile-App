@@ -1,7 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
+import 'package:hi/constants/error.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
+import 'package:hi/screens/email_verification_screen.dart';
+import 'package:hi/screens/home_screen.dart';
 import 'package:hi/screens/sign_up_screen.dart';
+
 
 class SignInScreen extends StatelessWidget {
   static const id = 'sign_in_screen';
@@ -61,7 +66,19 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
+  final formKey = GlobalKey<FormState>();
+
+  final emailTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
+
+  final emailValidator = (String? value) => value!.trim().isEmpty ? "Enter an email." : null;
+  final passwordValidator = (String? value) => value!.trim().length < 8 ? 'Enter at least 8 character long password.' : null;
+
   bool obscureText = true;
+
+  String? firebaseEmailError;
+  String? firebasePasswordError;
+
   final borderRadius = OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(40)),
     borderSide: BorderSide(color: kPrimaryButtonColor),
@@ -70,12 +87,16 @@ class _SignInFormState extends State<SignInForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
+            controller: emailTextController,
+            validator: emailValidator,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
+              errorText: firebaseEmailError,
               filled: true,
               fillColor: const Color(0x112EA043),
               labelText: 'Email',
@@ -88,9 +109,12 @@ class _SignInFormState extends State<SignInForm> {
           ),
           SizedBox(height: kDefaultPadding),
           TextFormField(
+            controller: passwordTextController,
+            validator: passwordValidator,
             obscureText: obscureText,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
+              errorText: firebasePasswordError,
               filled: true,
               fillColor: const Color(0x112EA043),
               labelText: 'Password',
@@ -110,7 +134,30 @@ class _SignInFormState extends State<SignInForm> {
             ),
           ),
           SizedBox(height: kDefaultPadding),
-          PrimaryButton(displayText: 'Sign In', onPressed: () {}),
+          PrimaryButton(displayText: 'Sign In', onPressed: () async{
+            firebaseEmailError = null;
+            firebasePasswordError = null;
+            if(formKey.currentState!.validate()){
+              await FirebaseAuth.instance.signOut();
+              await FirebaseAuth.instance
+              .signInWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
+              .then((value) {
+                if(FirebaseAuth.instance.currentUser!.emailVerified){
+                  Navigator.popAndPushNamed(context, HomeScreen.id);
+                }else{
+                  Navigator.popAndPushNamed(context, EmailVerificatoinScreen.id);
+                }
+              })
+              .catchError((error){
+                switch(error.code){
+                  case 'invalid-email': setState((){firebaseEmailError = invalid_email;}); break;
+                  case 'user-not-found': setState((){firebaseEmailError = user_not_found;}); break;
+                  case 'wrong-password': setState((){firebasePasswordError = wrong_password;}); break;
+                  default: assert(false);
+                }
+              });
+            }
+          }),
         ],
       ),
     );
