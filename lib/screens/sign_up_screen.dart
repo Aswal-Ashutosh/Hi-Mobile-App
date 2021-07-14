@@ -59,20 +59,23 @@ class SignUpScreen extends StatelessWidget {
 }
 
 class SignUpForm extends StatefulWidget {
-  final formKey = GlobalKey<FormState>();
-  final nameTextController = TextEditingController();
-  final emailTextController = TextEditingController();
-  final passwordTextController = TextEditingController();
-  
-  //TODO:Check if value can be null or not
-  final nameValidator = (String? value) => value!.trim().isEmpty ? "Name can't be empty!" : null;
-
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }
 
 class _SignUpFormState extends State<SignUpForm> {
+  final formKey = GlobalKey<FormState>();
+
+  final nameTextController = TextEditingController();
+  final emailTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
+
+  final nameValidator = (String? value) => value!.trim().isEmpty ? "Enter a name." : null;
+  final emailValidator = (String? value) => value!.trim().isEmpty ? "Enter an email." : null;
+  final passwordValidator = (String? value) => value!.trim().length < 8 ? 'Enter at least 8 character long password.' : null;
+
   bool obscureText = true;
+  String? firebaseEmailError;
   final borderRadius = OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(40)),
     borderSide: BorderSide(color: kSecondaryButtonColor),
@@ -80,20 +83,29 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   void initState() {
+    //TODO: Move this to loading
     Firebase.initializeApp();
     super.initState();
   }
 
   @override
+  void dispose() {
+    nameTextController.dispose();
+    emailTextController.dispose();
+    passwordTextController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
-      key: widget.formKey,
+      key: formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextFormField(
-            controller: widget.nameTextController,
-            validator: widget.nameValidator,
+            controller: nameTextController,
+            validator: nameValidator,
             maxLength: 20,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
@@ -111,9 +123,11 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           SizedBox(height: kDefaultPadding),
           TextFormField(
-            controller: widget.emailTextController,
+            controller: emailTextController,
+            validator: emailValidator,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
+              errorText: firebaseEmailError,
               filled: true,
               fillColor: const Color(0x111F6FEB),
               labelText: 'Email',
@@ -126,7 +140,8 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           SizedBox(height: kDefaultPadding),
           TextFormField(
-            controller: widget.passwordTextController,
+            controller: passwordTextController,
+            validator: passwordValidator,
             obscureText: obscureText,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
@@ -149,19 +164,24 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
           ),
           SizedBox(height: kDefaultPadding),
-          PrimaryButton(displayText: 'Sign Up', color: kSecondaryButtonColor,onPressed: () async{
-            //TODO:Remove print and Complete all validations
-            print(widget.nameTextController.text);
-            print(widget.emailTextController.text);
-            print(widget.passwordTextController.text);
-            widget.formKey.currentState!.validate();
-            try{
-              await FirebaseAuth.instance.createUserWithEmailAndPassword(email: widget.emailTextController.text, password: widget.passwordTextController.text);
-              Navigator.pushNamed(context, EmailVerificatoinScreen.id);
-            }catch(e){
-              print(e.toString());
-            }
-          }),
+          PrimaryButton(
+            displayText: 'Sign Up',
+            color: kSecondaryButtonColor,
+            onPressed: () async {
+              firebaseEmailError = null;
+              if (formKey.currentState!.validate()) {
+                await FirebaseAuth.instance
+                .createUserWithEmailAndPassword(email: emailTextController.text, password: passwordTextController.text)
+                .then((value) => Navigator.pushNamed(context, EmailVerificatoinScreen.id))
+                .catchError((error) {
+                  switch(error.code){
+                    case 'email-already-in-use': setState(() {firebaseEmailError = error.message;}); break;
+                    case 'invalid-email': setState(() {firebaseEmailError = error.message;}); break;
+                  }
+                });
+              }
+            },
+          ),
         ],
       ),
     );
