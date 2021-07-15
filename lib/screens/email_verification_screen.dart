@@ -40,8 +40,7 @@ class _EmailVerificatoinScreenState extends State<EmailVerificatoinScreen> {
     });
     timer = Timer.periodic(Duration(seconds: 3), (timer) async {
       if (await checkIfVerified()) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, HomeScreen.id, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
       }
     });
   }

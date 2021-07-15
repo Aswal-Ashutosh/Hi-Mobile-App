@@ -138,7 +138,6 @@ class _SignInFormState extends State<SignInForm> {
             firebaseEmailError = null;
             firebasePasswordError = null;
             if(formKey.currentState!.validate()){
-              await FirebaseAuth.instance.signOut();
               await FirebaseAuth.instance
               .signInWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
               .then((value) {

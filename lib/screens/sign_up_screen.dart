@@ -5,6 +5,7 @@ import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/screens/email_verification_screen.dart';
 import 'package:hi/screens/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hi/services/firestore_service.dart';
 
 class SignUpScreen extends StatelessWidget {
   static const id = 'sign_up_screen';
@@ -166,7 +167,10 @@ class _SignUpFormState extends State<SignUpForm> {
               if (formKey.currentState!.validate()) {
                 await FirebaseAuth.instance
                 .createUserWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
-                .then((value) => Navigator.pushNamed(context, EmailVerificatoinScreen.id))
+                .then((value) async{ 
+                  await FirestoreService.createNewUser(email: emailTextController.text.trim(), name: nameTextController.text.trim());
+                  Navigator.pushNamed(context, EmailVerificatoinScreen.id);
+                 })
                 .catchError((error) {
                   switch(error.code){
                     case 'email-already-in-use': setState(() {firebaseEmailError = email_already_in_use;}); break;
