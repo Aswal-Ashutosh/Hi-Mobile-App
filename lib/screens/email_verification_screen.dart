@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
+import 'package:hi/constants/error.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/screens/home_screen.dart';
 
@@ -29,8 +30,14 @@ class _EmailVerificatoinScreenState extends State<EmailVerificatoinScreen> {
     super.dispose();
   }
 
-  void runEmailVerification() {
-    FirebaseAuth.instance.currentUser?.sendEmailVerification();
+  void runEmailVerification() async {
+    await FirebaseAuth.instance.currentUser
+        ?.sendEmailVerification()
+        .catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              'Unable to send verification mail. Request again by clicking the Resend Button.')));
+    });
     timer = Timer.periodic(Duration(seconds: 3), (timer) async {
       if (await checkIfVerified()) {
         Navigator.pushNamedAndRemoveUntil(
@@ -68,26 +75,33 @@ class _EmailVerificatoinScreenState extends State<EmailVerificatoinScreen> {
                   tween: Tween(begin: 60.0, end: 0.0),
                   duration: Duration(seconds: 60),
                   builder: (context, value, child) => Text(
-                      'You can request again for verification mail in ${(value as double).toInt()} sec.', style: TextStyle(color: Colors.grey[500]),),
+                    'You can request again for verification mail in ${(value as double).toInt()} sec.',
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
                   onEnd: () {
                     setState(() {
                       resendButtonEnabled = true;
                     });
                   },
                 ),
-              if(resendButtonEnabled == false)
+              if (resendButtonEnabled == false)
                 SizedBox(height: kDefaultPadding),
               PrimaryButton(
                 displayText: 'Resend',
                 color: resendButtonEnabled ? kPrimaryButtonColor : Colors.grey,
                 onPressed: resendButtonEnabled
-                    ? () {
-                        FirebaseAuth.instance.currentUser?.sendEmailVerification();
-                        setState(() {
-                          resendButtonEnabled = false;
-                        });
+                    ? () async {
+                          await FirebaseAuth.instance.currentUser?.sendEmailVerification()
+                          .then((value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Verification mail sent.'))))
+                          .catchError((error) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(too_many_mail_request)));
+                          });
+
+                          setState(() {
+                            resendButtonEnabled = false;
+                          });
                       }
-                    : (){},
+                    : () {},
               ),
             ],
           ),
