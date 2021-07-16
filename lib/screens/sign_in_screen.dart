@@ -81,7 +81,7 @@ class _SignInFormState extends State<SignInForm> {
 
   final borderRadius = OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(40)),
-    borderSide: BorderSide(color: kPrimaryButtonColor),
+    borderSide: BorderSide(color: kPrimaryColor),
   );
 
   @override

@@ -29,11 +29,10 @@ class WelcomeScreen extends StatelessWidget {
                   children: [
                     PrimaryButton(displayText: 'Sign In', onPressed: () => Navigator.pushNamed(context, SignInScreen.id)),
                     SizedBox(height: kDefaultPadding * 0.5),
-                    PrimaryButton(displayText: 'Sign Up', color: kSecondaryButtonColor, onPressed: () => Navigator.pushNamed(context, SignUpScreen.id)),
+                    PrimaryButton(displayText: 'Sign Up', color: kSecondaryColor, onPressed: () => Navigator.pushNamed(context, SignUpScreen.id)),
                   ],
                 ),
               ),
-            
           ],
         ),
       )

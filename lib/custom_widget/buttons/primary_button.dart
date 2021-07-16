@@ -7,7 +7,7 @@ class PrimaryButton extends StatelessWidget {
   final EdgeInsets padding;
   final onPressed;
 
-  PrimaryButton({required this.displayText, this.color = kPrimaryButtonColor, this.padding = const EdgeInsets.all(kDefaultPadding * 0.75), required this.onPressed});
+  PrimaryButton({required this.displayText, this.color = kPrimaryColor, this.padding = const EdgeInsets.all(kDefaultPadding * 0.75), required this.onPressed});
   @override
   Widget build(BuildContext context) {
     return MaterialButton(

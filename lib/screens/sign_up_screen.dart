@@ -80,7 +80,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   final borderRadius = OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(40)),
-    borderSide: BorderSide(color: kSecondaryButtonColor),
+    borderSide: BorderSide(color: kSecondaryColor),
   );
 
   @override
@@ -161,7 +161,7 @@ class _SignUpFormState extends State<SignUpForm> {
           SizedBox(height: kDefaultPadding),
           PrimaryButton(
             displayText: 'Sign Up',
-            color: kSecondaryButtonColor,
+            color: kSecondaryColor,
             onPressed: () async {
               firebaseEmailError = null;
               if (formKey.currentState!.validate()) {
