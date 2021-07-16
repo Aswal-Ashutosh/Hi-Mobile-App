@@ -168,7 +168,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 await FirebaseAuth.instance
                 .createUserWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
                 .then((value) async{ 
-                  await FirestoreService.createNewUser(email: emailTextController.text.trim(), name: nameTextController.text.trim());
+                  final String uid = (FirebaseAuth.instance.currentUser?.uid) as String;
+                  await FirestoreService.createNewUser(uid: uid, email: emailTextController.text.trim(), name: nameTextController.text.trim());
                   Navigator.pushNamed(context, EmailVerificatoinScreen.id);
                  })
                 .catchError((error) {
