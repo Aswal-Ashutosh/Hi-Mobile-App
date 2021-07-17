@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hi/screens/email_verification_screen.dart';
-import 'package:hi/screens/home_screen.dart';
+import 'package:hi/screens/auth/email_verification_screen.dart';
+import 'package:hi/screens/home/home_screen.dart';
 import 'package:hi/screens/loading_screen.dart';
-import 'package:hi/screens/sign_in_screen.dart';
-import 'package:hi/screens/sign_up_screen.dart';
+import 'package:hi/screens/auth/sign_in_screen.dart';
+import 'package:hi/screens/auth/sign_up_screen.dart';
 import 'package:hi/screens/welcome_screen.dart';
 
 void main() {

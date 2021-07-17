@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
-import 'package:hi/screens/sign_in_screen.dart';
-import 'package:hi/screens/sign_up_screen.dart';
+import 'package:hi/screens/auth/sign_in_screen.dart';
+import 'package:hi/screens/auth/sign_up_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   static const id = "welcome_screen";
