@@ -80,7 +80,7 @@ class _SignInFormState extends State<SignInForm> {
   String? firebasePasswordError;
 
   final borderRadius = OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(40)),
+    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
     borderSide: BorderSide(color: kPrimaryColor),
   );
 
