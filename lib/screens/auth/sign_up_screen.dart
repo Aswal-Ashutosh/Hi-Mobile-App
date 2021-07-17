@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/error.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
-import 'package:hi/screens/email_verification_screen.dart';
-import 'package:hi/screens/sign_in_screen.dart';
+import 'package:hi/screens/auth/email_verification_screen.dart';
+import 'package:hi/screens/auth/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hi/services/firestore_service.dart';
 

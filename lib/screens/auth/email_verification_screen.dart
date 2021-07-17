@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/error.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
-import 'package:hi/screens/home_screen.dart';
+import 'package:hi/screens/home/home_screen.dart';
 
 class EmailVerificatoinScreen extends StatefulWidget {
   static const id = 'email_verification_screen';
