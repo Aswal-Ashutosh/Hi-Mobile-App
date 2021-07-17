@@ -6,7 +6,7 @@ class MyFriends extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: (){}, child: Icon(Icons.search), backgroundColor: kSecondaryColor),
+      floatingActionButton: FloatingActionButton(onPressed: (){}, child: Icon(Icons.search), backgroundColor: kPrimaryColor),
       body: Text('My Friends'),
     );
   }

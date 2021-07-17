@@ -14,6 +14,7 @@ class _FriendsTabState extends State<FriendsTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: _views.elementAt(_currentIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: [
@@ -21,7 +22,7 @@ class _FriendsTabState extends State<FriendsTab> {
           BottomNavigationBarItem(icon: Icon(Icons.person_add), label: 'Add Friends'),
         ],
         currentIndex: _currentIndex,
-        selectedItemColor: kSecondaryColor,
+        selectedItemColor: kPrimaryColor,
         onTap: (index){ setState(() { _currentIndex = index; }); },
       ),
     );
