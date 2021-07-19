@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
+import 'package:hi/services/firestore_service.dart';
 
 class AddFriends extends StatelessWidget {
   const AddFriends();
@@ -28,11 +29,26 @@ class AddFriends extends StatelessWidget {
   }
 }
 
-class AddByEmail extends StatelessWidget {
+//Bottom Sheet 
+class AddByEmail extends StatefulWidget {
+  @override
+  _AddByEmailState createState() => _AddByEmailState();
+}
+
+class _AddByEmailState extends State<AddByEmail> {
   final _borderRadius = OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
     borderSide: BorderSide(color: kPrimaryColor),
   );
+
+  final _formKey = GlobalKey<FormState>();
+
+  final _textEditingController = TextEditingController();
+
+  final _validator = (String? value) => value!.trim().isEmpty ? 'Enter an email.' : null;
+
+  String? firebaseError;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,23 +58,37 @@ class AddByEmail extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding),
-              child: TextField(
-                textAlign: TextAlign.center,
-              decoration: InputDecoration(
-                //errorText: firebaseEmailError,
-                filled: true,
-                fillColor: const Color(0x112EA043),
-                labelText: 'Your friend\'s email',
-                enabledBorder: _borderRadius,
-                focusedBorder: _borderRadius,
-                errorBorder: _borderRadius,
-                focusedErrorBorder: _borderRadius,
-                prefixIcon: Icon(Icons.mail),
-              ),
+              child: Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: _textEditingController,
+                  validator: _validator,
+                  textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  errorText: firebaseError,
+                  filled: true,
+                  fillColor: const Color(0x112EA043),
+                  labelText: 'Your friend\'s email',
+                  enabledBorder: _borderRadius,
+                  focusedBorder: _borderRadius,
+                  errorBorder: _borderRadius,
+                  focusedErrorBorder: _borderRadius,
+                  prefixIcon: Icon(Icons.mail),
+                ),
+                ),
               ),
             ),
             SizedBox(height: kDefaultPadding / 4.0),
-            PrimaryButton(displayText: 'Send Request', onPressed: (){})
+            PrimaryButton(displayText: 'Send Request', onPressed: () async{
+              if(_formKey.currentState!.validate()){
+                firebaseError = null;
+                await FirestoreService.sendFriendRequest(recipientEmail: _textEditingController.text.trim()).catchError((error){
+                  setState(() {
+                    firebaseError = error;
+                  });
+                });
+              }
+            })
           ],
         ),
         height: MediaQuery.of(context).size.height / 2.0,
@@ -74,6 +104,7 @@ class AddByEmail extends StatelessWidget {
   }
 }
 
+//Search Text Field
 class SearchTextField extends StatelessWidget {
   const SearchTextField(
       {final OutlineInputBorder borderRadius = const OutlineInputBorder(
