@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
+import 'package:hi/custom_widget/buttons/primary_button.dart';
+import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/screens/home/tabs/chat_tab/chat_tab.dart';
 import 'package:hi/screens/home/tabs/friends_tab/friends_tab.dart';
@@ -14,36 +16,65 @@ class HomeScreen extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: kPrimaryColor,
+          leading: Builder(
+            builder: (context) => InkWell(
+              onTap: () {
+                Scaffold.of(context).openDrawer();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(kDefaultPadding / 4.0),
+                child: CircleAvatar(
+                  backgroundImage:
+                      NetworkImage('https://picsum.photos/250?image=9'),
+                ),
+              ),
+            ),
+          ),
           automaticallyImplyLeading: false,
-          actions: [Padding(
-            padding: const EdgeInsets.only(right: kDefaultPadding / 4.0),
-            child: Icon(Icons.settings),
-          )],
           title: Text('Hi'),
           bottom: TabBar(
             indicatorColor: Colors.white,
             tabs: [
-              Tab(child: Row(
-                children: [
-                  Icon(Icons.messenger),
-                  SizedBox(width: kDefaultPadding / 4.0),
-                  Text('Chats')
-                ],
-              ),),
-              Tab(child: Row(
-                children: [
-                  Icon(Icons.group_rounded),
-                  SizedBox(width: kDefaultPadding / 4.0),
-                  Text('Friends')
-                ],
-              ),),
-              Tab(child: Row(
-                children: [
-                  Icon(Icons.person),
-                  SizedBox(width: kDefaultPadding / 4.0),
-                  Text('Requests'),
-                ],
-              ),),
+              Tab(
+                child: Row(
+                  children: [
+                    Icon(Icons.messenger),
+                    SizedBox(width: kDefaultPadding / 4.0),
+                    Text('Chats')
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  children: [
+                    Icon(Icons.group_rounded),
+                    SizedBox(width: kDefaultPadding / 4.0),
+                    Text('Friends')
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  children: [
+                    Icon(Icons.notifications),
+                    SizedBox(width: kDefaultPadding / 4.0),
+                    Text('Requests'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: kDefaultPadding / 2.0),
+            children: [
+                CircleAvatar(child:  ClipOval(child: Image.network('https://picsum.photos/250?image=9')), radius: kDefualtBorderRadius * 3,),
+                ListTile(leading: Icon(Icons.person), title: Text('Ashutosh Aswal', style: TextStyle(fontSize: 10, letterSpacing: 2.5,))),
+                ListTile(leading: Icon(Icons.email), title: Text('ashu.aswal.333@gmail.com', style: TextStyle(fontSize:10, letterSpacing: 2.5))),
+                RoundIconButton(icon: Icons.edit, onPressed: (){}),
+                Divider(color: Colors.grey,),
+                PrimaryButton(displayText: 'Sign Out', onPressed: (){})
             ],
           ),
         ),
