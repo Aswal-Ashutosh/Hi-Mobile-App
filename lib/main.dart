@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hi/screens/auth/email_verification_screen.dart';
+import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/home/home_screen.dart';
 import 'package:hi/screens/loading_screen.dart';
 import 'package:hi/screens/auth/sign_in_screen.dart';
@@ -26,6 +27,7 @@ class Hi extends StatelessWidget {
         EmailVerificatoinScreen.id : (context) => EmailVerificatoinScreen(),
         HomeScreen.id : (context) => HomeScreen(),
         LoadingScreen.id : (context) => LoadingScreen(),
+        EditProfileScreen.id: (context) => EditProfileScreen(),
       },
       initialRoute: LoadingScreen.id,
     );
