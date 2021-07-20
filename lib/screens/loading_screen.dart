@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hi/screens/home/home_screen.dart';
 import 'package:hi/screens/welcome_screen.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -17,7 +19,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   void loadStuff() async{
     await Firebase.initializeApp();
-    Navigator.popAndPushNamed(context, WelcomeScreen.id);
+    if(FirebaseAuth.instance.currentUser != null)
+      Navigator.popAndPushNamed(context, HomeScreen.id);
+    else
+      Navigator.popAndPushNamed(context, WelcomeScreen.id);
   }
 
   @override
