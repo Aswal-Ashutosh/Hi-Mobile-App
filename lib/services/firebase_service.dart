@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-class FirestoreService{
+class FirebaseService{
   static FirebaseFirestore _fStore = FirebaseFirestore.instance;
   static FirebaseAuth _fAuth = FirebaseAuth.instance;
+  static FirebaseStorage _fStorage = FirebaseStorage.instance;
 
   static Future<void> createNewUser({required String uid, required String email, required String name}) async{
     await _fStore.collection('users').doc(email).set({'uid': uid, 'email': email, 'display_name': name, 'search_name': name.toLowerCase()});
@@ -37,5 +42,21 @@ class FirestoreService{
       'time': timeOfSending,
       'date': dateOfSending,
     });
+  }
+
+   
+  static Future<void> pickAndUploadProfileImage() async{
+    final ImagePicker imagePicker = ImagePicker();
+    XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+    print(image?.name);
+    if(image != null){
+      Reference reference = _fStorage.ref().child('profile_pictures/${_fAuth.currentUser?.email}');
+      UploadTask task = reference.putFile(File(image.path));
+      TaskSnapshot snapshot = await task.whenComplete(() => task.snapshot);
+      String url = await snapshot.ref.getDownloadURL();
+
+      final email = _fAuth.currentUser?.email;
+      await _fStore.collection('users').doc(email).collection('profile_picture').doc('url').set({'url': url});
+    }
   }
 }

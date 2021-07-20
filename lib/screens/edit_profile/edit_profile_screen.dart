@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/profile_picture_stream_builder.dart';
-import 'package:hi/services/firestore_service.dart';
+import 'package:hi/services/firebase_service.dart';
 
 class EditProfileScreen extends StatelessWidget {
   static const id = 'edit_profile_screen';
@@ -24,7 +22,7 @@ class EditProfileScreen extends StatelessWidget {
                   child: RoundIconButton(
                     icon: Icons.edit,
                     onPressed: () {
-                      FirestoreService.pickAndUploadProfileImage();
+                      FirebaseService.pickAndUploadProfileImage();
                     },
                     color: kSecondaryColor,
                   ),

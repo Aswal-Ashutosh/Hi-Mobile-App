@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
-import 'package:hi/services/firestore_service.dart';
+import 'package:hi/services/firebase_service.dart';
 
 class AddFriends extends StatelessWidget {
   const AddFriends();
@@ -82,7 +82,7 @@ class _AddByEmailState extends State<AddByEmail> {
             PrimaryButton(displayText: 'Send Request', onPressed: () async{
               if(_formKey.currentState!.validate()){
                 firebaseError = null;
-                await FirestoreService.sendFriendRequest(recipientEmail: _textEditingController.text.trim()).catchError((error){
+                await FirebaseService.sendFriendRequest(recipientEmail: _textEditingController.text.trim()).catchError((error){
                   setState(() {
                     firebaseError = error;
                   });

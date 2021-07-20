@@ -5,7 +5,7 @@ import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/screens/auth/email_verification_screen.dart';
 import 'package:hi/screens/auth/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hi/services/firestore_service.dart';
+import 'package:hi/services/firebase_service.dart';
 
 class SignUpScreen extends StatelessWidget {
   static const id = 'sign_up_screen';
@@ -169,7 +169,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 .createUserWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
                 .then((value) async{ 
                   final String uid = (FirebaseAuth.instance.currentUser?.uid) as String;
-                  await FirestoreService.createNewUser(uid: uid, email: emailTextController.text.trim(), name: nameTextController.text.trim());
+                  await FirebaseService.createNewUser(uid: uid, email: emailTextController.text.trim(), name: nameTextController.text.trim());
                   Navigator.pushNamed(context, EmailVerificatoinScreen.id);
                  })
                 .catchError((error) {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
+import 'package:hi/custom_widget/profile_picture_stream_builder.dart';
+import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/screens/home/tabs/chat_tab/chat_tab.dart';
 import 'package:hi/screens/home/tabs/friends_tab/friends_tab.dart';
@@ -66,16 +68,19 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: kDefaultPadding / 2.0),
-            children: [
-                CircleAvatar(child:  ClipOval(child: Image.network('https://picsum.photos/250?image=9')), radius: kDefualtBorderRadius * 3,),
-                ListTile(leading: Icon(Icons.person), title: Text('Ashutosh Aswal', style: TextStyle(fontSize: 10, letterSpacing: 2.5,))),
-                ListTile(leading: Icon(Icons.email), title: Text('ashu.aswal.333@gmail.com', style: TextStyle(fontSize:10, letterSpacing: 2.5))),
-                RoundIconButton(icon: Icons.edit, onPressed: (){}),
-                Divider(color: Colors.grey,),
-                PrimaryButton(displayText: 'Sign Out', onPressed: (){})
-            ],
+          child: Scaffold(
+            appBar: AppBar(title: Text('Hi'), automaticallyImplyLeading: false, backgroundColor: kPrimaryColor),
+            body: ListView(
+              padding: EdgeInsets.symmetric(horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding / 4.0),
+              children: [
+                  ProfilePictureStreamBuilder(),
+                  ListTile(leading: Icon(Icons.person), title: Text('Ashutosh Aswal', style: TextStyle(fontSize: 10, letterSpacing: 2.5,))),
+                  ListTile(leading: Icon(Icons.email), title: Text('ashu.aswal.333@gmail.com', style: TextStyle(fontSize:10, letterSpacing: 2.5))),
+                  RoundIconButton(icon: Icons.edit, onPressed: () => Navigator.pushNamed(context, EditProfileScreen.id), color: kSecondaryColor),
+                  Divider(color: Colors.grey,),
+                  PrimaryButton(displayText: 'Sign Out', onPressed: (){})
+              ],
+            ),
           ),
         ),
         body: SafeArea(
