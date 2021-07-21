@@ -27,9 +27,12 @@ class HomeScreen extends StatelessWidget {
               },
               child: Padding(
                 padding: const EdgeInsets.all(kDefaultPadding / 4.0),
-                child: CircleAvatar(
-                  backgroundImage:
-                      NetworkImage('https://picsum.photos/250?image=9'),
+                child: ProfilePictureStreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(FirebaseAuth.instance.currentUser?.email)
+                      .collection('profile_picture')
+                      .snapshots(),
                 ),
               ),
             ),
