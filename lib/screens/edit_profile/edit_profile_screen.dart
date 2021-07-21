@@ -18,7 +18,7 @@ class EditProfileScreen extends StatelessWidget {
             Stack(
               children: [
                 ProfilePictureStreamBuilder(
-                  stream: FirebaseService.getStreamToProfilePicture(email: FirebaseService.currentUserEmail)
+                  stream: FirebaseService.currentUserStreamToProfilePicture,
                 ),
                 Positioned(
                   child: RoundIconButton(

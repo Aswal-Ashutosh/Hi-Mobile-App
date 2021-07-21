@@ -27,7 +27,7 @@ class HomeScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(kDefaultPadding / 4.0),
                 child: ProfilePictureStreamBuilder(
-                  stream:  FirebaseService.getStreamToProfilePicture(email: FirebaseService.currentUserEmail)
+                  stream:  FirebaseService.currentUserStreamToProfilePicture,
                 ),
               ),
             ),
@@ -80,7 +80,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   ProfilePictureStreamBuilder(
-                    stream:  FirebaseService.getStreamToProfilePicture(email: FirebaseService.currentUserEmail)
+                    stream:  FirebaseService.currentUserStreamToProfilePicture,
                   ),
                   ListTile(
                       leading: Icon(Icons.person),
