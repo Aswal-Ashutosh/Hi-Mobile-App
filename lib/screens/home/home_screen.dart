@@ -78,39 +78,41 @@ class HomeScreen extends StatelessWidget {
                 title: Text('Hi'),
                 automaticallyImplyLeading: false,
                 backgroundColor: kPrimaryColor),
-            body: ListView(
-              padding: EdgeInsets.symmetric(
+            body: Padding(
+                padding: EdgeInsets.symmetric(
                   horizontal: kDefaultPadding / 2.0,
                   vertical: kDefaultPadding / 4.0),
-              children: [
-                ProfilePictureStreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(FirebaseAuth.instance.currentUser?.email)
-                      .collection('profile_picture')
-                      .snapshots(),
-                ),
-                ListTile(
-                    leading: Icon(Icons.person),
-                    title: Text('Ashutosh Aswal',
-                        style: TextStyle(
-                          fontSize: 10,
-                          letterSpacing: 2.5,
-                        ))),
-                ListTile(
-                    leading: Icon(Icons.email),
-                    title: Text('ashu.aswal.333@gmail.com',
-                        style: TextStyle(fontSize: 10, letterSpacing: 2.5))),
-                RoundIconButton(
-                    icon: Icons.edit,
-                    onPressed: () =>
-                        Navigator.pushNamed(context, EditProfileScreen.id),
-                    color: kSecondaryColor),
-                Divider(
-                  color: Colors.grey,
-                ),
-                PrimaryButton(displayText: 'Sign Out', onPressed: () {})
-              ],
+              child: Column(
+                children: [
+                  ProfilePictureStreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser?.email)
+                        .collection('profile_picture')
+                        .snapshots(),
+                  ),
+                  ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text('Ashutosh Aswal',
+                          style: TextStyle(
+                            fontSize: 10,
+                            letterSpacing: 2.5,
+                          ))),
+                  ListTile(
+                      leading: Icon(Icons.email),
+                      title: Text('ashu.aswal.333@gmail.com',
+                          style: TextStyle(fontSize: 10, letterSpacing: 2.5))),
+                  RoundIconButton(
+                      icon: Icons.edit,
+                      onPressed: () =>
+                          Navigator.pushNamed(context, EditProfileScreen.id),
+                      color: Colors.blueGrey),
+                  Divider(
+                    color: Colors.grey,
+                  ),
+                  PrimaryButton(displayText: 'Sign Out', onPressed: () {})
+                ],
+              ),
             ),
           ),
         ),

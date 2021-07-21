@@ -32,7 +32,7 @@ class EditProfileScreen extends StatelessWidget {
                     onPressed: () {
                       FirebaseService.pickAndUploadProfileImage();
                     },
-                    color: kSecondaryColor,
+                    color: Colors.blueGrey,
                   ),
                   right: 0,
                   bottom: 0,
