@@ -1,14 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 
 class ProfilePictureStreamBuilder extends StatelessWidget {
-  final _stream = FirebaseFirestore.instance
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser?.email)
-      .collection('profile_picture')
-      .snapshots();
+  final _stream;
+  final _radius;
+  const ProfilePictureStreamBuilder({required final stream, final radius = kDefualtBorderRadius * 3}) : _stream = stream, _radius = radius;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +18,7 @@ class ProfilePictureStreamBuilder extends StatelessWidget {
           return CircleAvatar(
             backgroundColor: Colors.grey,
             backgroundImage: NetworkImage(imageUrl),
-            radius: kDefualtBorderRadius * 3,
+            radius: _radius,
           );
         } else {
           return CircleAvatar(
@@ -31,7 +28,7 @@ class ProfilePictureStreamBuilder extends StatelessWidget {
               size: 50,
             ),
             backgroundColor: Colors.blueGrey,
-            radius: kDefualtBorderRadius * 3,
+            radius: _radius,
           );
         }
       },
