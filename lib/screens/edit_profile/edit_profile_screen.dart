@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
@@ -20,11 +18,7 @@ class EditProfileScreen extends StatelessWidget {
             Stack(
               children: [
                 ProfilePictureStreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(FirebaseAuth.instance.currentUser?.email)
-                      .collection('profile_picture')
-                      .snapshots(),
+                  stream: FirebaseService.getStreamToProfilePicture(email: FirebaseService.currentUserEmail)
                 ),
                 Positioned(
                   child: RoundIconButton(

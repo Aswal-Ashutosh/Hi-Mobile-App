@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
@@ -9,6 +7,7 @@ import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/screens/home/tabs/chat_tab/chat_tab.dart';
 import 'package:hi/screens/home/tabs/friends_tab/friends_tab.dart';
+import 'package:hi/services/firebase_service.dart';
 
 class HomeScreen extends StatelessWidget {
   static const id = 'home_screen';
@@ -28,11 +27,7 @@ class HomeScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(kDefaultPadding / 4.0),
                 child: ProfilePictureStreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(FirebaseAuth.instance.currentUser?.email)
-                      .collection('profile_picture')
-                      .snapshots(),
+                  stream:  FirebaseService.getStreamToProfilePicture(email: FirebaseService.currentUserEmail)
                 ),
               ),
             ),
@@ -85,11 +80,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   ProfilePictureStreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(FirebaseAuth.instance.currentUser?.email)
-                        .collection('profile_picture')
-                        .snapshots(),
+                    stream:  FirebaseService.getStreamToProfilePicture(email: FirebaseService.currentUserEmail)
                   ),
                   ListTile(
                       leading: Icon(Icons.person),
