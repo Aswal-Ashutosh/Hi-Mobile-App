@@ -14,7 +14,7 @@ class ProfilePictureStreamBuilder extends StatelessWidget {
       builder: (context, snapshots) {
         if (snapshots.hasData && snapshots.data!.docs.isNotEmpty) {
           final imageUrl =
-              (snapshots.data?.docs[0].data() as Map<String, dynamic>)['url'];
+              snapshots.data?.docs[0]['url'];
           return CircleAvatar(
             backgroundColor: Colors.grey,
             backgroundImage: NetworkImage(imageUrl),
