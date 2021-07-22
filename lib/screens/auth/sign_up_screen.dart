@@ -5,7 +5,6 @@ import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/screens/auth/email_verification_screen.dart';
 import 'package:hi/screens/auth/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hi/services/firebase_service.dart';
 
 class SignUpScreen extends StatelessWidget {
   static const id = 'sign_up_screen';

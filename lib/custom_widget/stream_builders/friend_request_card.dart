@@ -25,8 +25,7 @@ class FriendRequestCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           CircularProfilePicture(
-            stream:
-                 FirebaseService.getStreamToUserData(email: _senderEmail),
+            email: _senderEmail,
             radius: kDefualtBorderRadius * 2,
           ),
           SizedBox(width: kDefaultPadding / 5.0),

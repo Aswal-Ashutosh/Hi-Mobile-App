@@ -1,16 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
+import 'package:hi/services/firebase_service.dart';
 
 class CircularProfilePicture extends StatelessWidget {
-  final _stream;
+  final _email;
   final _radius;
-  const CircularProfilePicture({required final stream, final radius = kDefualtBorderRadius * 3}) : _stream = stream, _radius = radius;
+  const CircularProfilePicture({required final String email, final radius = kDefualtBorderRadius * 3}) : _email = email, _radius = radius;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-      stream: _stream,
+      stream: FirebaseService.getStreamToUserData(email: _email),
       builder: (context, snapshots) {
         if (snapshots.hasData && snapshots.data != null && snapshots.data?['profile_image'] != null) {
           final imageUrl = snapshots.data?['profile_image'];
