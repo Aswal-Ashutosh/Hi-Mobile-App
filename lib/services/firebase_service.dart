@@ -133,6 +133,8 @@ class FirebaseService {
           .get()
           .then((value) => value['display_name']);
 
+  static Future<String> get currentUserName async => await getNameOf(email: FirebaseService.currentUserEmail);
+
   static String get currentUserEmail => _fAuth.currentUser?.email as String;
 
   static Future<void> acceptFriendRequest({required final String email}) async {
