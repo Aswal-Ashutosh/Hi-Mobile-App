@@ -110,6 +110,8 @@ class FirebaseService {
       .doc(email)
       .collection('profile_picture')
       .snapshots();
+  
+  static getStreamToUserData({required final String email}) => _fStore.collection('users').doc(email).snapshots();
 
   static get currentUserStreamToProfilePicture =>
       getStreamToProfilePicture(email: FirebaseService.currentUserEmail);
@@ -149,7 +151,7 @@ class FirebaseService {
         .doc(email)
         .collection('friends')
         .doc(FirebaseService.currentUserEmail)
-        .set({'email': email});
+        .set({'email': FirebaseService.currentUserEmail});
     await _fStore
         .collection('users')
         .doc(FirebaseService.currentUserEmail)
