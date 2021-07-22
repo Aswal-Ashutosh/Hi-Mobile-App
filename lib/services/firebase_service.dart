@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -94,12 +93,30 @@ class FirebaseService {
     }
   }
 
-  static getStreamToProfilePicture({required final String email}) =>
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(email)
-          .collection('profile_picture')
-          .snapshots();
-  
-  static String get currentUserEmail => FirebaseAuth.instance.currentUser?.email as String;
+  static getStreamToProfilePicture({required final String email}) => _fStore
+      .collection('users')
+      .doc(email)
+      .collection('profile_picture')
+      .snapshots();
+
+  static get currentUserStreamToProfilePicture =>
+      getStreamToProfilePicture(email: FirebaseService.currentUserEmail);
+
+  static get currentUserStreamToFirendRequests =>
+      _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friend_requests').snapshots();
+
+  static Future<String> getNameOf({required final String email}) async => await _fStore
+    .collection('users').doc(email).get().then((value) => value['display_name']);
+
+
+  static String get currentUserEmail => _fAuth.currentUser?.email as String;
+
+  static Future<void> acceptFriendRequest({required final String email}) async{
+    await _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friends').doc(email).set({'email': email});
+    await _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friend_requests').doc(email).delete();
+  }
+
+  static Future<void> rejectFreindRequest({required final String email}) async{
+     await _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friend_requests').doc(email).delete();
+  }
 }
