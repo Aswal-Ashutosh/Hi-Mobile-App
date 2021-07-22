@@ -28,6 +28,7 @@ class HomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(kDefaultPadding / 4.0),
                 child: ProfilePictureStreamBuilder(
                   stream:  FirebaseService.currentUserStreamToProfilePicture,
+                  radius: kDefualtBorderRadius,
                 ),
               ),
             ),

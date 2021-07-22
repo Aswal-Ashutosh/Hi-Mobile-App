@@ -25,7 +25,7 @@ class ProfilePictureStreamBuilder extends StatelessWidget {
             child: Icon(
               Icons.person,
               color: Colors.grey,
-              size: 50,
+              size: _radius,
             ),
             backgroundColor: Colors.blueGrey,
             radius: _radius,
