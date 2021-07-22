@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
@@ -86,14 +87,37 @@ class HomeScreen extends StatelessWidget {
                   ),
                   ListTile(
                       leading: Icon(Icons.person),
-                      title: Text('Ashutosh Aswal',
-                          style: TextStyle(
-                            fontSize: 10,
-                            letterSpacing: 2.5,
-                          ))),
+                      title: FutureBuilder<String>(
+                        future: FirebaseService.currentUserName,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.hasError) //TODO: Add shimmer
+                              return Text(
+                                'Something went wrong!',
+                                style: TextStyle(color: Colors.red),
+                              );
+                            else
+                              return Text(
+                                snapshot.data as String,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  letterSpacing: 2.5,
+                                ),
+                              );
+                          } else {
+                            //TODO: Add shimmer
+                            return Text(
+                              'Loading...',
+                              style: TextStyle(color: Colors.grey),
+                            );
+                          }
+                        },
+                      )),
+                  /**/
                   ListTile(
                       leading: Icon(Icons.email),
-                      title: Text('ashu.aswal.333@gmail.com',
+                      title: Text(FirebaseService.currentUserEmail,
                           style: TextStyle(fontSize: 10, letterSpacing: 2.5))),
                   RoundIconButton(
                       icon: Icons.edit,
@@ -104,11 +128,12 @@ class HomeScreen extends StatelessWidget {
                     color: Colors.grey,
                   ),
                   PrimaryButton(
-                      displayText: 'Sign Out',
-                      onPressed: () async {
-                        FirebaseService.signOut();
-                        Navigator.popAndPushNamed(context, WelcomeScreen.id);
-                      })
+                    displayText: 'Sign Out',
+                    onPressed: () async {
+                      FirebaseService.signOut();
+                      Navigator.popAndPushNamed(context, WelcomeScreen.id);
+                    },
+                  )
                 ],
               ),
             ),

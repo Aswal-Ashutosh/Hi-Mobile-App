@@ -35,18 +35,27 @@ class FriendRequestCard extends StatelessWidget {
               FutureBuilder(
                 future: FirebaseService.getNameOf(email: _senderEmail),
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(
-                      snapshot.data as String,
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 15,
-                        letterSpacing: 2.5,
-                      ),
-                    );
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) //TODO: Add shimmer
+                      return Text(
+                        'Something went wrong!',
+                        style: TextStyle(color: Colors.red),
+                      );
+                    else
+                      return Text(
+                        snapshot.data as String,
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 15,
+                          letterSpacing: 2.5,
+                        ),
+                      );
                   } else {
                     //TODO: Add shimmer
-                    return Text('Loading...', style: TextStyle(color: Colors.grey),);
+                    return Text(
+                      'Loading...',
+                      style: TextStyle(color: Colors.grey),
+                    );
                   }
                 },
               ),
@@ -56,23 +65,25 @@ class FriendRequestCard extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
               Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                        onPressed: () => FirebaseService.acceptFriendRequest(email: _senderEmail),
-                        child: Text(
-                          'ACCEPT',
-                          style: TextStyle(color: Colors.green),
-                        )),
-                    TextButton(
-                      onPressed: () => FirebaseService.rejectFreindRequest(email: _senderEmail),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                      onPressed: () => FirebaseService.acceptFriendRequest(
+                          email: _senderEmail),
                       child: Text(
-                        'REJECT',
-                        style: TextStyle(color: Colors.red),
-                      ),
+                        'ACCEPT',
+                        style: TextStyle(color: Colors.green),
+                      )),
+                  TextButton(
+                    onPressed: () => FirebaseService.rejectFreindRequest(
+                        email: _senderEmail),
+                    child: Text(
+                      'REJECT',
+                      style: TextStyle(color: Colors.red),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
             ],
           )
         ],
