@@ -14,7 +14,7 @@ class FriendCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(kDefaultPadding / 4.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CircularProfilePicture(
             stream:
@@ -25,7 +25,7 @@ class FriendCard extends StatelessWidget {
           UserNameText(
             email: _friendEmail,
             style: TextStyle(
-              color: Colors.black54,
+              color: Colors.black87,
               fontSize: 15,
               letterSpacing: 2.5,
             ),
