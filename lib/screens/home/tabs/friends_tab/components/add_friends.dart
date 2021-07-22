@@ -12,7 +12,8 @@ class AddFriends extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(context: context, builder: (cotext) => AddByEmail());
+          showModalBottomSheet(
+              context: context, builder: (cotext) => AddByEmail());
         },
         child: Icon(Icons.add),
         backgroundColor: kPrimaryColor,
@@ -29,7 +30,7 @@ class AddFriends extends StatelessWidget {
   }
 }
 
-//Bottom Sheet 
+//Bottom Sheet
 class AddByEmail extends StatefulWidget {
   @override
   _AddByEmailState createState() => _AddByEmailState();
@@ -45,7 +46,8 @@ class _AddByEmailState extends State<AddByEmail> {
 
   final _textEditingController = TextEditingController();
 
-  final _validator = (String? value) => value!.trim().isEmpty ? 'Enter an email.' : null;
+  final _validator =
+      (String? value) => value!.trim().isEmpty ? 'Enter an email.' : null;
 
   String? firebaseError;
 
@@ -57,38 +59,44 @@ class _AddByEmailState extends State<AddByEmail> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding),
               child: Form(
                 key: _formKey,
                 child: TextFormField(
                   controller: _textEditingController,
                   validator: _validator,
                   textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                  errorText: firebaseError,
-                  filled: true,
-                  fillColor: const Color(0x112EA043),
-                  labelText: 'Your friend\'s email',
-                  enabledBorder: _borderRadius,
-                  focusedBorder: _borderRadius,
-                  errorBorder: _borderRadius,
-                  focusedErrorBorder: _borderRadius,
-                  prefixIcon: Icon(Icons.mail),
-                ),
+                  decoration: InputDecoration(
+                    errorText: firebaseError,
+                    filled: true,
+                    fillColor: const Color(0x112EA043),
+                    labelText: 'Your friend\'s email',
+                    enabledBorder: _borderRadius,
+                    focusedBorder: _borderRadius,
+                    errorBorder: _borderRadius,
+                    focusedErrorBorder: _borderRadius,
+                    prefixIcon: Icon(Icons.mail),
+                  ),
                 ),
               ),
             ),
             SizedBox(height: kDefaultPadding / 4.0),
-            PrimaryButton(displayText: 'Send Request', onPressed: () async{
-              if(_formKey.currentState!.validate()){
-                firebaseError = null;
-                await FirebaseService.sendFriendRequest(recipientEmail: _textEditingController.text.trim()).catchError((error){
-                  setState(() {
-                    firebaseError = error;
+            PrimaryButton(
+              displayText: 'Send Request',
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  firebaseError = null;
+                  await FirebaseService.sendFriendRequest(
+                          recipientEmail: _textEditingController.text.trim())
+                      .catchError((error) {
+                    setState(() {
+                      firebaseError = error;
+                    });
                   });
-                });
-              }
-            })
+                }
+              },
+            )
           ],
         ),
         height: MediaQuery.of(context).size.height / 2.0,
@@ -133,9 +141,7 @@ class SearchTextField extends StatelessWidget {
           borderRadius:
               BorderRadius.all(Radius.circular(kDefualtBorderRadius / 2.0)),
           color: Colors.white,
-          boxShadow: <BoxShadow>[
-            BoxShadow(blurRadius: 0.2)
-          ]),
+          boxShadow: <BoxShadow>[BoxShadow(blurRadius: 0.2)]),
     );
   }
 }
