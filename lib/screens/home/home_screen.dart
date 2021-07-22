@@ -7,6 +7,7 @@ import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/screens/home/tabs/chat_tab/chat_tab.dart';
 import 'package:hi/screens/home/tabs/friends_tab/friends_tab.dart';
+import 'package:hi/screens/welcome_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -27,7 +28,7 @@ class HomeScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(kDefaultPadding / 4.0),
                 child: ProfilePictureStreamBuilder(
-                  stream:  FirebaseService.currentUserStreamToProfilePicture,
+                  stream: FirebaseService.currentUserStreamToProfilePicture,
                   radius: kDefualtBorderRadius,
                 ),
               ),
@@ -75,13 +76,13 @@ class HomeScreen extends StatelessWidget {
                 automaticallyImplyLeading: false,
                 backgroundColor: kPrimaryColor),
             body: Padding(
-                padding: EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                   horizontal: kDefaultPadding / 2.0,
                   vertical: kDefaultPadding / 4.0),
               child: Column(
                 children: [
                   ProfilePictureStreamBuilder(
-                    stream:  FirebaseService.currentUserStreamToProfilePicture,
+                    stream: FirebaseService.currentUserStreamToProfilePicture,
                   ),
                   ListTile(
                       leading: Icon(Icons.person),
@@ -102,7 +103,12 @@ class HomeScreen extends StatelessWidget {
                   Divider(
                     color: Colors.grey,
                   ),
-                  PrimaryButton(displayText: 'Sign Out', onPressed: () {})
+                  PrimaryButton(
+                      displayText: 'Sign Out',
+                      onPressed: () async {
+                        FirebaseService.signOut();
+                        Navigator.popAndPushNamed(context, WelcomeScreen.id);
+                      })
                 ],
               ),
             ),
