@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/profile_picture_stream_builder.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -19,14 +20,17 @@ class FriendRequestCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(kDefaultPadding / 4.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ProfilePictureStreamBuilder(
             stream:
                 FirebaseService.getStreamToProfilePicture(email: _senderEmail),
+            radius: kDefualtBorderRadius * 2,
           ),
+          SizedBox(width: kDefaultPadding / 5.0),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               FutureBuilder(
                 future: FirebaseService.getNameOf(email: _senderEmail),
@@ -35,8 +39,8 @@ class FriendRequestCard extends StatelessWidget {
                     return Text(
                       snapshot.data as String,
                       style: TextStyle(
-                        color: Colors.blueGrey,
-                        fontSize: 13,
+                        color: Colors.blue,
+                        fontSize: 15,
                         letterSpacing: 2.5,
                       ),
                     );
@@ -47,31 +51,11 @@ class FriendRequestCard extends StatelessWidget {
                 },
               ),
               SizedBox(height: kDefaultPadding / 5.0),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.65,
-                child: Row(
-                  children: <Widget>[
-                    Flexible(
-                      child: new Text(
-                        _senderEmail,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                          letterSpacing: 2.5,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(height: kDefaultPadding / 4.0),
               Text(
                 '${_date as String} at ${_time as String}',
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.50,
-                child: Row(
+              Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton(
@@ -89,7 +73,6 @@ class FriendRequestCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              )
             ],
           )
         ],
