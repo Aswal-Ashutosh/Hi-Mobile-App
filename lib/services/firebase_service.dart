@@ -113,6 +113,7 @@ class FirebaseService {
 
   static Future<void> acceptFriendRequest({required final String email}) async{
     await _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friends').doc(email).set({'email': email});
+    await _fStore.collection('users').doc(email).collection('friends').doc(FirebaseService.currentUserEmail).set({'email': email});
     await _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friend_requests').doc(email).delete();
   }
 
