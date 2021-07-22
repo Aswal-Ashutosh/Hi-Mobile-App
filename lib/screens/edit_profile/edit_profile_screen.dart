@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
-import 'package:hi/custom_widget/profile_picture_stream_builder.dart';
+import 'package:hi/custom_widget/circular_profile_picture.dart';
 import 'package:hi/services/firebase_service.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -17,7 +17,7 @@ class EditProfileScreen extends StatelessWidget {
           children: [
             Stack(
               children: [
-                ProfilePictureStreamBuilder(
+                CircularProfilePicture(
                   stream: FirebaseService.currentUserStreamToProfilePicture,
                 ),
                 Positioned(

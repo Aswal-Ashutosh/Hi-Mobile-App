@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/custom_widget/profile_picture_stream_builder.dart';
+import 'package:hi/custom_widget/circular_profile_picture.dart';
 import 'package:hi/custom_widget/user_name_text.dart';
 import 'package:hi/services/firebase_service.dart';
 
@@ -24,7 +24,7 @@ class FriendRequestCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          ProfilePictureStreamBuilder(
+          CircularProfilePicture(
             stream:
                 FirebaseService.getStreamToProfilePicture(email: _senderEmail),
             radius: kDefualtBorderRadius * 2,

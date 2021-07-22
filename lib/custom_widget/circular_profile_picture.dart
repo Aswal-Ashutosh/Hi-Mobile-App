@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 
-class ProfilePictureStreamBuilder extends StatelessWidget {
+class CircularProfilePicture extends StatelessWidget {
   final _stream;
   final _radius;
-  const ProfilePictureStreamBuilder({required final stream, final radius = kDefualtBorderRadius * 3}) : _stream = stream, _radius = radius;
+  const CircularProfilePicture({required final stream, final radius = kDefualtBorderRadius * 3}) : _stream = stream, _radius = radius;
 
   @override
   Widget build(BuildContext context) {

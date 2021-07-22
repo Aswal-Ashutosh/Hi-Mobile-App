@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
-import 'package:hi/custom_widget/profile_picture_stream_builder.dart';
+import 'package:hi/custom_widget/circular_profile_picture.dart';
 import 'package:hi/custom_widget/user_name_text.dart';
 import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
               },
               child: Padding(
                 padding: const EdgeInsets.all(kDefaultPadding / 4.0),
-                child: ProfilePictureStreamBuilder(
+                child: CircularProfilePicture(
                   stream: FirebaseService.currentUserStreamToProfilePicture,
                   radius: kDefualtBorderRadius,
                 ),
@@ -82,7 +82,7 @@ class HomeScreen extends StatelessWidget {
                   vertical: kDefaultPadding / 4.0),
               child: Column(
                 children: [
-                  ProfilePictureStreamBuilder(
+                  CircularProfilePicture(
                     stream: FirebaseService.currentUserStreamToProfilePicture,
                   ),
                   ListTile(
