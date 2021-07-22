@@ -120,6 +120,12 @@ class FirebaseService {
       .collection('friend_requests')
       .snapshots();
 
+  static get currentUserStreamToFriends => _fStore
+      .collection('users')
+      .doc(FirebaseService.currentUserEmail)
+      .collection('friends')
+      .snapshots();
+
   static Future<String> getNameOf({required final String email}) async =>
       await _fStore
           .collection('users')
