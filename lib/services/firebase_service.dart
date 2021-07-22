@@ -24,7 +24,7 @@ class FirebaseService {
 
   static Future<void> sendFriendRequest(
       {required String recipientEmail}) async {
-    final senderEmail = _fAuth.currentUser?.email;
+    final senderEmail = FirebaseService.currentUserEmail;
     //Sending request to yourselft
     if (senderEmail == recipientEmail)
       throw ('Can\'t send request to yourself.');
@@ -54,6 +54,16 @@ class FirebaseService {
         .get()
         .then((value) => value.exists))
       throw ('You have a pending request from the same user.');
+
+    //If your request is still pending
+    if (await _fStore
+        .collection('users')
+        .doc(recipientEmail)
+        .collection('friend_requests')
+        .doc(senderEmail)
+        .get()
+        .then((value) => value.exists))
+      throw ('Your request is still pending.');
 
     final timeStamp = DateTime.now();
     final timeOfSending = DateFormat.jm().format(timeStamp);
@@ -102,22 +112,48 @@ class FirebaseService {
   static get currentUserStreamToProfilePicture =>
       getStreamToProfilePicture(email: FirebaseService.currentUserEmail);
 
-  static get currentUserStreamToFirendRequests =>
-      _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friend_requests').snapshots();
+  static get currentUserStreamToFirendRequests => _fStore
+      .collection('users')
+      .doc(FirebaseService.currentUserEmail)
+      .collection('friend_requests')
+      .snapshots();
 
-  static Future<String> getNameOf({required final String email}) async => await _fStore
-    .collection('users').doc(email).get().then((value) => value['display_name']);
-
+  static Future<String> getNameOf({required final String email}) async =>
+      await _fStore
+          .collection('users')
+          .doc(email)
+          .get()
+          .then((value) => value['display_name']);
 
   static String get currentUserEmail => _fAuth.currentUser?.email as String;
 
-  static Future<void> acceptFriendRequest({required final String email}) async{
-    await _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friends').doc(email).set({'email': email});
-    await _fStore.collection('users').doc(email).collection('friends').doc(FirebaseService.currentUserEmail).set({'email': email});
-    await _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friend_requests').doc(email).delete();
+  static Future<void> acceptFriendRequest({required final String email}) async {
+    await _fStore
+        .collection('users')
+        .doc(FirebaseService.currentUserEmail)
+        .collection('friends')
+        .doc(email)
+        .set({'email': email});
+    await _fStore
+        .collection('users')
+        .doc(email)
+        .collection('friends')
+        .doc(FirebaseService.currentUserEmail)
+        .set({'email': email});
+    await _fStore
+        .collection('users')
+        .doc(FirebaseService.currentUserEmail)
+        .collection('friend_requests')
+        .doc(email)
+        .delete();
   }
 
-  static Future<void> rejectFreindRequest({required final String email}) async{
-     await _fStore.collection('users').doc(FirebaseService.currentUserEmail).collection('friend_requests').doc(email).delete();
+  static Future<void> rejectFreindRequest({required final String email}) async {
+    await _fStore
+        .collection('users')
+        .doc(FirebaseService.currentUserEmail)
+        .collection('friend_requests')
+        .doc(email)
+        .delete();
   }
 }
