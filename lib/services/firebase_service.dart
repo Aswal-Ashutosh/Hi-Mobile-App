@@ -99,22 +99,14 @@ class FirebaseService {
       await _fStore
           .collection('users')
           .doc(email)
-          .collection('profile_picture')
-          .doc('url')
-          .set({'url': url});
+          .update({'profile_image': url});
     }
   }
-
-  static getStreamToProfilePicture({required final String email}) => _fStore
-      .collection('users')
-      .doc(email)
-      .collection('profile_picture')
-      .snapshots();
   
   static getStreamToUserData({required final String email}) => _fStore.collection('users').doc(email).snapshots();
 
-  static get currentUserStreamToProfilePicture =>
-      getStreamToProfilePicture(email: FirebaseService.currentUserEmail);
+  static get currentUserStreamToUserData =>
+      getStreamToUserData(email: FirebaseService.currentUserEmail);
 
   static get currentUserStreamToFirendRequests => _fStore
       .collection('users')

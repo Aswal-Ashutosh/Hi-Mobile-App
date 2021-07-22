@@ -26,7 +26,7 @@ class FriendRequestCard extends StatelessWidget {
         children: [
           CircularProfilePicture(
             stream:
-                FirebaseService.getStreamToProfilePicture(email: _senderEmail),
+                 FirebaseService.getStreamToUserData(email: _senderEmail),
             radius: kDefualtBorderRadius * 2,
           ),
           SizedBox(width: kDefaultPadding / 5.0),

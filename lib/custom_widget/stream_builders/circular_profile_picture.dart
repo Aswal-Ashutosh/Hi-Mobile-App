@@ -9,12 +9,11 @@ class CircularProfilePicture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
+    return StreamBuilder<DocumentSnapshot>(
       stream: _stream,
       builder: (context, snapshots) {
-        if (snapshots.hasData && snapshots.data!.docs.isNotEmpty) {
-          final imageUrl =
-              snapshots.data?.docs[0]['url'];
+        if (snapshots.hasData && snapshots.data != null && snapshots.data?['profile_image'] != null) {
+          final imageUrl = snapshots.data?['profile_image'];
           return CircleAvatar(
             backgroundColor: Colors.grey,
             backgroundImage: NetworkImage(imageUrl),
