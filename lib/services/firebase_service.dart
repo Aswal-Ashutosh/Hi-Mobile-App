@@ -22,6 +22,8 @@ class FirebaseService {
     });
   }
 
+  static Future<void> signOut() async => await _fAuth.signOut();
+
   static Future<void> sendFriendRequest(
       {required String recipientEmail}) async {
     final senderEmail = FirebaseService.currentUserEmail;
