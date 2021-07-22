@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/error.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
+import 'package:hi/screens/auth/profile_setup_screen.dart';
 import 'package:hi/screens/home/home_screen.dart';
 
 class EmailVerificatoinScreen extends StatefulWidget {
@@ -40,7 +41,7 @@ class _EmailVerificatoinScreenState extends State<EmailVerificatoinScreen> {
     });
     timer = Timer.periodic(Duration(seconds: 3), (timer) async {
       if (await checkIfVerified()) {
-        Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
+        Navigator.popAndPushNamed(context, ProfileSetupScreen.id);
       }
     });
   }

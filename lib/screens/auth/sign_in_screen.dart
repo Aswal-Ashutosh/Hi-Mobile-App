@@ -4,8 +4,10 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/error.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/screens/auth/email_verification_screen.dart';
+import 'package:hi/screens/auth/profile_setup_screen.dart';
 import 'package:hi/screens/home/home_screen.dart';
 import 'package:hi/screens/auth/sign_up_screen.dart';
+import 'package:hi/services/firebase_service.dart';
 
 
 class SignInScreen extends StatelessWidget {
@@ -140,9 +142,12 @@ class _SignInFormState extends State<SignInForm> {
             if(formKey.currentState!.validate()){
               await FirebaseAuth.instance
               .signInWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
-              .then((value) {
+              .then((value) async{
                 if(FirebaseAuth.instance.currentUser!.emailVerified){
-                  Navigator.popAndPushNamed(context, HomeScreen.id);
+                  if(await FirebaseService.userHasSetupProfile)
+                    Navigator.popAndPushNamed(context, HomeScreen.id);
+                  else
+                    Navigator.popAndPushNamed(context, ProfileSetupScreen.id);
                 }else{
                   Navigator.popAndPushNamed(context, EmailVerificatoinScreen.id);
                 }

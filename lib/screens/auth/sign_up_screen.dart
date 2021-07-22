@@ -67,11 +67,9 @@ class SignUpForm extends StatefulWidget {
 class _SignUpFormState extends State<SignUpForm> {
   final formKey = GlobalKey<FormState>();
 
-  final nameTextController = TextEditingController();
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
 
-  final nameValidator = (String? value) => value!.trim().isEmpty ? "Enter a name." : null;
   final emailValidator = (String? value) => value!.trim().isEmpty ? "Enter an email." : null;
   final passwordValidator = (String? value) => value!.trim().length < 8 ? 'Enter at least 8 character long password.' : null;
 
@@ -85,7 +83,6 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   void dispose() {
-    nameTextController.dispose();
     emailTextController.dispose();
     passwordTextController.dispose();
     super.dispose();
@@ -98,25 +95,6 @@ class _SignUpFormState extends State<SignUpForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextFormField(
-            controller: nameTextController,
-            validator: nameValidator,
-            maxLength: 20,
-            textAlign: TextAlign.center,
-            decoration: InputDecoration(
-              counterText: '',
-              filled: true,
-              fillColor: const Color(0x111F6FEB),
-              labelText: 'Name',
-              labelStyle: TextStyle(color: Colors.grey[650]),
-              enabledBorder: borderRadius,
-              focusedBorder: borderRadius,
-              errorBorder: borderRadius,
-              focusedErrorBorder: borderRadius,
-              prefixIcon: Icon(Icons.person),
-            ),
-          ),
-          SizedBox(height: kDefaultPadding),
           TextFormField(
             controller: emailTextController,
             validator: emailValidator,
@@ -168,8 +146,6 @@ class _SignUpFormState extends State<SignUpForm> {
                 await FirebaseAuth.instance
                 .createUserWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
                 .then((value) async{ 
-                  final String uid = (FirebaseAuth.instance.currentUser?.uid) as String;
-                  await FirebaseService.createNewUser(uid: uid, email: emailTextController.text.trim(), name: nameTextController.text.trim());
                   Navigator.pushNamed(context, EmailVerificatoinScreen.id);
                  })
                 .catchError((error) {

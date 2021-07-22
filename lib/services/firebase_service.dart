@@ -10,17 +10,33 @@ class FirebaseService {
   static FirebaseAuth _fAuth = FirebaseAuth.instance;
   static FirebaseStorage _fStorage = FirebaseStorage.instance;
 
-  static Future<void> createNewUser(
-      {required String uid,
-      required String email,
-      required String name}) async {
+  static Future<void> createNewUser({
+    required String email,
+    required String name,
+    required String about,
+    required File? profileImage,
+  }) async {
+    String? profileImageUrl;
+
+    if (profileImage != null) {
+      Reference reference = _fStorage
+          .ref()
+          .child('profile_pictures/${_fAuth.currentUser?.email}');
+      UploadTask task = reference.putFile(profileImage);
+      TaskSnapshot snapshot = await task.whenComplete(() => task.snapshot);
+      profileImageUrl = await snapshot.ref.getDownloadURL();
+    }
+
     await _fStore.collection('users').doc(email).set({
-      'uid': uid,
       'email': email,
       'display_name': name,
-      'search_name': name.toLowerCase()
+      'search_name': name.toLowerCase(),
+      'profile_image': profileImageUrl,
+      'about': about,
     });
   }
+
+  static Future<bool> get userHasSetupProfile async => await _fStore.collection('users').doc(FirebaseService.currentUserEmail).get().then((value) => value.exists);
 
   static Future<void> signOut() async => await _fAuth.signOut();
 
@@ -86,7 +102,6 @@ class FirebaseService {
   static Future<void> pickAndUploadProfileImage() async {
     final ImagePicker imagePicker = ImagePicker();
     XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
-    print(image?.name);
     if (image != null) {
       Reference reference = _fStorage
           .ref()
@@ -102,8 +117,9 @@ class FirebaseService {
           .update({'profile_image': url});
     }
   }
-  
-  static getStreamToUserData({required final String email}) => _fStore.collection('users').doc(email).snapshots();
+
+  static getStreamToUserData({required final String email}) =>
+      _fStore.collection('users').doc(email).snapshots();
 
   static get currentUserStreamToUserData =>
       getStreamToUserData(email: FirebaseService.currentUserEmail);
@@ -127,7 +143,8 @@ class FirebaseService {
           .get()
           .then((value) => value['display_name']);
 
-  static Future<String> get currentUserName async => await getNameOf(email: FirebaseService.currentUserEmail);
+  static Future<String> get currentUserName async =>
+      await getNameOf(email: FirebaseService.currentUserEmail);
 
   static String get currentUserEmail => _fAuth.currentUser?.email as String;
 
