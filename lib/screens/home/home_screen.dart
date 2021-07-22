@@ -1,9 +1,9 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/profile_picture_stream_builder.dart';
+import 'package:hi/custom_widget/user_name_text.dart';
 import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/screens/home/tabs/chat_tab/chat_tab.dart';
@@ -86,35 +86,15 @@ class HomeScreen extends StatelessWidget {
                     stream: FirebaseService.currentUserStreamToProfilePicture,
                   ),
                   ListTile(
-                      leading: Icon(Icons.person),
-                      title: FutureBuilder<String>(
-                        future: FirebaseService.currentUserName,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshot.hasError) //TODO: Add shimmer
-                              return Text(
-                                'Something went wrong!',
-                                style: TextStyle(color: Colors.red),
-                              );
-                            else
-                              return Text(
-                                snapshot.data as String,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  letterSpacing: 2.5,
-                                ),
-                              );
-                          } else {
-                            //TODO: Add shimmer
-                            return Text(
-                              'Loading...',
-                              style: TextStyle(color: Colors.grey),
-                            );
-                          }
-                        },
-                      )),
-                  /**/
+                    leading: Icon(Icons.person),
+                    title: UserNameText(
+                      email: FirebaseService.currentUserEmail,
+                      style: TextStyle(
+                        fontSize: 10,
+                        letterSpacing: 2.5,
+                      ),
+                    ),
+                  ),
                   ListTile(
                       leading: Icon(Icons.email),
                       title: Text(FirebaseService.currentUserEmail,

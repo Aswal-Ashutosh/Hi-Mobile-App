@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/profile_picture_stream_builder.dart';
+import 'package:hi/custom_widget/user_name_text.dart';
 import 'package:hi/services/firebase_service.dart';
 
 class FriendRequestCard extends StatelessWidget {
@@ -32,32 +33,13 @@ class FriendRequestCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              FutureBuilder(
-                future: FirebaseService.getNameOf(email: _senderEmail),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) //TODO: Add shimmer
-                      return Text(
-                        'Something went wrong!',
-                        style: TextStyle(color: Colors.red),
-                      );
-                    else
-                      return Text(
-                        snapshot.data as String,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 15,
-                          letterSpacing: 2.5,
-                        ),
-                      );
-                  } else {
-                    //TODO: Add shimmer
-                    return Text(
-                      'Loading...',
-                      style: TextStyle(color: Colors.grey),
-                    );
-                  }
-                },
+              UserNameText(
+                email: _senderEmail,
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 15,
+                  letterSpacing: 2.5,
+                ),
               ),
               SizedBox(height: kDefaultPadding / 5.0),
               Text(
