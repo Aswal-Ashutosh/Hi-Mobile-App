@@ -110,12 +110,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     ),
                     SizedBox(height: kDefaultPadding),
                     TextFormField(
+                      textInputAction: TextInputAction.done,
                       controller: _aboutTextController,
                       validator: _validator,
+                      textAlign: TextAlign.left,
                       minLines: 1,
                       maxLines: 3,
-                      maxLength: 60,
-                      textAlign: TextAlign.left,
+                      maxLength: 120,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: const Color(0x112EA043),
@@ -136,7 +137,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                 name: _nameTextController.text.trim(),
                                 about: _aboutTextController.text.trim(),
                                 profileImage: profileImage)
-                            .then((value) => Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false));
+                            .then((value) => Navigator.pushNamedAndRemoveUntil(
+                                context, HomeScreen.id, (route) => false));
                       },
                     ),
                   ],
