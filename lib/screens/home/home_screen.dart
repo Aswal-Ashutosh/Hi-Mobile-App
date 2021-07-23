@@ -3,7 +3,7 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
-import 'package:hi/custom_widget/stream_builders/user_name_text.dart';
+import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/screens/home/tabs/chat_tab/chat_tab.dart';
@@ -87,8 +87,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                   ListTile(
                     leading: Icon(Icons.person),
-                    title: UserNameText(
+                    title: TextStreamBuilder(
                       email: FirebaseService.currentUserEmail,
+                      key: 'display_name',
                       style: TextStyle(
                         fontSize: 10,
                         letterSpacing: 2.5,

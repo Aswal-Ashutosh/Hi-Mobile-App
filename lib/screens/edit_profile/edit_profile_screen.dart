@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
-import 'package:hi/custom_widget/stream_builders/user_name_text.dart';
+import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/services/firebase_service.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -42,7 +42,7 @@ class EditProfileScreen extends StatelessWidget {
                 children: [
                   Icon(Icons.person),
                   SizedBox(width: kDefaultPadding),
-                  UserNameText(email: FirebaseService.currentUserEmail),
+                  TextStreamBuilder(email: FirebaseService.currentUserEmail, key: 'display_name'),
                   Spacer(),
                   TextButton(onPressed: () {}, child: Text('Change')),
                 ],

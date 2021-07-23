@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
-import 'package:hi/custom_widget/stream_builders/user_name_text.dart';
+import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 
 class FriendCard extends StatelessWidget {
   final _friendEmail;
@@ -20,8 +20,9 @@ class FriendCard extends StatelessWidget {
             radius: kDefualtBorderRadius * 1.5,
           ),
           SizedBox(width: kDefaultPadding / 2.0),
-          UserNameText(
+          TextStreamBuilder(
             email: _friendEmail,
+            key: 'display_name',
             style: TextStyle(
               color: Colors.black87,
               fontSize: 15,

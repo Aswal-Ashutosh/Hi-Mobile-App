@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
-import 'package:hi/custom_widget/stream_builders/user_name_text.dart';
+import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/services/firebase_service.dart';
 
 class FriendRequestCard extends StatelessWidget {
@@ -32,8 +32,9 @@ class FriendRequestCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              UserNameText(
+              TextStreamBuilder(
                 email: _senderEmail,
+                key: 'display_name',
                 style: TextStyle(
                   color: Colors.blue,
                   fontSize: 15,
