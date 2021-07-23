@@ -84,7 +84,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   CircularProfilePicture(
-                   email: FirebaseService.currentUserEmail,
+                    email: FirebaseService.currentUserEmail,
                   ),
                   ListTile(
                     leading: Icon(Icons.person),
@@ -98,9 +98,12 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   ListTile(
-                      leading: Icon(Icons.email),
-                      title: Text(FirebaseService.currentUserEmail,
-                          style: TextStyle(fontSize: 10, letterSpacing: 2.5))),
+                    leading: Icon(Icons.email),
+                    title: Text(
+                      FirebaseService.currentUserEmail,
+                      style: TextStyle(fontSize: 10, letterSpacing: 2.5),
+                    ),
+                  ),
                   RoundIconButton(
                       icon: Icons.edit,
                       onPressed: () =>
