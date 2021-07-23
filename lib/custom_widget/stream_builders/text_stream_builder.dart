@@ -6,9 +6,11 @@ class TextStreamBuilder extends StatelessWidget {
   final String _email;
   final String _key;
   final TextStyle? _style;
-  const TextStreamBuilder({required final String email, required final String key, final TextStyle? style})
+  final TextOverflow? _textOverflow;
+  const TextStreamBuilder({required final String email, required final String key, final TextStyle? style, final TextOverflow? textOverflow})
       : _email = email,
         _key = key,
+        _textOverflow = textOverflow,
         _style = style;
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class TextStreamBuilder extends StatelessWidget {
             return Text(
               requiredData,
               style: _style,
-              overflow: TextOverflow.ellipsis,
+              overflow: _textOverflow,
             );
           } else {
             //TODO: Add Shimmer

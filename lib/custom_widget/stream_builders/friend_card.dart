@@ -37,6 +37,7 @@ class FriendCard extends StatelessWidget {
                 TextStreamBuilder(
                   email: _friendEmail,
                   key: UserDocumentField.ABOUT,
+                  textOverflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 12,
