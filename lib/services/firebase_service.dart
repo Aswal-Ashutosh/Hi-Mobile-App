@@ -37,7 +37,11 @@ class FirebaseService {
     });
   }
 
-  static Future<bool> get userHasSetupProfile async => await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).get().then((value) => value.exists);
+  static Future<bool> get userHasSetupProfile async => await _fStore
+      .collection(Collections.USERS)
+      .doc(FirebaseService.currentUserEmail)
+      .get()
+      .then((value) => value.exists);
 
   static Future<void> signOut() async => await _fAuth.signOut();
 
@@ -178,4 +182,24 @@ class FirebaseService {
         .doc(email)
         .delete();
   }
+
+  static Future<void> updateCurrentUserAboutField(
+          {required final String about}) async =>
+      await _fStore
+          .collection(Collections.USERS)
+          .doc(FirebaseService.currentUserEmail)
+          .update({UserDocumentField.ABOUT: about});
+  
+   static Future<void> updateCurrentUserNameField(
+          {required final String name}) async =>
+      await _fStore
+          .collection(Collections.USERS)
+          .doc(FirebaseService.currentUserEmail)
+          .update({
+            UserDocumentField.DISPLAY_NAME: name,
+            UserDocumentField.SEARCH_NAME: name.toLowerCase(),
+          });
+
+  static Future<String> get currentUserAboutFieldData async => await _fStore
+    .collection(Collections.USERS).doc(FirebaseService.currentUserEmail).get().then((value) => value[UserDocumentField.ABOUT]);
 }

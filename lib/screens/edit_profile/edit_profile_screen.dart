@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
@@ -12,8 +13,10 @@ class EditProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: Text('Edit Profile'), backgroundColor: kPrimaryColor,),
+      appBar: AppBar(
+        title: Text('Edit Profile'),
+        backgroundColor: kPrimaryColor,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(kDefaultPadding),
@@ -38,30 +41,260 @@ class EditProfileScreen extends StatelessWidget {
                   )
                 ],
               ),
+              SizedBox(height: kDefaultPadding),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.person),
+                  Icon(Icons.person, color: Colors.grey[700]),
                   SizedBox(width: kDefaultPadding),
-                  TextStreamBuilder(email: FirebaseService.currentUserEmail, key: UserDocumentField.DISPLAY_NAME),
+                  TextStreamBuilder(
+                    email: FirebaseService.currentUserEmail,
+                    key: UserDocumentField.DISPLAY_NAME,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                      letterSpacing: 2.5,
+                    ),
+                  ),
                   Spacer(),
-                  TextButton(onPressed: () {}, child: Text('Change')),
+                  TextButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) => NameEditingSheet());
+                    },
+                    child: Text(
+                      'Edit',
+                      style: TextStyle(color: Colors.teal),
+                    ),
+                  ),
                 ],
               ),
               Divider(),
-              //TODO: Avoid Text Overflow
+              SizedBox(height: kDefaultPadding),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.email),
+                  Icon(Icons.menu_book, color: Colors.grey[700]),
                   SizedBox(width: kDefaultPadding),
-                  Text(FirebaseService.currentUserEmail),
+                  Flexible(
+                    flex: 5,
+                    child: TextStreamBuilder(
+                      email: FirebaseService.currentUserEmail,
+                      key: UserDocumentField.ABOUT,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        letterSpacing: 2.5,
+                      ),
+                    ),
+                  ),
                   Spacer(),
-                  TextButton(onPressed: () {}, child: Text('Change')),
+                  TextButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) => AboutEditingSheet());
+                    },
+                    child: Text(
+                      'Edit',
+                      style: TextStyle(color: Colors.teal),
+                    ),
+                  ),
                 ],
               ),
-              Divider()
+              Divider(),
+              SizedBox(height: kDefaultPadding),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(Icons.email, color: Colors.grey[700]),
+                  SizedBox(width: kDefaultPadding),
+                  Flexible(
+                    flex: 5,
+                    child: Text(
+                      FirebaseService.currentUserEmail,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        letterSpacing: 2.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+//Bottom Sheet
+class AboutEditingSheet extends StatefulWidget {
+  @override
+  _AboutEditingSheetState createState() => _AboutEditingSheetState();
+}
+
+class _AboutEditingSheetState extends State<AboutEditingSheet> {
+  final _borderRadius = OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
+    borderSide: BorderSide(color: kPrimaryColor),
+  );
+
+  final _formKey = GlobalKey<FormState>();
+
+  final _textEditingController = TextEditingController();
+
+  final _validator = (String? value) =>
+      value!.trim().isEmpty ? 'This field can\'t be empty.' : null;
+
+  @override
+  void initState() {
+    getOldAboutText();
+    super.initState();
+  }
+
+  void getOldAboutText() async {
+    _textEditingController.text =
+        await FirebaseService.currentUserAboutFieldData;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color(0xFF737373),
+      child: Container(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding),
+              child: Form(
+                key: _formKey,
+                child: TextFormField(
+                  textInputAction: TextInputAction.done,
+                  controller: _textEditingController,
+                  validator: _validator,
+                  textAlign: TextAlign.left,
+                  minLines: 1,
+                  maxLines: 3,
+                  maxLength: 120,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: const Color(0x112EA043),
+                    labelText: 'About',
+                    enabledBorder: _borderRadius,
+                    focusedBorder: _borderRadius,
+                    errorBorder: _borderRadius,
+                    focusedErrorBorder: _borderRadius,
+                    prefixIcon: Icon(Icons.menu_book),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: kDefaultPadding / 4.0),
+            PrimaryButton(
+              displayText: 'Update',
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  await FirebaseService.updateCurrentUserAboutField(
+                      about: _textEditingController.text.trim());
+                }
+              },
+            )
+          ],
+        ),
+        height: MediaQuery.of(context).size.height / 2.0,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(kDefualtBorderRadius),
+            topRight: Radius.circular(kDefualtBorderRadius),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class NameEditingSheet extends StatefulWidget {
+  @override
+  _NameEditingSheetState createState() => _NameEditingSheetState();
+}
+
+class _NameEditingSheetState extends State<NameEditingSheet> {
+  final _borderRadius = OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
+    borderSide: BorderSide(color: kPrimaryColor),
+  );
+
+  final _formKey = GlobalKey<FormState>();
+
+  final _textEditingController = TextEditingController();
+
+  final _validator = (String? value) =>
+      value!.trim().isEmpty ? 'This field can\'t be empty.' : null;
+
+  @override
+  void initState() {
+    getOldName();
+    super.initState();
+  }
+
+  void getOldName() async {
+    _textEditingController.text = await FirebaseService.currentUserName;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color(0xFF737373),
+      child: Container(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding),
+              child: Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: _textEditingController,
+                  validator: _validator,
+                  textAlign: TextAlign.center,
+                  maxLength: 20,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: const Color(0x112EA043),
+                    labelText: 'Your Name',
+                    enabledBorder: _borderRadius,
+                    focusedBorder: _borderRadius,
+                    errorBorder: _borderRadius,
+                    focusedErrorBorder: _borderRadius,
+                    prefixIcon: Icon(Icons.mail),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: kDefaultPadding / 4.0),
+            PrimaryButton(
+              displayText: 'Update',
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  await FirebaseService.updateCurrentUserNameField(
+                      name: _textEditingController.text.trim());
+                }
+              },
+            )
+          ],
+        ),
+        height: MediaQuery.of(context).size.height / 2.0,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(kDefualtBorderRadius),
+            topRight: Radius.circular(kDefualtBorderRadius),
           ),
         ),
       ),
