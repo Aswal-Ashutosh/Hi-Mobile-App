@@ -17,10 +17,11 @@ class TextStreamBuilder extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             final userData = snapshot.data;
-            final userName = userData?[_key];
+            final requiredData = userData?[_key];
             return Text(
-              userName,
+              requiredData,
               style: _style,
+              overflow: TextOverflow.ellipsis,
             );
           } else {
             //TODO: Add Shimmer
