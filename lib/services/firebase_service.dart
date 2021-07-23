@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:hi/constants/firestore_costants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -27,16 +28,16 @@ class FirebaseService {
       profileImageUrl = await snapshot.ref.getDownloadURL();
     }
 
-    await _fStore.collection('users').doc(email).set({
-      'email': email,
-      'display_name': name,
-      'search_name': name.toLowerCase(),
-      'profile_image': profileImageUrl,
-      'about': about,
+    await _fStore.collection(Collections.USERS).doc(email).set({
+      UserDocumentField.EMAIL: email,
+      UserDocumentField.DISPLAY_NAME: name,
+      UserDocumentField.SEARCH_NAME: name.toLowerCase(),
+      UserDocumentField.PROFILE_IMAGE: profileImageUrl,
+      UserDocumentField.ABOUT: about,
     });
   }
 
-  static Future<bool> get userHasSetupProfile async => await _fStore.collection('users').doc(FirebaseService.currentUserEmail).get().then((value) => value.exists);
+  static Future<bool> get userHasSetupProfile async => await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).get().then((value) => value.exists);
 
   static Future<void> signOut() async => await _fAuth.signOut();
 
@@ -49,25 +50,25 @@ class FirebaseService {
 
     //No such email exist in database
     if (await _fStore
-        .collection('users')
+        .collection(Collections.USERS)
         .doc(recipientEmail)
         .get()
         .then((value) => !value.exists)) throw ('No such user exist.');
 
     //If already friends
     if (await _fStore
-        .collection('users')
+        .collection(Collections.USERS)
         .doc(senderEmail)
-        .collection('friends')
+        .collection(Collections.FRIENDS)
         .doc(recipientEmail)
         .get()
         .then((value) => value.exists)) throw ('You are already friends.');
 
     //If same user already requested you
     if (await _fStore
-        .collection('users')
+        .collection(Collections.USERS)
         .doc(senderEmail)
-        .collection('friend_requests')
+        .collection(Collections.FRIEND_REQUESTS)
         .doc(recipientEmail)
         .get()
         .then((value) => value.exists))
@@ -75,9 +76,9 @@ class FirebaseService {
 
     //If your request is still pending
     if (await _fStore
-        .collection('users')
+        .collection(Collections.USERS)
         .doc(recipientEmail)
-        .collection('friend_requests')
+        .collection(Collections.FRIEND_REQUESTS)
         .doc(senderEmail)
         .get()
         .then((value) => value.exists))
@@ -88,14 +89,14 @@ class FirebaseService {
     final dateOfSending = DateFormat.yMMMMEEEEd().format(timeStamp);
 
     await _fStore
-        .collection('users')
+        .collection(Collections.USERS)
         .doc(recipientEmail)
-        .collection('friend_requests')
+        .collection(Collections.FRIEND_REQUESTS)
         .doc(senderEmail)
         .set({
-      'sender_email': senderEmail,
-      'time': timeOfSending,
-      'date': dateOfSending,
+      FriendRequestDocumentField.SENDER_EMAIL: senderEmail,
+      FriendRequestDocumentField.TIME: timeOfSending,
+      FriendRequestDocumentField.DATE: dateOfSending,
     });
   }
 
@@ -112,36 +113,36 @@ class FirebaseService {
 
       final email = _fAuth.currentUser?.email;
       await _fStore
-          .collection('users')
+          .collection(Collections.USERS)
           .doc(email)
-          .update({'profile_image': url});
+          .update({UserDocumentField.PROFILE_IMAGE: url});
     }
   }
 
   static getStreamToUserData({required final String email}) =>
-      _fStore.collection('users').doc(email).snapshots();
+      _fStore.collection(Collections.USERS).doc(email).snapshots();
 
   static get currentUserStreamToUserData =>
       getStreamToUserData(email: FirebaseService.currentUserEmail);
 
   static get currentUserStreamToFirendRequests => _fStore
-      .collection('users')
+      .collection(Collections.USERS)
       .doc(FirebaseService.currentUserEmail)
-      .collection('friend_requests')
+      .collection(Collections.FRIEND_REQUESTS)
       .snapshots();
 
   static get currentUserStreamToFriends => _fStore
-      .collection('users')
+      .collection(Collections.USERS)
       .doc(FirebaseService.currentUserEmail)
-      .collection('friends')
+      .collection(Collections.FRIENDS)
       .snapshots();
 
   static Future<String> getNameOf({required final String email}) async =>
       await _fStore
-          .collection('users')
+          .collection(Collections.USERS)
           .doc(email)
           .get()
-          .then((value) => value['display_name']);
+          .then((value) => value[UserDocumentField.DISPLAY_NAME]);
 
   static Future<String> get currentUserName async =>
       await getNameOf(email: FirebaseService.currentUserEmail);
@@ -150,30 +151,30 @@ class FirebaseService {
 
   static Future<void> acceptFriendRequest({required final String email}) async {
     await _fStore
-        .collection('users')
+        .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
-        .collection('friends')
+        .collection(Collections.FRIENDS)
         .doc(email)
-        .set({'email': email});
+        .set({FriendsDocumentField.EMAIL: email});
     await _fStore
-        .collection('users')
+        .collection(Collections.USERS)
         .doc(email)
-        .collection('friends')
+        .collection(Collections.FRIENDS)
         .doc(FirebaseService.currentUserEmail)
-        .set({'email': FirebaseService.currentUserEmail});
+        .set({FriendsDocumentField.EMAIL: FirebaseService.currentUserEmail});
     await _fStore
-        .collection('users')
+        .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
-        .collection('friend_requests')
+        .collection(Collections.FRIEND_REQUESTS)
         .doc(email)
         .delete();
   }
 
   static Future<void> rejectFreindRequest({required final String email}) async {
     await _fStore
-        .collection('users')
+        .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
-        .collection('friend_requests')
+        .collection(Collections.FRIEND_REQUESTS)
         .doc(email)
         .delete();
   }

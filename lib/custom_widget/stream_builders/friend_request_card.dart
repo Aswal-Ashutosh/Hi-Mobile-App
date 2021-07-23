@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
+import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -34,7 +35,7 @@ class FriendRequestCard extends StatelessWidget {
             children: [
               TextStreamBuilder(
                 email: _senderEmail,
-                key: 'display_name',
+                key: UserDocumentField.DISPLAY_NAME,
                 style: TextStyle(
                   color: Colors.blue,
                   fontSize: 15,

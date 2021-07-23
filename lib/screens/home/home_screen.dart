@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
+import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
@@ -89,7 +90,7 @@ class HomeScreen extends StatelessWidget {
                     leading: Icon(Icons.person),
                     title: TextStreamBuilder(
                       email: FirebaseService.currentUserEmail,
-                      key: 'display_name',
+                      key: UserDocumentField.DISPLAY_NAME,
                       style: TextStyle(
                         fontSize: 10,
                         letterSpacing: 2.5,
