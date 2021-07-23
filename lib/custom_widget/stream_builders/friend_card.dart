@@ -17,19 +17,35 @@ class FriendCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CircularProfilePicture(
-            email:_friendEmail,
+            email: _friendEmail,
             radius: kDefualtBorderRadius * 1.5,
           ),
           SizedBox(width: kDefaultPadding / 2.0),
-          TextStreamBuilder(
-            email: _friendEmail,
-            key: UserDocumentField.DISPLAY_NAME,
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-              letterSpacing: 2.5,
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextStreamBuilder(
+                  email: _friendEmail,
+                  key: UserDocumentField.DISPLAY_NAME,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 15,
+                    letterSpacing: 2.5,
+                  ),
+                ),
+                TextStreamBuilder(
+                  email: _friendEmail,
+                  key: UserDocumentField.ABOUT,
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                    letterSpacing: 2.5,
+                  ),
+                ),
+              ],
             ),
-          ),
+          )
         ],
       ),
     );
