@@ -34,6 +34,8 @@ dependencies:
   firebase_storage: ^9.0.0
   intl: ^0.17.0
   image_picker: ^0.8.2
+  crypto: ^3.0.1
+  uuid: ^3.0.4
 
 dev_dependencies:
   flutter_test:
