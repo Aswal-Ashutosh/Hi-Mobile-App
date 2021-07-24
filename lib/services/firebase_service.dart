@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/services/uid_generator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -154,24 +155,52 @@ class FirebaseService {
   static String get currentUserEmail => _fAuth.currentUser?.email as String;
 
   static Future<void> acceptFriendRequest({required final String email}) async {
+    //Adding friend to current user friend list
     await _fStore
         .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
         .collection(Collections.FRIENDS)
         .doc(email)
         .set({FriendsDocumentField.EMAIL: email});
+    //Adding current user to friend's friend list
     await _fStore
         .collection(Collections.USERS)
         .doc(email)
         .collection(Collections.FRIENDS)
         .doc(FirebaseService.currentUserEmail)
         .set({FriendsDocumentField.EMAIL: FirebaseService.currentUserEmail});
+    //Deleting the request
     await _fStore
         .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
         .collection(Collections.FRIEND_REQUESTS)
         .doc(email)
         .delete();
+    
+    //Setting Room Id
+    final String roomId = UidGenerator.getRoomIdFor(email1: email, email2: FirebaseService.currentUserEmail);
+
+    //Creating Chat refrence in current user collection
+    await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.CHATS).doc(roomId).set(
+      {
+        ChatDocumentField.ROOM_ID: roomId,
+        ChatDocumentField.VISIBILITY: false,
+        ChatDocumentField.SHOW_AFTER: DateTime.now(),
+      }
+    );
+
+    //Creating Chat refrence in friend collection
+    await _fStore.collection(Collections.USERS).doc(email).collection(Collections.CHATS).doc(roomId).set(
+      {
+        ChatDocumentField.ROOM_ID: roomId,
+        ChatDocumentField.VISIBILITY: false,
+        ChatDocumentField.SHOW_AFTER: DateTime.now(),
+      }
+    );
+
+    //Creating Chat in Chat Database
+
+    await _fStore.collection(Collections.CHAT_DB).doc(roomId).set({ChatDBDocumentField.ROOM_ID: roomId});
   }
 
   static Future<void> rejectFreindRequest({required final String email}) async {
@@ -202,4 +231,31 @@ class FirebaseService {
 
   static Future<String> get currentUserAboutFieldData async => await _fStore
     .collection(Collections.USERS).doc(FirebaseService.currentUserEmail).get().then((value) => value[UserDocumentField.ABOUT]);
+
+  //Chat Related functions
+
+  static Future<void> sendTextMessageToFriend({required String friendEmail, required String roomId, required String message}) async{
+    //Setting visiblity as true for current user chat reference.
+    await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.CHATS).doc(roomId).update({ChatDocumentField.VISIBILITY: true});
+    //Setting visiblity as true for friends chat reference.
+    await _fStore.collection(Collections.USERS).doc(friendEmail).collection(Collections.CHATS).doc(roomId).update({ChatDocumentField.VISIBILITY: true});
+
+    //Sending Message
+    final messageId = UidGenerator.uniqueId;
+    final timeStamp = DateTime.now();
+    final timeOfSending = DateFormat.jm().format(timeStamp);
+    final dateOfSending = DateFormat.yMMMMEEEEd().format(timeStamp);
+
+    await _fStore.collection(Collections.CHAT_DB).doc(roomId).collection(Collections.MESSAGES).doc(messageId).set({
+      MessageDocumentField.MESSAGE_ID: messageId,
+      MessageDocumentField.SENDER: FirebaseService.currentUserEmail,
+      MessageDocumentField.CONTENT: message,
+      MessageDocumentField.DATE: dateOfSending,
+      MessageDocumentField.TIME: timeOfSending,
+      MessageDocumentField.TIME_STAMP: timeStamp,
+      MessageDocumentField.TYPE: MessageType.TEXT,
+    });
+  }
+
+  static getStreamToChat({required roomId}) => _fStore.collection(Collections.CHAT_DB).doc(roomId).collection(Collections.MESSAGES).snapshots();
 }
