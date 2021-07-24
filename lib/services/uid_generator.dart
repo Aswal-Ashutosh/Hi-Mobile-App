@@ -1,7 +1,11 @@
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
+import 'package:uuid/uuid.dart';
+
 class UidGenerator {
+  static final uuid = Uuid();
+
   static String getRoomIdFor({required String email1, required String email2}) {
     late String combination;
 
@@ -16,4 +20,6 @@ class UidGenerator {
     
     return digest.toString();
   }
+
+  static String get uniqueId => uuid.v1();
 }
