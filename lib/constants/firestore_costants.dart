@@ -2,6 +2,9 @@ class Collections {
   static const USERS = 'users';
   static const FRIENDS = 'friends';
   static const FRIEND_REQUESTS = 'friend_requests';
+  static const CHATS = 'chats';
+  static const CHAT_DB = 'chat_db';
+  static const MESSAGES = 'messages';
 }
 
 class UserDocumentField{
@@ -20,4 +23,31 @@ class FriendRequestDocumentField{
 
 class FriendsDocumentField{
   static const EMAIL = 'email';
+}
+
+class ChatDocumentField{
+  static const ROOM_ID = 'room_id';
+  static const VISIBILITY = 'visibility';
+  static const SHOW_AFTER = 'show_after';
+}
+
+class ChatDBDocumentField{
+  static const ROOM_ID = 'room_id';
+}
+
+class MessageDocumentField{
+  static const MESSAGE_ID = 'id';
+  static const CONTENT = 'content';
+  static const SENDER = 'sender';
+  static const TIME = 'time';
+  static const DATE = 'date';
+  static const TIME_STAMP = 'time_stamp';
+  static const TYPE = 'type';
+}
+
+class MessageType{
+  static const TEXT = 'text';
+  static const IMAGE = 'IMAGE';
+  static const VIDEO = 'VIDEO';
+  static const AUDIO = 'AUDIO';
 }
