@@ -3,13 +3,16 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 
 class MessageTextField extends StatelessWidget {
+  final TextEditingController _textEditingController;
+  final Function _onSend;
+
   final _borderRadius = const OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
     borderSide: BorderSide(color: Colors.white),
   );
 
-  final TextEditingController _textEditingController = TextEditingController();
-
+  MessageTextField({required final TextEditingController controller, required final Function onSend}) : _textEditingController = controller, _onSend = onSend;
+  
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -52,7 +55,7 @@ class MessageTextField extends StatelessWidget {
               ),
             ),
           ),
-          RoundIconButton(icon: Icons.send, onPressed: () {}, radius: 50.0)
+          RoundIconButton(icon: Icons.send, onPressed: _onSend, radius: 50.0)
         ],
       ),
     );
