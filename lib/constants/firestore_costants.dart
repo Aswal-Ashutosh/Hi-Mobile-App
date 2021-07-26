@@ -39,6 +39,7 @@ class ChatDBDocumentField{
   static const LAST_MESSAGE_TIME = 'last_message_time';
   static const LAST_MESSAGE_DATE = 'last_message_date';
   static const LAST_MESSAGE_SEEN = 'last_message_seen';
+  static const MEMBERS = 'members';
 }
 
 class MessageDocumentField{

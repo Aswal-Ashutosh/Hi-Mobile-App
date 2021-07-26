@@ -19,9 +19,16 @@ class ChatTab extends StatelessWidget {
                 if (snapshots.hasData && snapshots.data!.docs.isNotEmpty) {
                   final chats = snapshots.data?.docs;
                   chats?.forEach((element){
+                    late String friendEmail;
+                    for(final email in element[ChatDBDocumentField.MEMBERS]){
+                      if(email != FirebaseService.currentUserEmail){
+                        friendEmail = email;
+                      }
+                    }
                     chatCards.add(
                       ChatCardOneToOne(
                         roomId:element[ChatDBDocumentField.ROOM_ID],
+                        friendEmail: friendEmail,
                       )
                     );
                   });

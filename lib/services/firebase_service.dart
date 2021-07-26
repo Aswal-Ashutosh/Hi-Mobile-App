@@ -209,10 +209,10 @@ class FirebaseService {
     });
 
     //Creating Chat in Chat Database
-
     await _fStore.collection(Collections.CHAT_DB).doc(roomId).set({
       ChatDBDocumentField.ROOM_ID: roomId,
-      ChatDBDocumentField.TYPE: ChatType.ONE_TO_ONE
+      ChatDBDocumentField.TYPE: ChatType.ONE_TO_ONE,
+      ChatDBDocumentField.MEMBERS: [email, FirebaseService.currentUserEmail],
     });
   }
 
@@ -339,5 +339,6 @@ class FirebaseService {
           .get()
           .then((value) => value[ChatDocumentField.FRIEND_EMAIL]);
 
-  static getStreamToChatRoomDoc({required final String roomId}) => _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
+  static getStreamToChatRoomDoc({required final String roomId}) =>
+      _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
 }
