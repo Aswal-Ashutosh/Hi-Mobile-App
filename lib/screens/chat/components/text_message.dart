@@ -22,7 +22,7 @@ class TextMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isMe = _sender == FirebaseService.currentUserEmail;
     return Container(
-      margin: const EdgeInsets.all(kDefaultPadding / 5.0),
+      margin: EdgeInsets.only(top: kDefaultPadding / 5.0, bottom: kDefaultPadding / 5.0, left: isMe ? kDefaultPadding * 3 : kDefaultPadding / 5.0, right: isMe ? kDefaultPadding / 5.0 : kDefaultPadding * 3.0),
       child: Column(
         crossAxisAlignment:
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
