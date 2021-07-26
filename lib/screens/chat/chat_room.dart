@@ -11,11 +11,11 @@ import 'package:hi/services/firebase_service.dart';
 
 class ChatRoom extends StatelessWidget {
   final String _roomId;
-  final String _friendEamil;
+  final String _friendEmail;
   final TextEditingController _textEditingController = TextEditingController();
   ChatRoom({required final String roomId, required final String friendEamil})
       : _roomId = roomId,
-        _friendEamil = friendEamil;
+        _friendEmail = friendEamil;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,12 +23,13 @@ class ChatRoom extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.all(kDefaultPadding / 4.0),
           child: CircularProfilePicture(
-            email: _friendEamil,
+            email: _friendEmail,
             radius: kDefualtBorderRadius,
           ),
         ),
         title: TextStreamBuilder(
-            email: _friendEamil, key: UserDocumentField.DISPLAY_NAME),
+            stream: FirebaseService.getStreamToUserData(email: _friendEmail),
+        key: UserDocumentField.DISPLAY_NAME,),
         backgroundColor: kPrimaryColor,
         automaticallyImplyLeading: false,
       ),
@@ -44,13 +45,15 @@ class ChatRoom extends StatelessWidget {
                   for (final message in messages) {
                     final id = message[MessageDocumentField.MESSAGE_ID];
                     final sender = message[MessageDocumentField.SENDER];
-                    final content = EncryptionService.decrypt(message[MessageDocumentField.CONTENT]);
+                    final content = EncryptionService.decrypt(
+                        message[MessageDocumentField.CONTENT]);
                     final time = message[MessageDocumentField.TIME];
-                    messageList
-                        .add(TextMessage(id: id, sender: sender, content: content, time: time));
+                    messageList.add(TextMessage(
+                        id: id, sender: sender, content: content, time: time));
                   }
                 }
-                return Expanded(child: ListView(children: messageList, reverse: true));
+                return Expanded(
+                    child: ListView(children: messageList, reverse: true));
               },
             ),
             MessageTextField(
@@ -60,7 +63,7 @@ class ChatRoom extends StatelessWidget {
                 if (message.isNotEmpty) {
                   _textEditingController.clear();
                   await FirebaseService.sendTextMessageToFriend(
-                    friendEmail: _friendEamil,
+                    friendEmail: _friendEmail,
                     roomId: _roomId,
                     message: message,
                   );

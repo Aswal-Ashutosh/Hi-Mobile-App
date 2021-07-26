@@ -35,7 +35,7 @@ class FriendRequestCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 TextStreamBuilder(
-                  email: _senderEmail,
+                   stream: FirebaseService.getStreamToUserData(email: _senderEmail),
                   key: UserDocumentField.DISPLAY_NAME,
                   style: TextStyle(
                     color: Colors.blue,

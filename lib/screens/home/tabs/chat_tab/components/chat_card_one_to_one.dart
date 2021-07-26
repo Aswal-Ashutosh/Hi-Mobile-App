@@ -34,7 +34,7 @@ class ChatCardOneToOne extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextStreamBuilder(
-                        email: friendEmail,
+                       stream: FirebaseService.getStreamToUserData(email: friendEmail),
                         key: UserDocumentField.DISPLAY_NAME,
                         style: TextStyle(
                           color: Colors.black87,
@@ -43,7 +43,7 @@ class ChatCardOneToOne extends StatelessWidget {
                         ),
                       ),
                       TextStreamBuilder(
-                        email: friendEmail,
+                        stream: FirebaseService.getStreamToUserData(email: friendEmail),
                         key: UserDocumentField.ABOUT,
                         textOverflow: TextOverflow.ellipsis,
                         style: TextStyle(

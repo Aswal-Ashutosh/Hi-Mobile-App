@@ -89,7 +89,7 @@ class HomeScreen extends StatelessWidget {
                   ListTile(
                     leading: Icon(Icons.person),
                     title: TextStreamBuilder(
-                      email: FirebaseService.currentUserEmail,
+                      stream: FirebaseService.getStreamToUserData(email: FirebaseService.currentUserEmail),
                       key: UserDocumentField.DISPLAY_NAME,
                       style: TextStyle(
                         fontSize: 10,

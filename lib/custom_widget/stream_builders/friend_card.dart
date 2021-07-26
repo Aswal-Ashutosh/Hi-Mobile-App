@@ -30,7 +30,7 @@ class FriendCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextStreamBuilder(
-                    email: _friendEmail,
+                    stream: FirebaseService.getStreamToUserData(email: _friendEmail),
                     key: UserDocumentField.DISPLAY_NAME,
                     style: TextStyle(
                       color: Colors.black87,
@@ -39,7 +39,7 @@ class FriendCard extends StatelessWidget {
                     ),
                   ),
                   TextStreamBuilder(
-                    email: _friendEmail,
+                    stream: FirebaseService.getStreamToUserData(email: _friendEmail),
                     key: UserDocumentField.ABOUT,
                     textOverflow: TextOverflow.ellipsis,
                     style: TextStyle(

@@ -48,7 +48,7 @@ class EditProfileScreen extends StatelessWidget {
                   Icon(Icons.person, color: Colors.grey[700]),
                   SizedBox(width: kDefaultPadding),
                   TextStreamBuilder(
-                    email: FirebaseService.currentUserEmail,
+                     stream: FirebaseService.getStreamToUserData(email: FirebaseService.currentUserEmail),
                     key: UserDocumentField.DISPLAY_NAME,
                     style: TextStyle(
                       color: Colors.grey,
@@ -80,7 +80,7 @@ class EditProfileScreen extends StatelessWidget {
                   Flexible(
                     flex: 5,
                     child: TextStreamBuilder(
-                      email: FirebaseService.currentUserEmail,
+                      stream: FirebaseService.getStreamToUserData(email: FirebaseService.currentUserEmail),
                       key: UserDocumentField.ABOUT,
                       style: TextStyle(
                         color: Colors.grey,
