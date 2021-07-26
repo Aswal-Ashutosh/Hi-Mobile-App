@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hi/constants/firestore_costants.dart';
-import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/uid_generator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -339,4 +338,6 @@ class FirebaseService {
           .doc(roomId)
           .get()
           .then((value) => value[ChatDocumentField.FRIEND_EMAIL]);
+
+  static getStreamToChatRoomDoc({required final String roomId}) => _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
 }
