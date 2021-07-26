@@ -192,7 +192,6 @@ class FirebaseService {
       ChatDocumentField.ROOM_ID: roomId,
       ChatDocumentField.VISIBILITY: false,
       ChatDocumentField.SHOW_AFTER: DateTime.now(),
-      ChatDocumentField.FRIEND_EMAIL: email,
     });
 
     //Creating Chat refrence in friend collection
@@ -205,7 +204,6 @@ class FirebaseService {
       ChatDocumentField.ROOM_ID: roomId,
       ChatDocumentField.VISIBILITY: false,
       ChatDocumentField.SHOW_AFTER: DateTime.now(),
-      ChatDocumentField.FRIEND_EMAIL: FirebaseService.currentUserEmail,
     });
 
     //Creating Chat in Chat Database
@@ -328,16 +326,6 @@ class FirebaseService {
         .where(ChatDBDocumentField.ROOM_ID, whereIn: roomId)
         .snapshots();
   }
-
-  static Future<String> getFriendsEmailOfChat(
-          {required final String roomId}) async =>
-      await _fStore
-          .collection(Collections.USERS)
-          .doc(FirebaseService.currentUserEmail)
-          .collection(Collections.CHATS)
-          .doc(roomId)
-          .get()
-          .then((value) => value[ChatDocumentField.FRIEND_EMAIL]);
 
   static getStreamToChatRoomDoc({required final String roomId}) =>
       _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
