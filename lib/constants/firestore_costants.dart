@@ -29,10 +29,16 @@ class ChatDocumentField{
   static const ROOM_ID = 'room_id';
   static const VISIBILITY = 'visibility';
   static const SHOW_AFTER = 'show_after';
+  static const FRIEND_EMAIL = 'friend_email';
 }
 
 class ChatDBDocumentField{
   static const ROOM_ID = 'room_id';
+  static const TYPE = 'type';
+  static const LAST_MESSAGE = 'last_message';
+  static const LAST_MESSAGE_TIME = 'last_message_time';
+  static const LAST_MESSAGE_DATE = 'last_message_date';
+  static const LAST_MESSAGE_SEEN = 'last_message_seen';
 }
 
 class MessageDocumentField{
@@ -50,4 +56,9 @@ class MessageType{
   static const IMAGE = 'image';
   static const VIDEO = 'video';
   static const AUDIO = 'audio';
+}
+
+class ChatType{
+  static const ONE_TO_ONE = 'one_to_one';
+  static const GROUP = 'group';
 }
