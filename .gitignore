@@ -1,4 +1,6 @@
 google-services.json
+encryption_service.dart
+important.dart
 
 # Miscellaneous
 *.class
