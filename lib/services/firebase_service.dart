@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/uid_generator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -241,6 +242,7 @@ class FirebaseService {
     await _fStore.collection(Collections.USERS).doc(friendEmail).collection(Collections.CHATS).doc(roomId).update({ChatDocumentField.VISIBILITY: true});
 
     //Sending Message
+    final encryptedMessage = EncryptionService.encrypt(message);
     final messageId = UidGenerator.uniqueId;
     final timeStamp = DateTime.now();
     final timeOfSending = DateFormat.jm().format(timeStamp);
@@ -249,7 +251,7 @@ class FirebaseService {
     await _fStore.collection(Collections.CHAT_DB).doc(roomId).collection(Collections.MESSAGES).doc(messageId).set({
       MessageDocumentField.MESSAGE_ID: messageId,
       MessageDocumentField.SENDER: FirebaseService.currentUserEmail,
-      MessageDocumentField.CONTENT: message,
+      MessageDocumentField.CONTENT: encryptedMessage,
       MessageDocumentField.DATE: dateOfSending,
       MessageDocumentField.TIME: timeOfSending,
       MessageDocumentField.TIME_STAMP: timeStamp,
