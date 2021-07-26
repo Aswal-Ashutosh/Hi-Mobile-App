@@ -36,7 +36,7 @@ class ChatRoom extends StatelessWidget {
         child: Column(
           children: [
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseService.getStreamToChat(roomId: _roomId),
+              stream: FirebaseService.getStreamToChatRoom(roomId: _roomId),
               builder: (context, snapshots) {
                 List<Widget> messageList = [];
                 if (snapshots.hasData && snapshots.data != null) {

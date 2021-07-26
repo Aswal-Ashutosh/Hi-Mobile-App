@@ -187,6 +187,8 @@ class FirebaseService {
         ChatDocumentField.ROOM_ID: roomId,
         ChatDocumentField.VISIBILITY: false,
         ChatDocumentField.SHOW_AFTER: DateTime.now(),
+        ChatDocumentField.TYPE: ChatType.ONE_TO_ONE,
+        ChatDocumentField.FRIEND_EMAIL: email,
       }
     );
 
@@ -196,12 +198,14 @@ class FirebaseService {
         ChatDocumentField.ROOM_ID: roomId,
         ChatDocumentField.VISIBILITY: false,
         ChatDocumentField.SHOW_AFTER: DateTime.now(),
+        ChatDocumentField.TYPE: ChatType.ONE_TO_ONE,
+        ChatDocumentField.FRIEND_EMAIL: FirebaseService.currentUserEmail,
       }
     );
 
     //Creating Chat in Chat Database
 
-    await _fStore.collection(Collections.CHAT_DB).doc(roomId).set({ChatDBDocumentField.ROOM_ID: roomId});
+    await _fStore.collection(Collections.CHAT_DB).doc(roomId).set({ChatDBDocumentField.ROOM_ID: roomId, ChatDBDocumentField.TYPE: ChatType.ONE_TO_ONE});
   }
 
   static Future<void> rejectFreindRequest({required final String email}) async {
@@ -259,5 +263,5 @@ class FirebaseService {
     });
   }
 
-  static getStreamToChat({required roomId}) => _fStore.collection(Collections.CHAT_DB).doc(roomId).collection(Collections.MESSAGES).orderBy(MessageDocumentField.TIME_STAMP, descending: true).snapshots();
+  static getStreamToChatRoom({required roomId}) => _fStore.collection(Collections.CHAT_DB).doc(roomId).collection(Collections.MESSAGES).orderBy(MessageDocumentField.TIME_STAMP, descending: true).snapshots();
 }
