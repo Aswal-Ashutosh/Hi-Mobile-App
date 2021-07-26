@@ -257,5 +257,5 @@ class FirebaseService {
     });
   }
 
-  static getStreamToChat({required roomId}) => _fStore.collection(Collections.CHAT_DB).doc(roomId).collection(Collections.MESSAGES).snapshots();
+  static getStreamToChat({required roomId}) => _fStore.collection(Collections.CHAT_DB).doc(roomId).collection(Collections.MESSAGES).orderBy(MessageDocumentField.TIME_STAMP, descending: true).snapshots();
 }
