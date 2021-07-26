@@ -47,7 +47,7 @@ class MessageDocumentField{
 
 class MessageType{
   static const TEXT = 'text';
-  static const IMAGE = 'IMAGE';
-  static const VIDEO = 'VIDEO';
-  static const AUDIO = 'AUDIO';
+  static const IMAGE = 'image';
+  static const VIDEO = 'video';
+  static const AUDIO = 'audio';
 }
