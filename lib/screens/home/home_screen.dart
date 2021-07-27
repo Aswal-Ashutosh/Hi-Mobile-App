@@ -12,8 +12,31 @@ import 'package:hi/screens/home/tabs/friends_tab/friends_tab.dart';
 import 'package:hi/screens/welcome_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static const id = 'home_screen';
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
+ 
+ @override
+ void initState() {
+    FirebaseService.setCurrentUserOnline(state: true);
+    WidgetsBinding.instance?.addObserver(this);
+    super.initState();
+  }
+
+ @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed)
+      FirebaseService.setCurrentUserOnline(state: true);
+    else
+      FirebaseService.setCurrentUserOnline(state: false);
+    super.didChangeAppLifecycleState(state);
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -115,6 +138,7 @@ class HomeScreen extends StatelessWidget {
                   PrimaryButton(
                     displayText: 'Sign Out',
                     onPressed: () async {
+                      await FirebaseService.setCurrentUserOnline(state: false);
                       FirebaseService.signOut();
                       Navigator.popAndPushNamed(context, WelcomeScreen.id);
                     },

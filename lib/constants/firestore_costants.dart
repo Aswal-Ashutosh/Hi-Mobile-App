@@ -13,6 +13,7 @@ class UserDocumentField{
   static const EMAIL = 'email';
   static const PROFILE_IMAGE = 'profile_image';
   static const SEARCH_NAME = 'search_name';
+  static const ONLINE = 'online';
 }
 
 class FriendRequestDocumentField{

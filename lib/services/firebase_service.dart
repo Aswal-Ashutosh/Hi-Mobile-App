@@ -329,4 +329,6 @@ class FirebaseService {
 
   static getStreamToChatRoomDoc({required final String roomId}) =>
       _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
+
+  static Future<void> setCurrentUserOnline({required final bool state}) async => await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).update({UserDocumentField.ONLINE: state});
 }
