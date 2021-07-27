@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
+import 'package:hi/custom_widget/stream_builders/online_indicator_text.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/components/message_text_field.dart';
 import 'package:hi/screens/chat/components/text_message.dart';
@@ -20,18 +21,30 @@ class ChatRoom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(kDefaultPadding / 4.0),
-          child: CircularProfilePicture(
-            email: _friendEmail,
-            radius: kDefualtBorderRadius,
-          ),
+        title: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(kDefaultPadding / 4.0),
+              child: CircularProfilePicture(
+                email: _friendEmail,
+                radius: kDefualtBorderRadius,
+              ),
+            ),
+            SizedBox(width: kDefaultPadding / 4.0),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                TextStreamBuilder(
+                  stream:
+                      FirebaseService.getStreamToUserData(email: _friendEmail),
+                  key: UserDocumentField.DISPLAY_NAME,
+                ),
+                OnlineIndicatorText(email: _friendEmail)
+              ],
+            ),
+          ],
         ),
-        title: TextStreamBuilder(
-            stream: FirebaseService.getStreamToUserData(email: _friendEmail),
-        key: UserDocumentField.DISPLAY_NAME,),
         backgroundColor: kPrimaryColor,
-        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: Column(
@@ -53,7 +66,8 @@ class ChatRoom extends StatelessWidget {
                   }
                 }
                 return Expanded(
-                    child: ListView(children: messageList, reverse: true));
+                  child: ListView(children: messageList, reverse: true),
+                );
               },
             ),
             MessageTextField(

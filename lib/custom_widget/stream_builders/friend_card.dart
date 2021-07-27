@@ -8,6 +8,8 @@ import 'package:hi/screens/chat/chat_room.dart';
 import 'package:hi/services/firebase_service.dart';
 import 'package:hi/services/uid_generator.dart';
 
+import 'online_indicator_dot.dart';
+
 class FriendCard extends StatelessWidget {
   final _friendEmail;
   const FriendCard({required final friendEmail}) : _friendEmail = friendEmail;
@@ -29,14 +31,20 @@ class FriendCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextStreamBuilder(
-                    stream: FirebaseService.getStreamToUserData(email: _friendEmail),
-                    key: UserDocumentField.DISPLAY_NAME,
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 15,
-                      letterSpacing: 2.5,
-                    ),
+                  Row(
+                    children: [
+                      TextStreamBuilder(
+                        stream: FirebaseService.getStreamToUserData(email: _friendEmail),
+                        key: UserDocumentField.DISPLAY_NAME,
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 15,
+                          letterSpacing: 2.5,
+                        ),
+                      ),
+                      SizedBox(width: kDefaultPadding / 4.0),
+                      OnlineIndicatorDot(email: _friendEmail)
+                    ],
                   ),
                   TextStreamBuilder(
                     stream: FirebaseService.getStreamToUserData(email: _friendEmail),

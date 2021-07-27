@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
+import 'package:hi/custom_widget/stream_builders/online_indicator_dot.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/chat_room.dart';
 import 'package:hi/services/encryption_service.dart';
@@ -34,15 +35,21 @@ class ChatCardOneToOne extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextStreamBuilder(
-                    stream:
-                        FirebaseService.getStreamToUserData(email: _friendEmail),
-                    key: UserDocumentField.DISPLAY_NAME,
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 15,
-                      letterSpacing: 2.5,
-                    ),
+                  Row(
+                    children: [
+                      TextStreamBuilder(
+                        stream: FirebaseService.getStreamToUserData(
+                            email: _friendEmail),
+                        key: UserDocumentField.DISPLAY_NAME,
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 15,
+                          letterSpacing: 2.5,
+                        ),
+                      ),
+                      SizedBox(width: kDefaultPadding / 4.0),
+                      OnlineIndicatorDot(email: _friendEmail)
+                    ],
                   ),
                   StreamBuilder<DocumentSnapshot>(
                     stream:
@@ -51,7 +58,8 @@ class ChatCardOneToOne extends StatelessWidget {
                       if (snapshot.hasData && snapshot.data != null) {
                         final docData = snapshot.data;
                         final lastMessage = EncryptionService.decrypt(
-                            docData?[ChatDBDocumentField.LAST_MESSAGE]).replaceAll('\n', ' ');
+                                docData?[ChatDBDocumentField.LAST_MESSAGE])
+                            .replaceAll('\n', ' ');
                         final lastMessageTime =
                             docData?[ChatDBDocumentField.LAST_MESSAGE_TIME];
                         final lastMessageDate =
