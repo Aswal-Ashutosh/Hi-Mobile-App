@@ -57,24 +57,41 @@ class ChatCardOneToOne extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (snapshot.hasData && snapshot.data != null) {
                         final docData = snapshot.data;
-                        final lastMessage = EncryptionService.decrypt(
-                                docData?[ChatDBDocumentField.LAST_MESSAGE])
-                            .replaceAll('\n', ' ');
                         final lastMessageTime =
                             docData?[ChatDBDocumentField.LAST_MESSAGE_TIME];
                         final lastMessageDate =
                             docData?[ChatDBDocumentField.LAST_MESSAGE_DATE];
+                        final lastMessageType =
+                            docData?[ChatDBDocumentField.LAST_MESSAGE_TYPE];
+                        String? lastMessage =
+                            docData?[ChatDBDocumentField.LAST_MESSAGE];
+                        if (lastMessage != null) {
+                          lastMessage = EncryptionService.decrypt(lastMessage)
+                              .replaceAll('\n', ' ');
+                        }
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              lastMessage,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                                letterSpacing: 2.5,
-                              ),
+                            Row(
+                              children: [
+                                if(lastMessageType == MessageType.IMAGE)
+                                  Icon(
+                                    Icons.photo,
+                                    color: Colors.grey,
+                                  ),
+                                if (lastMessage != null)
+                                  Flexible(
+                                    child: Text(
+                                      lastMessage,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                        letterSpacing: 2.5,
+                                      ),
+                                    ),
+                                  )
+                              ],
                             ),
                             SizedBox(height: 2.5),
                             Text(

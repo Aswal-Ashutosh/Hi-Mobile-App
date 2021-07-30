@@ -29,7 +29,7 @@ class TextMessage extends StatelessWidget {
         children: [
           Material(
             elevation: 1.0,
-            color: isMe ? Color(0x552EA043) : Color(0x551F6FEB),
+            color: isMe ? Color(0xAA2EA043) : Color(0xAA1F6FEB),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(kDefualtBorderRadius),
               topRight: Radius.circular(kDefualtBorderRadius),

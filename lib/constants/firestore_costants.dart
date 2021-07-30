@@ -39,12 +39,14 @@ class ChatDBDocumentField{
   static const LAST_MESSAGE_TIME = 'last_message_time';
   static const LAST_MESSAGE_DATE = 'last_message_date';
   static const LAST_MESSAGE_SEEN = 'last_message_seen';
+  static const LAST_MESSAGE_TYPE = 'last_message_type';
   static const MEMBERS = 'members';
 }
 
 class MessageDocumentField{
   static const MESSAGE_ID = 'id';
   static const CONTENT = 'content';
+  static const IMAGES = 'images';
   static const SENDER = 'sender';
   static const TIME = 'time';
   static const DATE = 'date';
@@ -53,13 +55,13 @@ class MessageDocumentField{
 }
 
 class MessageType{
-  static const TEXT = 'text';
-  static const IMAGE = 'image';
-  static const VIDEO = 'video';
-  static const AUDIO = 'audio';
+  static const TEXT = 'TEXT';
+  static const IMAGE = 'IMAGE';
+  static const VIDEO = 'VIDEO';
+  static const AUDIO = 'AUDIO';
 }
 
 class ChatType{
-  static const ONE_TO_ONE = 'one_to_one';
-  static const GROUP = 'group';
+  static const ONE_TO_ONE = 'ONE_TO_ONE';
+  static const GROUP = 'GROUP';
 }

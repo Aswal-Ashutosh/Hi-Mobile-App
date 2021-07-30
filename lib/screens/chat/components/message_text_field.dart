@@ -1,21 +1,24 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
+import 'package:hi/screens/chat/image_message_preview_screen/image_message_preview_screen.dart';
+import 'package:hi/services/firebase_service.dart';
+import 'package:hi/services/image_picker_service.dart';
 
 class MessageTextField extends StatelessWidget {
-  final TextEditingController _textEditingController;
-  final Function _onSend;
+  final String _roomId;
+  final String _friendEmail;
+  final TextEditingController _textEditingController = TextEditingController();
 
   final _borderRadius = const OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
     borderSide: BorderSide(color: Colors.white),
   );
 
-  MessageTextField(
-      {required final TextEditingController controller,
-      required final Function onSend})
-      : _textEditingController = controller,
-        _onSend = onSend;
+  MessageTextField({required final roomId, required final friendEmail})
+      : _friendEmail = friendEmail,
+        _roomId = roomId;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,7 @@ class MessageTextField extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'Your message',
                         hintStyle: TextStyle(
-                          color: Colors.grey,
+                          color: Colors.black45,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 1.5,
                         ),
@@ -52,8 +55,12 @@ class MessageTextField extends StatelessWidget {
                     icon: Icon(Icons.share),
                     color: kPrimaryColor,
                     onPressed: () {
-                      Scaffold.of(context)
-                          .showBottomSheet((context) => SharePopUpMenu());
+                      Scaffold.of(context).showBottomSheet(
+                        (context) => SharePopUpMenu(
+                          roomId: _roomId,
+                          friendEmail: _friendEmail,
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -75,21 +82,33 @@ class MessageTextField extends StatelessWidget {
           ),
           RoundIconButton(icon: Icons.mic, onPressed: () {}, radius: 50.0),
           SizedBox(width: kDefaultPadding / 4.0),
-          RoundIconButton(icon: Icons.send, onPressed: _onSend, radius: 50.0),
+          RoundIconButton(
+            icon: Icons.send,
+            onPressed: () async {
+              final message = _textEditingController.text.trim();
+              if (message.isNotEmpty) {
+                _textEditingController.clear();
+                await FirebaseService.sendTextMessageToFriend(
+                  friendEmail: _friendEmail,
+                  roomId: _roomId,
+                  message: message,
+                );
+              }
+            },
+            radius: 50.0,
+          ),
         ],
       ),
     );
   }
 }
 
-class SharePopUpMenu extends StatefulWidget {
-  const SharePopUpMenu({Key? key}) : super(key: key);
-
-  @override
-  _SharePopUpMenuState createState() => _SharePopUpMenuState();
-}
-
-class _SharePopUpMenuState extends State<SharePopUpMenu> {
+class SharePopUpMenu extends StatelessWidget {
+  final String _roomId;
+  final String _friendEmail;
+  const SharePopUpMenu({required final roomId, required final friendEmail})
+      : _friendEmail = friendEmail,
+        _roomId = roomId;
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -100,7 +119,25 @@ class _SharePopUpMenuState extends State<SharePopUpMenu> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            RoundIconButton(icon: Icons.image, onPressed: () {}),
+            RoundIconButton(
+                icon: Icons.image,
+                onPressed: () async {
+                  final List<File> pickedImages =
+                      await ImagePickerService.pickMultiImagesFromGallery();
+                  if (pickedImages.isNotEmpty) {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ImageMessagePreviewScreen(
+                          roomId: _roomId,
+                          friendEmail: _friendEmail,
+                          images: pickedImages,
+                        ),
+                      ),
+                    );
+                  }
+                  Navigator.pop(context);
+                }),
             RoundIconButton(icon: Icons.video_collection, onPressed: () {}),
             RoundIconButton(icon: Icons.file_copy, onPressed: () {}),
           ],

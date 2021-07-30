@@ -5,6 +5,7 @@ import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/online_indicator_text.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/screens/chat/components/image_message.dart';
 import 'package:hi/screens/chat/components/message_text_field.dart';
 import 'package:hi/screens/chat/components/text_message.dart';
 import 'package:hi/services/encryption_service.dart';
@@ -13,7 +14,7 @@ import 'package:hi/services/firebase_service.dart';
 class ChatRoom extends StatelessWidget {
   final String _roomId;
   final String _friendEmail;
-  final TextEditingController _textEditingController = TextEditingController();
+
   ChatRoom({required final String roomId, required final String friendEamil})
       : _roomId = roomId,
         _friendEmail = friendEamil;
@@ -58,11 +59,35 @@ class ChatRoom extends StatelessWidget {
                   for (final message in messages) {
                     final id = message[MessageDocumentField.MESSAGE_ID];
                     final sender = message[MessageDocumentField.SENDER];
-                    final content = EncryptionService.decrypt(
-                        message[MessageDocumentField.CONTENT]);
                     final time = message[MessageDocumentField.TIME];
-                    messageList.add(TextMessage(
-                        id: id, sender: sender, content: content, time: time));
+                    final type = message[MessageDocumentField.TYPE];
+
+                    String? content = message[MessageDocumentField.CONTENT] != null ? EncryptionService.decrypt(message[MessageDocumentField.CONTENT]) : null;
+
+                    if (type == MessageType.TEXT) {
+                      messageList.add(
+                        TextMessage(
+                          id: id,
+                          sender: sender,
+                          content: content as String,
+                          time: time,
+                        ),
+                      );
+                    } else if (type == MessageType.IMAGE) {
+                      final List<String> imageUrl = [];
+                      for (final url in message[MessageDocumentField.IMAGES]) {
+                        imageUrl.add(EncryptionService.decrypt(url));
+                      }
+                      messageList.add(
+                        ImageMessage(
+                          id: id,
+                          sender: sender,
+                          content: content,
+                          time: time,
+                          imageUrl: imageUrl,
+                        ),
+                      );
+                    }
                   }
                 }
                 return Expanded(
@@ -71,18 +96,8 @@ class ChatRoom extends StatelessWidget {
               },
             ),
             MessageTextField(
-              controller: _textEditingController,
-              onSend: () async {
-                final message = _textEditingController.text.trim();
-                if (message.isNotEmpty) {
-                  _textEditingController.clear();
-                  await FirebaseService.sendTextMessageToFriend(
-                    friendEmail: _friendEmail,
-                    roomId: _roomId,
-                    message: message,
-                  );
-                }
-              },
+              roomId: _roomId,
+              friendEmail: _friendEmail,
             )
           ],
         ),

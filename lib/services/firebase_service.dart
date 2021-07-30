@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/services/encryption_service.dart';
+import 'package:hi/services/image_picker_service.dart';
 import 'package:hi/services/uid_generator.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class FirebaseService {
@@ -107,13 +107,12 @@ class FirebaseService {
   }
 
   static Future<void> pickAndUploadProfileImage() async {
-    final ImagePicker imagePicker = ImagePicker();
-    XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+    File? image = await ImagePickerService.pickImageFromGallery();
     if (image != null) {
       Reference reference = _fStorage
           .ref()
           .child('profile_pictures/${_fAuth.currentUser?.email}');
-      UploadTask task = reference.putFile(File(image.path));
+      UploadTask task = reference.putFile(image);
       TaskSnapshot snapshot = await task.whenComplete(() => task.snapshot);
       String url = await snapshot.ref.getDownloadURL();
 
@@ -293,10 +292,79 @@ class FirebaseService {
       ChatDBDocumentField.LAST_MESSAGE: encryptedMessage,
       ChatDBDocumentField.LAST_MESSAGE_TIME: timeOfSending,
       ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
+      ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.TEXT,
       ChatDBDocumentField.LAST_MESSAGE_SEEN: false,
     });
   }
 
+  //METHOD: to send photos to friend
+  static Future<void> sendImagesToFriend({
+    required String friendEmail,
+    required String roomId,
+    required List<File> images,
+    required String? message,
+  }) async {
+    List<String> encryptedUrl = [];
+    for (File image in images) {
+      //Uploading images
+      final Reference reference =
+          _fStorage.ref().child('shared_pictures/${UidGenerator.uniqueId}');
+      final UploadTask task = reference.putFile(image);
+      final TaskSnapshot snapshot =
+          await task.whenComplete(() => task.snapshot);
+      final String url = await snapshot.ref.getDownloadURL();
+      encryptedUrl.add(EncryptionService.encrypt(url));
+    }
+
+    final encryptedMessage =
+        message != null ? EncryptionService.encrypt(message) : null;
+    final messageId = UidGenerator.uniqueId;
+    final timeStamp = DateTime.now();
+    final timeOfSending = DateFormat.jm().format(timeStamp);
+    final dateOfSending = DateFormat.yMMMMEEEEd().format(timeStamp);
+
+    await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .collection(Collections.MESSAGES)
+        .doc(messageId)
+        .set({
+      MessageDocumentField.MESSAGE_ID: messageId,
+      MessageDocumentField.SENDER: FirebaseService.currentUserEmail,
+      MessageDocumentField.IMAGES: encryptedUrl,
+      MessageDocumentField.CONTENT: encryptedMessage,
+      MessageDocumentField.DATE: dateOfSending,
+      MessageDocumentField.TIME: timeOfSending,
+      MessageDocumentField.TIME_STAMP: timeStamp,
+      MessageDocumentField.TYPE: MessageType.IMAGE,
+    });
+
+    await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({
+      ChatDBDocumentField.LAST_MESSAGE: encryptedMessage,
+      ChatDBDocumentField.LAST_MESSAGE_TIME: timeOfSending,
+      ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
+      ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.IMAGE,
+      ChatDBDocumentField.LAST_MESSAGE_SEEN: false,
+    });
+
+    //Setting visiblity as true for current user chat reference.
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(FirebaseService.currentUserEmail)
+        .collection(Collections.CHATS)
+        .doc(roomId)
+        .update({ChatDocumentField.VISIBILITY: true});
+
+    //Setting visiblity as true for friends chat reference.
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(friendEmail)
+        .collection(Collections.CHATS)
+        .doc(roomId)
+        .update({ChatDocumentField.VISIBILITY: true});
+  }
+
+  //METHOD: To get stream to chat room
   static getStreamToChatRoom({required final String roomId}) => _fStore
       .collection(Collections.CHAT_DB)
       .doc(roomId)
@@ -330,5 +398,9 @@ class FirebaseService {
   static getStreamToChatRoomDoc({required final String roomId}) =>
       _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
 
-  static Future<void> setCurrentUserOnline({required final bool state}) async => await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).update({UserDocumentField.ONLINE: state});
+  static Future<void> setCurrentUserOnline({required final bool state}) async =>
+      await _fStore
+          .collection(Collections.USERS)
+          .doc(FirebaseService.currentUserEmail)
+          .update({UserDocumentField.ONLINE: state});
 }
