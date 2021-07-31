@@ -22,6 +22,7 @@ class ImageMessagePreviewScreen extends StatelessWidget {
         child: Stack(
           children: [
             PageView.builder(
+              scrollDirection: Axis.vertical,
               itemBuilder: (context, index) => PhotoView(
                 imageProvider: FileImage(
                   _images[index],
@@ -34,17 +35,15 @@ class ImageMessagePreviewScreen extends StatelessWidget {
                   roomId: _roomId, friendEmail: _friendEmail, images: _images),
               bottom: 0,
             ),
-            Positioned(
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                  size: MediaQuery.of(context).size.width * 0.08,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+            IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                size: MediaQuery.of(context).size.width * 0.06,
               ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             )
           ],
         ),
