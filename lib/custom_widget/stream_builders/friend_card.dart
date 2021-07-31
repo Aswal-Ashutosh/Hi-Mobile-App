@@ -16,7 +16,7 @@ class FriendCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       child: Container(
         padding: const EdgeInsets.all(kDefaultPadding / 4.0),
         child: Row(
