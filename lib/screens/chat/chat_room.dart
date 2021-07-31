@@ -54,6 +54,7 @@ class ChatRoom extends StatelessWidget {
               stream: FirebaseService.getStreamToChatRoom(roomId: _roomId),
               builder: (context, snapshots) {
                 List<Widget> messageList = [];
+                messageList.add(SizedBox(height: kDefaultPadding * 4)); //To Provide Gap After last message so that it can go above the text field level
                 if (snapshots.hasData && snapshots.data != null) {
                   final messages = snapshots.data!.docs;
                   for (final message in messages) {
