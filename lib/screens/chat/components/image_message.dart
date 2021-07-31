@@ -65,6 +65,7 @@ class ImageMessage extends StatelessWidget {
                           PrimaryButton(
                             onPressed: () {},
                             displayText: '${_imageUrl.length - 1} More',
+                            color: Colors.black.withOpacity(0.05),
                           ),
                       ],
                     ),
