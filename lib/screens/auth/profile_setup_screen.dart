@@ -132,13 +132,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     PrimaryButton(
                       displayText: 'Save',
                       onPressed: () async {
-                        await FirebaseService.createNewUser(
-                                email: FirebaseService.currentUserEmail,
-                                name: _nameTextController.text.trim(),
-                                about: _aboutTextController.text.trim(),
-                                profileImage: profileImage)
-                            .then((value) => Navigator.pushNamedAndRemoveUntil(
-                                context, HomeScreen.id, (route) => false));
+                        if (_formKey.currentState!.validate()) {
+                          await FirebaseService.createNewUser(
+                                  email: FirebaseService.currentUserEmail,
+                                  name: _nameTextController.text.trim(),
+                                  about: _aboutTextController.text.trim(),
+                                  profileImage: profileImage)
+                              .then(
+                            (value) => Navigator.pushNamedAndRemoveUntil(
+                                context, HomeScreen.id, (route) => false),
+                          );
+                        }
                       },
                     ),
                   ],
