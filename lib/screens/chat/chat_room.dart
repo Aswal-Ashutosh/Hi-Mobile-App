@@ -48,7 +48,7 @@ class ChatRoom extends StatelessWidget {
         backgroundColor: kPrimaryColor,
       ),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseService.getStreamToChatRoom(roomId: _roomId),
@@ -90,14 +90,18 @@ class ChatRoom extends StatelessWidget {
                     }
                   }
                 }
-                return Expanded(
-                  child: ListView(children: messageList, reverse: true),
-                );
+                return ListView(children: messageList, reverse: true);
               },
             ),
-            MessageTextField(
-              roomId: _roomId,
-              friendEmail: _friendEmail,
+            Positioned(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: MessageTextField(
+                  roomId: _roomId,
+                  friendEmail: _friendEmail,
+                ),
+              ),
+              bottom: 0,
             )
           ],
         ),
