@@ -59,7 +59,7 @@ class ImageMessage extends StatelessWidget {
                           image: NetworkImage(_imageUrl[0]),
                           width: displaySize.width * 0.80,
                           height: displaySize.height * 0.60,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         ),
                         if (multiImages)
                           PrimaryButton(
