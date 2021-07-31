@@ -8,6 +8,7 @@ class TextMessage extends StatelessWidget {
   final String _sender;
   final String _content;
   final String _time;
+  
 
   const TextMessage(
       {required final String id,
@@ -21,8 +22,13 @@ class TextMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isMe = _sender == FirebaseService.currentUserEmail;
+    final displaySize = MediaQuery.of(context).size;
     return Container(
-      margin: EdgeInsets.only(top: kDefaultPadding / 5.0, bottom: kDefaultPadding / 5.0, left: isMe ? kDefaultPadding * 3 : kDefaultPadding / 5.0, right: isMe ? kDefaultPadding / 5.0 : kDefaultPadding * 3.0),
+      margin: EdgeInsets.only(
+          top: kDefaultPadding / 5.0,
+          bottom: kDefaultPadding / 5.0,
+          left: isMe ? displaySize.width * .20 : kDefaultPadding / 5.0,
+          right: isMe ? kDefaultPadding / 5.0 : displaySize.width * .20),
       child: Column(
         crossAxisAlignment:
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
