@@ -4,6 +4,7 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/selection_card.dart';
 import 'package:hi/provider/selected_users.dart';
+import 'package:hi/screens/group/group_setup_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 import 'package:provider/provider.dart';
 
@@ -77,7 +78,18 @@ class GroupChatSelectionScreen extends StatelessWidget {
           builder: (context, selectedUsers, child) {
             if (selectedUsers.isNotEmpty) {
               return FloatingActionButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GroupSetupScreen(
+                          selectedUsers: selectedUsers.toList,
+                        ),
+                      ),
+                    );
+                    if(result == true)
+                      Navigator.pop(context, true);
+                  },
                   child: Icon(Icons.done),
                   backgroundColor: kPrimaryColor);
             } else {
