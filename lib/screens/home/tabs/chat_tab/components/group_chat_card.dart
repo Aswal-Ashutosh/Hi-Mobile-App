@@ -123,9 +123,8 @@ class GroupChatCard extends StatelessWidget {
         // Navigator.push(
         //   context,
         //   MaterialPageRoute(
-        //     builder: (context) => ChatRoom(
+        //     builder: (context) => GroupChatRoom(
         //       roomId: _roomId,
-        //       friendEamil: _friendEmail,
         //     ),
         //   ),
         // );

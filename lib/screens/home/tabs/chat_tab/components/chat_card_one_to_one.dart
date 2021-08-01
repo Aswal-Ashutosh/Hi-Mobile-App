@@ -6,7 +6,7 @@ import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/online_indicator_dot.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
-import 'package:hi/screens/chat/chat_room.dart';
+import 'package:hi/screens/chat/one_to_one/chat_room.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
 

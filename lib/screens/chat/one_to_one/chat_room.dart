@@ -5,9 +5,9 @@ import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/online_indicator_text.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
-import 'package:hi/screens/chat/components/image_message.dart';
-import 'package:hi/screens/chat/components/message_text_field.dart';
-import 'package:hi/screens/chat/components/text_message.dart';
+import 'package:hi/screens/chat/one_to_one/components/image_message.dart';
+import 'package:hi/screens/chat/one_to_one/components/message_text_field.dart';
+import 'package:hi/screens/chat/one_to_one/components/text_message.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
 
