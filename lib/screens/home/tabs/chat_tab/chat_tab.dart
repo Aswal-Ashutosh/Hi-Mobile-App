@@ -43,7 +43,7 @@ class _ChatTabState extends State<ChatTab> {
                     } else {
                       chatCards.add(
                         GroupChatCard(
-                          roomId: element[GroupDBDocumentField.ROOM_ID],
+                          roomId: element[ChatDBDocumentField.ROOM_ID],
                         ),
                       );
                     }

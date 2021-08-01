@@ -5,6 +5,7 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/screens/chat/group_chat/group_chat_room.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
 
@@ -32,7 +33,7 @@ class GroupChatCard extends StatelessWidget {
                   TextStreamBuilder(
                     stream:
                         FirebaseService.getStreamToGroupData(roomId: _roomId),
-                    key: GroupDBDocumentField.GROUP_NAME,
+                    key: ChatDBDocumentField.GROUP_NAME,
                     style: TextStyle(
                       color: Colors.black87,
                       fontSize: 15,
@@ -120,14 +121,14 @@ class GroupChatCard extends StatelessWidget {
         ),
       ),
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => GroupChatRoom(
-        //       roomId: _roomId,
-        //     ),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GroupChatRoom(
+              roomId: _roomId,
+            ),
+          ),
+        );
       },
     );
   }

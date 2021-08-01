@@ -14,8 +14,8 @@ class CircularGroupProfilePicture extends StatelessWidget {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseService.getStreamToGroupData(roomId: _roomId),
       builder: (context, snapshots) {
-        if (snapshots.hasData && snapshots.data != null && snapshots.data?[GroupDBDocumentField.GROUP_IMAGE] != null) {
-          final imageUrl = snapshots.data?[GroupDBDocumentField.GROUP_IMAGE];
+        if (snapshots.hasData && snapshots.data != null && snapshots.data?[ChatDBDocumentField.GROUP_IMAGE] != null) {
+          final imageUrl = snapshots.data?[ChatDBDocumentField.GROUP_IMAGE];
           return CircleAvatar(
             backgroundColor: Colors.grey,
             backgroundImage: NetworkImage(imageUrl),

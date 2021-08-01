@@ -130,7 +130,7 @@ class FirebaseService {
   static get currentUserStreamToUserData =>
       getStreamToUserData(email: FirebaseService.currentUserEmail);
 
- static getStreamToGroupData({required final String roomId}) =>
+  static getStreamToGroupData({required final String roomId}) =>
       _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
 
   static get currentUserStreamToFirendRequests => _fStore
@@ -250,25 +250,8 @@ class FirebaseService {
 
   //Chat Related functions
 
-  static Future<void> sendTextMessageToFriend(
-      {required String friendEmail,
-      required String roomId,
-      required String message}) async {
-    //Setting visiblity as true for current user chat reference.
-    await _fStore
-        .collection(Collections.USERS)
-        .doc(FirebaseService.currentUserEmail)
-        .collection(Collections.CHATS)
-        .doc(roomId)
-        .update({ChatDocumentField.VISIBILITY: true});
-    //Setting visiblity as true for friends chat reference.
-    await _fStore
-        .collection(Collections.USERS)
-        .doc(friendEmail)
-        .collection(Collections.CHATS)
-        .doc(roomId)
-        .update({ChatDocumentField.VISIBILITY: true});
-
+  static Future<void> sendTextMessageToRoom(
+      {required String roomId, required String message}) async {
     //Sending Message
     final encryptedMessage = EncryptionService.encrypt(message);
     final messageId = UidGenerator.uniqueId;
@@ -301,9 +284,31 @@ class FirebaseService {
     });
   }
 
-  //METHOD: to send photos to friend
-  static Future<void> sendImagesToFriend({
-    required String friendEmail,
+  static Future<void> sendTextMessageToFriend(
+      {required String friendEmail,
+      required String roomId,
+      required String message}) async {
+    //Sending Message
+    await FirebaseService.sendTextMessageToRoom(
+        roomId: roomId, message: message);
+
+    //Setting visiblity as true for current user chat reference.
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(FirebaseService.currentUserEmail)
+        .collection(Collections.CHATS)
+        .doc(roomId)
+        .update({ChatDocumentField.VISIBILITY: true});
+    //Setting visiblity as true for friends chat reference.
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(friendEmail)
+        .collection(Collections.CHATS)
+        .doc(roomId)
+        .update({ChatDocumentField.VISIBILITY: true});
+  }
+
+  static Future<void> sendImagesToRoom({
     required String roomId,
     required List<File> images,
     required String? message,
@@ -351,6 +356,18 @@ class FirebaseService {
       ChatDBDocumentField.LAST_MESSAGE_SEEN: false,
       ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP: timeStamp,
     });
+  }
+
+  //METHOD: to send photos to friend
+  static Future<void> sendImagesToFriend({
+    required String friendEmail,
+    required String roomId,
+    required List<File> images,
+    required String? message,
+  }) async {
+    
+    await FirebaseService.sendImagesToRoom(
+        roomId: roomId, images: images, message: message);
 
     //Setting visiblity as true for current user chat reference.
     await _fStore
@@ -410,12 +427,15 @@ class FirebaseService {
           .doc(FirebaseService.currentUserEmail)
           .update({UserDocumentField.ONLINE: state});
 
-
   //METHOD: TO CREATE A GROUP
-  static Future<void> createNewGroup({required List<String> members, required final String groupName, required final String aboutGroup, required final File? groupImage}) async {
+  static Future<void> createNewGroup(
+      {required List<String> members,
+      required final String groupName,
+      required final String aboutGroup,
+      required final File? groupImage}) async {
     //Adding current user to the member list
     members.insert(0, FirebaseService.currentUserEmail);
-    
+
     //Generating Unique Room ID
     final String roomId = UidGenerator.uniqueId;
 
@@ -423,9 +443,8 @@ class FirebaseService {
     String? groupImageUrl;
 
     if (groupImage != null) {
-      Reference reference = _fStorage
-          .ref()
-          .child('group_profile_pictures/$roomId');
+      Reference reference =
+          _fStorage.ref().child('group_profile_pictures/$roomId');
       UploadTask task = reference.putFile(groupImage);
       TaskSnapshot snapshot = await task.whenComplete(() => task.snapshot);
       groupImageUrl = await snapshot.ref.getDownloadURL();
@@ -434,24 +453,31 @@ class FirebaseService {
     final timeStamp = DateTime.now();
     final timeOfCreation = DateFormat.jm().format(timeStamp);
     final dateOfCreation = DateFormat.yMMMMEEEEd().format(timeStamp);
-    
+
     //Creating Group in Chat Database
     await _fStore.collection(Collections.CHAT_DB).doc(roomId).set({
-      GroupDBDocumentField.GROUP_NAME: groupName,
-      GroupDBDocumentField.GROUP_IMAGE: groupImageUrl,
-      GroupDBDocumentField.GROUP_ADMIN: FirebaseService.currentUserEmail,
-      GroupDBDocumentField.ABOUT_GROUP: aboutGroup,
-      GroupDBDocumentField.CREATED_AT: '$dateOfCreation at $timeOfCreation',
-      GroupDBDocumentField.ROOM_ID: roomId,
-      GroupDBDocumentField.MEMBERS: members,
-      GroupDBDocumentField.TYPE: ChatType.GROUP,
-      GroupDBDocumentField.LAST_MESSAGE_TYPE: null,
-      GroupDBDocumentField.LAST_MESSAGE_TIME: timeStamp, /* This field is required to Sort the Chat based on time*/
+      ChatDBDocumentField.GROUP_NAME: groupName,
+      ChatDBDocumentField.GROUP_IMAGE: groupImageUrl,
+      ChatDBDocumentField.GROUP_ADMIN: FirebaseService.currentUserEmail,
+      ChatDBDocumentField.GROUP_ABOUT: aboutGroup,
+      ChatDBDocumentField.GROUP_CREATED_AT:
+          '$dateOfCreation at $timeOfCreation',
+      ChatDBDocumentField.ROOM_ID: roomId,
+      ChatDBDocumentField.MEMBERS: members,
+      ChatDBDocumentField.TYPE: ChatType.GROUP,
+      ChatDBDocumentField.LAST_MESSAGE_TYPE: null,
+      ChatDBDocumentField.LAST_MESSAGE_TIME:
+          timeStamp, /* This field is required to Sort the Chat based on time*/
     });
 
     //Creating reference for each member
-    for(final String member in members){
-      _fStore.collection(Collections.USERS).doc(member).collection(Collections.CHATS).doc(roomId).set({
+    for (final String member in members) {
+      _fStore
+          .collection(Collections.USERS)
+          .doc(member)
+          .collection(Collections.CHATS)
+          .doc(roomId)
+          .set({
         ChatDocumentField.ROOM_ID: roomId,
         ChatDocumentField.VISIBILITY: true,
         ChatDocumentField.SHOW_AFTER: timeStamp,
