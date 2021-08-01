@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
-import 'package:hi/screens/group_chat_selection_screen/group_chat_selection_screen.dart';
+import 'package:hi/screens/group/group_chat_selection_screen.dart';
 import 'package:hi/screens/home/tabs/chat_tab/components/chat_card_one_to_one.dart';
 import 'package:hi/services/firebase_service.dart';
 
