@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/screens/group_chat_selection_screen/group_chat_selection_screen.dart';
 import 'package:hi/screens/home/tabs/chat_tab/components/chat_card_one_to_one.dart';
 import 'package:hi/services/firebase_service.dart';
 
@@ -18,19 +20,17 @@ class ChatTab extends StatelessWidget {
                 List<Widget> chatCards = [];
                 if (snapshots.hasData && snapshots.data!.docs.isNotEmpty) {
                   final chats = snapshots.data?.docs;
-                  chats?.forEach((element){
+                  chats?.forEach((element) {
                     late String friendEmail;
-                    for(final email in element[ChatDBDocumentField.MEMBERS]){
-                      if(email != FirebaseService.currentUserEmail){
+                    for (final email in element[ChatDBDocumentField.MEMBERS]) {
+                      if (email != FirebaseService.currentUserEmail) {
                         friendEmail = email;
                       }
                     }
-                    chatCards.add(
-                      ChatCardOneToOne(
-                        roomId:element[ChatDBDocumentField.ROOM_ID],
-                        friendEmail: friendEmail,
-                      )
-                    );
+                    chatCards.add(ChatCardOneToOne(
+                      roomId: element[ChatDBDocumentField.ROOM_ID],
+                      friendEmail: friendEmail,
+                    ));
                   });
                 }
                 return ListView(
@@ -42,6 +42,13 @@ class ChatTab extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, GroupChatSelectionScreen.id);
+        },
+        backgroundColor: kPrimaryColor,
+        child: Icon(Icons.group_add),
       ),
     );
   }
