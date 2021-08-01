@@ -130,6 +130,9 @@ class FirebaseService {
   static get currentUserStreamToUserData =>
       getStreamToUserData(email: FirebaseService.currentUserEmail);
 
+ static getStreamToGroupData({required final String roomId}) =>
+      _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
+
   static get currentUserStreamToFirendRequests => _fStore
       .collection(Collections.USERS)
       .doc(FirebaseService.currentUserEmail)
@@ -294,6 +297,7 @@ class FirebaseService {
       ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
       ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.TEXT,
       ChatDBDocumentField.LAST_MESSAGE_SEEN: false,
+      ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP: timeStamp,
     });
   }
 
@@ -345,6 +349,7 @@ class FirebaseService {
       ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
       ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.IMAGE,
       ChatDBDocumentField.LAST_MESSAGE_SEEN: false,
+      ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP: timeStamp,
     });
 
     //Setting visiblity as true for current user chat reference.
@@ -389,6 +394,7 @@ class FirebaseService {
       }
       return id;
     });
+
     return _fStore
         .collection(Collections.CHAT_DB)
         .where(ChatDBDocumentField.ROOM_ID, whereIn: roomId)
@@ -403,4 +409,53 @@ class FirebaseService {
           .collection(Collections.USERS)
           .doc(FirebaseService.currentUserEmail)
           .update({UserDocumentField.ONLINE: state});
+
+
+  //METHOD: TO CREATE A GROUP
+  static Future<void> createNewGroup({required List<String> members, required final String groupName, required final String aboutGroup, required final File? groupImage}) async {
+    //Adding current user to the member list
+    members.insert(0, FirebaseService.currentUserEmail);
+    
+    //Generating Unique Room ID
+    final String roomId = UidGenerator.uniqueId;
+
+    //Uploading Group Image
+    String? groupImageUrl;
+
+    if (groupImage != null) {
+      Reference reference = _fStorage
+          .ref()
+          .child('group_profile_pictures/$roomId');
+      UploadTask task = reference.putFile(groupImage);
+      TaskSnapshot snapshot = await task.whenComplete(() => task.snapshot);
+      groupImageUrl = await snapshot.ref.getDownloadURL();
+    }
+
+    final timeStamp = DateTime.now();
+    final timeOfCreation = DateFormat.jm().format(timeStamp);
+    final dateOfCreation = DateFormat.yMMMMEEEEd().format(timeStamp);
+    
+    //Creating Group in Chat Database
+    await _fStore.collection(Collections.CHAT_DB).doc(roomId).set({
+      GroupDBDocumentField.GROUP_NAME: groupName,
+      GroupDBDocumentField.GROUP_IMAGE: groupImageUrl,
+      GroupDBDocumentField.GROUP_ADMIN: FirebaseService.currentUserEmail,
+      GroupDBDocumentField.ABOUT_GROUP: aboutGroup,
+      GroupDBDocumentField.CREATED_AT: '$dateOfCreation at $timeOfCreation',
+      GroupDBDocumentField.ROOM_ID: roomId,
+      GroupDBDocumentField.MEMBERS: members,
+      GroupDBDocumentField.TYPE: ChatType.GROUP,
+      GroupDBDocumentField.LAST_MESSAGE_TYPE: null,
+      GroupDBDocumentField.LAST_MESSAGE_TIME: timeStamp, /* This field is required to Sort the Chat based on time*/
+    });
+
+    //Creating reference for each member
+    for(final String member in members){
+      _fStore.collection(Collections.USERS).doc(member).collection(Collections.CHATS).doc(roomId).set({
+        ChatDocumentField.ROOM_ID: roomId,
+        ChatDocumentField.VISIBILITY: true,
+        ChatDocumentField.SHOW_AFTER: timeStamp,
+      });
+    }
+  }
 }
