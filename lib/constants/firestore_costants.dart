@@ -32,6 +32,23 @@ class ChatDocumentField{
   static const SHOW_AFTER = 'show_after';
 }
 
+class GroupDBDocumentField{
+  static const GROUP_NAME = 'group_name';
+  static const GROUP_IMAGE = 'group_image';
+  static const CREATED_AT = 'created_at';
+  static const GROUP_ADMIN = 'group_admin';
+  static const ABOUT_GROUP = 'about_group';
+  static const ROOM_ID = 'room_id';
+  static const TYPE = 'type';
+  static const LAST_MESSAGE = 'last_message';
+  static const LAST_MESSAGE_TIME = 'last_message_time';
+  static const LAST_MESSAGE_DATE = 'last_message_date';
+  static const LAST_MESSAGE_SEEN = 'last_message_seen';
+  static const LAST_MESSAGE_TYPE = 'last_message_type';
+  static const LAST_MESSAGE_TIME_STAMP = 'last_message_time_stamp';
+  static const MEMBERS = 'members';
+}
+
 class ChatDBDocumentField{
   static const ROOM_ID = 'room_id';
   static const TYPE = 'type';
@@ -40,6 +57,7 @@ class ChatDBDocumentField{
   static const LAST_MESSAGE_DATE = 'last_message_date';
   static const LAST_MESSAGE_SEEN = 'last_message_seen';
   static const LAST_MESSAGE_TYPE = 'last_message_type';
+  static const LAST_MESSAGE_TIME_STAMP = 'last_message_time_stamp';
   static const MEMBERS = 'members';
 }
 
