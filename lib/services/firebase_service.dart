@@ -365,7 +365,6 @@ class FirebaseService {
     required List<File> images,
     required String? message,
   }) async {
-    
     await FirebaseService.sendImagesToRoom(
         roomId: roomId, images: images, message: message);
 
@@ -394,29 +393,16 @@ class FirebaseService {
       .orderBy(MessageDocumentField.TIME_STAMP, descending: true)
       .snapshots();
 
-  static Future<Stream<QuerySnapshot<Map<String, dynamic>>>>
-      get currentUserStreamToChats async {
-    List<String> roomId = await _fStore
+  static get currentUserStreamToChats =>
+    _fStore
         .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
-        .collection(Collections.CHATS)
-        .get()
-        .then((value) {
-      List<String> id = [];
-      if (value.docs.isNotEmpty) {
-        value.docs.forEach((element) {
-          if (element[ChatDocumentField.VISIBILITY] == true)
-            id.add(element[ChatDocumentField.ROOM_ID]);
-        });
-      }
-      return id;
-    });
-
-    return _fStore
-        .collection(Collections.CHAT_DB)
-        .where(ChatDBDocumentField.ROOM_ID, whereIn: roomId)
+        .collection(Collections.CHATS).where(ChatDocumentField.VISIBILITY, isEqualTo: true)
         .snapshots();
-  }
+
+  static getStreamToChatDBWhereRoomIdIn({required final List<String> roomId}) =>
+  _fStore.collection(Collections.CHAT_DB).where(ChatDBDocumentField.ROOM_ID, whereIn: roomId).snapshots();
+  
 
   static getStreamToChatRoomDoc({required final String roomId}) =>
       _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();

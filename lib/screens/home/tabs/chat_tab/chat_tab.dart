@@ -16,15 +16,26 @@ class _ChatTabState extends State<ChatTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<Stream<QuerySnapshot<Map<String, dynamic>>>>(
-        future: FirebaseService.currentUserStreamToChats,
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseService.currentUserStreamToChats,
         builder: (context, snapshots) {
-          if (snapshots.connectionState == ConnectionState.done) {
+          List<String> chats = [];
+          if (snapshots.hasData &&
+              snapshots.data != null &&
+              snapshots.data!.docs.isNotEmpty) {
+            final chats = snapshots.data?.docs;
+            List<String> roomId = [];
+
+            if (chats != null) for (final chat in chats) roomId.add(chat.id);
+
             return StreamBuilder<QuerySnapshot>(
-              stream: snapshots.data,
+              stream: FirebaseService.getStreamToChatDBWhereRoomIdIn(
+                  roomId: roomId),
               builder: (context, snapshots) {
                 List<Widget> chatCards = [];
-                if (snapshots.hasData && snapshots.data!.docs.isNotEmpty) {
+                if (snapshots.hasData &&
+                    snapshots.data != null &&
+                    snapshots.data!.docs.isNotEmpty) {
                   final chats = snapshots.data?.docs;
                   chats?.forEach((element) {
                     if (element[ChatDBDocumentField.TYPE] ==
@@ -55,7 +66,14 @@ class _ChatTabState extends State<ChatTab> {
               },
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: Text(
+                'No chats available',
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+            );
           }
         },
       ),
