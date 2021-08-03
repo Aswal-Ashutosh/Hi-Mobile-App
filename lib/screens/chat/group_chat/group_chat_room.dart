@@ -7,8 +7,6 @@ import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/group_chat/components/group_image_message.dart';
 import 'package:hi/screens/chat/group_chat/components/group_message_text_field.dart';
 import 'package:hi/screens/chat/group_chat/components/group_text_message.dart';
-import 'package:hi/screens/chat/one_to_one/components/image_message.dart';
-import 'package:hi/screens/chat/one_to_one/components/text_message.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
 
