@@ -50,11 +50,13 @@ class _ChatTabState extends State<ChatTab> {
                       chatCards.add(ChatCardOneToOne(
                         roomId: element[ChatDBDocumentField.ROOM_ID],
                         friendEmail: friendEmail,
+                        lastMessageSeen: element[ChatDBDocumentField.LAST_MESSAGE_SEEN],
                       ));
                     } else {
                       chatCards.add(
                         GroupChatCard(
                           roomId: element[ChatDBDocumentField.ROOM_ID],
+                          lastMessageSeen: element[ChatDBDocumentField.LAST_MESSAGE_SEEN],
                         ),
                       );
                     }
@@ -82,10 +84,8 @@ class _ChatTabState extends State<ChatTab> {
           final result =
               await Navigator.pushNamed(context, GroupChatSelectionScreen.id);
           if (result == true) {
-            setState(() {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Group Created Successfully.')));
-            });
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Group Created Successfully.')));
           }
         },
         backgroundColor: kPrimaryColor,

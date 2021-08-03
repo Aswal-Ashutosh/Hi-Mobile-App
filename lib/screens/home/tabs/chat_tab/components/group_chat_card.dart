@@ -11,7 +11,11 @@ import 'package:hi/services/firebase_service.dart';
 
 class GroupChatCard extends StatelessWidget {
   final String _roomId;
-  const GroupChatCard({required final String roomId}) : _roomId = roomId;
+  final bool _lastMessageSeen;
+  const GroupChatCard(
+      {required final String roomId, required final bool lastMessageSeen})
+      : _roomId = roomId,
+        _lastMessageSeen = lastMessageSeen;
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +34,22 @@ class GroupChatCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextStreamBuilder(
-                    stream:
-                        FirebaseService.getStreamToGroupData(roomId: _roomId),
-                    key: ChatDBDocumentField.GROUP_NAME,
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 15,
-                      letterSpacing: 2.5,
-                    ),
+                  Row(
+                    children: [
+                      TextStreamBuilder(
+                        stream: FirebaseService.getStreamToGroupData(
+                            roomId: _roomId),
+                        key: ChatDBDocumentField.GROUP_NAME,
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 15,
+                          letterSpacing: 2.5,
+                        ),
+                      ),
+                      if (_lastMessageSeen == false) Spacer(),
+                      if (_lastMessageSeen == false)
+                        Icon(Icons.message_rounded, color: Colors.green),
+                    ],
                   ),
                   StreamBuilder<DocumentSnapshot>(
                     stream:
@@ -77,9 +88,14 @@ class GroupChatCard extends StatelessWidget {
                                         lastMessage,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                          color: Colors.grey,
+                                          color: _lastMessageSeen
+                                              ? Colors.grey
+                                              : Colors.blueGrey,
                                           fontSize: 12,
                                           letterSpacing: 2.5,
+                                          fontWeight: _lastMessageSeen
+                                              ? FontWeight.normal
+                                              : FontWeight.bold,
                                         ),
                                       ),
                                     )
@@ -90,9 +106,14 @@ class GroupChatCard extends StatelessWidget {
                                 '$lastMessageDate at $lastMessageTime',
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: Colors.grey,
+                                  color: _lastMessageSeen
+                                      ? Colors.grey
+                                      : Colors.blueGrey,
                                   fontSize: 10,
                                   letterSpacing: 2.5,
+                                  fontWeight: _lastMessageSeen
+                                      ? FontWeight.normal
+                                      : FontWeight.bold,
                                 ),
                               ),
                             ],
@@ -101,9 +122,14 @@ class GroupChatCard extends StatelessWidget {
                           return Text(
                             'Say Hello to everyone.',
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: _lastMessageSeen
+                                  ? Colors.grey
+                                  : Colors.blueGrey,
                               fontSize: 12,
                               letterSpacing: 2.5,
+                              fontWeight: _lastMessageSeen
+                                  ? FontWeight.normal
+                                  : FontWeight.bold,
                             ),
                           );
                         }

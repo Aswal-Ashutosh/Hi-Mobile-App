@@ -393,16 +393,20 @@ class FirebaseService {
       .orderBy(MessageDocumentField.TIME_STAMP, descending: true)
       .snapshots();
 
-  static get currentUserStreamToChats =>
-    _fStore
-        .collection(Collections.USERS)
-        .doc(FirebaseService.currentUserEmail)
-        .collection(Collections.CHATS).where(ChatDocumentField.VISIBILITY, isEqualTo: true)
-        .snapshots();
+  static get currentUserStreamToChats => _fStore
+      .collection(Collections.USERS)
+      .doc(FirebaseService.currentUserEmail)
+      .collection(Collections.CHATS)
+      .where(ChatDocumentField.VISIBILITY, isEqualTo: true)
+      .snapshots();
 
   static getStreamToChatDBWhereRoomIdIn({required final List<String> roomId}) =>
-  _fStore.collection(Collections.CHAT_DB).where(ChatDBDocumentField.ROOM_ID, whereIn: roomId).snapshots();
-  
+      _fStore
+          .collection(Collections.CHAT_DB)
+          .where(ChatDBDocumentField.ROOM_ID, whereIn: roomId)
+          .orderBy(ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP,
+              descending: true)
+          .snapshots();
 
   static getStreamToChatRoomDoc({required final String roomId}) =>
       _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
@@ -452,7 +456,8 @@ class FirebaseService {
       ChatDBDocumentField.MEMBERS: members,
       ChatDBDocumentField.TYPE: ChatType.GROUP,
       ChatDBDocumentField.LAST_MESSAGE_TYPE: null,
-      ChatDBDocumentField.LAST_MESSAGE_TIME:
+      ChatDBDocumentField.LAST_MESSAGE_SEEN: false, //To Show Highligted Card
+      ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP:
           timeStamp, /* This field is required to Sort the Chat based on time*/
     });
 

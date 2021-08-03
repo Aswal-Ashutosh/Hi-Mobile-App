@@ -13,10 +13,14 @@ import 'package:hi/services/firebase_service.dart';
 class ChatCardOneToOne extends StatelessWidget {
   final String _roomId;
   final String _friendEmail;
+  final bool _lastMessageSeen;
   const ChatCardOneToOne(
-      {required final String roomId, required final String friendEmail})
+      {required final String roomId,
+      required final String friendEmail,
+      required final bool lastMessageSeen})
       : _roomId = roomId,
-        _friendEmail = friendEmail;
+        _friendEmail = friendEmail,
+        _lastMessageSeen = lastMessageSeen;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +52,11 @@ class ChatCardOneToOne extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: kDefaultPadding / 4.0),
-                      OnlineIndicatorDot(email: _friendEmail)
+                      OnlineIndicatorDot(email: _friendEmail),
+                      if(_lastMessageSeen == false)
+                        Spacer(),
+                      if(_lastMessageSeen == false)
+                        Icon(Icons.message_rounded, color: Colors.green),
                     ],
                   ),
                   StreamBuilder<DocumentSnapshot>(
@@ -74,7 +82,7 @@ class ChatCardOneToOne extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                if(lastMessageType == MessageType.IMAGE)
+                                if (lastMessageType == MessageType.IMAGE)
                                   Icon(
                                     Icons.photo,
                                     color: Colors.grey,
@@ -85,9 +93,10 @@ class ChatCardOneToOne extends StatelessWidget {
                                       lastMessage,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        color: Colors.grey,
+                                        color: _lastMessageSeen? Colors.grey : Colors.blueGrey,
                                         fontSize: 12,
                                         letterSpacing: 2.5,
+                                        fontWeight: _lastMessageSeen ? FontWeight.normal : FontWeight.bold,
                                       ),
                                     ),
                                   )
@@ -98,9 +107,10 @@ class ChatCardOneToOne extends StatelessWidget {
                               '$lastMessageDate at $lastMessageTime',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                color: Colors.grey,
+                                color: _lastMessageSeen? Colors.grey : Colors.blueGrey,
                                 fontSize: 10,
                                 letterSpacing: 2.5,
+                                fontWeight: _lastMessageSeen ? FontWeight.normal : FontWeight.bold,
                               ),
                             ),
                           ],
