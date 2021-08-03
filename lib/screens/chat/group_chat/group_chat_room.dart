@@ -4,7 +4,9 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/screens/chat/group_chat/components/group_image_message.dart';
 import 'package:hi/screens/chat/group_chat/components/group_message_text_field.dart';
+import 'package:hi/screens/chat/group_chat/components/group_text_message.dart';
 import 'package:hi/screens/chat/one_to_one/components/image_message.dart';
 import 'package:hi/screens/chat/one_to_one/components/text_message.dart';
 import 'package:hi/services/encryption_service.dart';
@@ -58,7 +60,7 @@ class GroupChatRoom extends StatelessWidget {
 
                     if (type == MessageType.TEXT) {
                       messageList.add(
-                        TextMessage(
+                        GroupTextMessage(
                           id: id,
                           sender: sender,
                           content: content as String,
@@ -71,7 +73,7 @@ class GroupChatRoom extends StatelessWidget {
                         imageUrl.add(EncryptionService.decrypt(url));
                       }
                       messageList.add(
-                        ImageMessage(
+                        GroupImageMessage(
                           id: id,
                           sender: sender,
                           content: content,
