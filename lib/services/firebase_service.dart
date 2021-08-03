@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/services/encryption_service.dart';
@@ -279,7 +280,7 @@ class FirebaseService {
       ChatDBDocumentField.LAST_MESSAGE_TIME: timeOfSending,
       ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
       ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.TEXT,
-      ChatDBDocumentField.LAST_MESSAGE_SEEN: false,
+      ChatDBDocumentField.LAST_MESSAGE_SEEN: {FirebaseService.currentUserEmail: true},
       ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP: timeStamp,
     });
   }
@@ -353,7 +354,7 @@ class FirebaseService {
       ChatDBDocumentField.LAST_MESSAGE_TIME: timeOfSending,
       ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
       ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.IMAGE,
-      ChatDBDocumentField.LAST_MESSAGE_SEEN: false,
+      ChatDBDocumentField.LAST_MESSAGE_SEEN: {FirebaseService.currentUserEmail: true},
       ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP: timeStamp,
     });
   }
@@ -456,7 +457,7 @@ class FirebaseService {
       ChatDBDocumentField.MEMBERS: members,
       ChatDBDocumentField.TYPE: ChatType.GROUP,
       ChatDBDocumentField.LAST_MESSAGE_TYPE: null,
-      ChatDBDocumentField.LAST_MESSAGE_SEEN: false, //To Show Highligted Card
+      ChatDBDocumentField.LAST_MESSAGE_SEEN: {},
       ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP:
           timeStamp, /* This field is required to Sort the Chat based on time*/
     });
@@ -474,5 +475,11 @@ class FirebaseService {
         ChatDocumentField.SHOW_AFTER: timeStamp,
       });
     }
+  }
+
+  static Future<void> markLastMessageAsSeen({required final String roomId}) async{
+    final Map<dynamic, dynamic> lastMessageSeen = await _fStore.collection(Collections.CHAT_DB).doc(roomId).get().then((value) => value[ChatDBDocumentField.LAST_MESSAGE_SEEN]);
+    lastMessageSeen[FirebaseService.currentUserEmail] = true;
+    await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({ChatDBDocumentField.LAST_MESSAGE_SEEN: lastMessageSeen});
   }
 }

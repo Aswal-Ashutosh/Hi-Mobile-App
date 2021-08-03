@@ -38,25 +38,29 @@ class _ChatTabState extends State<ChatTab> {
                     snapshots.data!.docs.isNotEmpty) {
                   final chats = snapshots.data?.docs;
                   chats?.forEach((element) {
+                    final Map<dynamic, dynamic> lastMessageSeen =
+                        element[ChatDBDocumentField.LAST_MESSAGE_SEEN];
                     if (element[ChatDBDocumentField.TYPE] ==
                         ChatType.ONE_TO_ONE) {
                       late String friendEmail;
-                      for (final email
-                          in element[ChatDBDocumentField.MEMBERS]) {
-                        if (email != FirebaseService.currentUserEmail) {
+                      for (final email in element[ChatDBDocumentField.MEMBERS])
+                        if (email != FirebaseService.currentUserEmail)
                           friendEmail = email;
-                        }
-                      }
-                      chatCards.add(ChatCardOneToOne(
-                        roomId: element[ChatDBDocumentField.ROOM_ID],
-                        friendEmail: friendEmail,
-                        lastMessageSeen: element[ChatDBDocumentField.LAST_MESSAGE_SEEN],
-                      ));
+
+                      chatCards.add(
+                        ChatCardOneToOne(
+                          roomId: element[ChatDBDocumentField.ROOM_ID],
+                          friendEmail: friendEmail,
+                          lastMessageSeen: lastMessageSeen
+                              .containsKey(FirebaseService.currentUserEmail),
+                        ),
+                      );
                     } else {
                       chatCards.add(
                         GroupChatCard(
                           roomId: element[ChatDBDocumentField.ROOM_ID],
-                          lastMessageSeen: element[ChatDBDocumentField.LAST_MESSAGE_SEEN],
+                          lastMessageSeen: lastMessageSeen
+                              .containsKey(FirebaseService.currentUserEmail),
                         ),
                       );
                     }

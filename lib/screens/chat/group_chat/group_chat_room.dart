@@ -44,6 +44,8 @@ class GroupChatRoom extends StatelessWidget {
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseService.getStreamToChatRoom(roomId: _roomId),
               builder: (context, snapshots) {
+                 //Setting last message as set whenever stream builder rebuilds itself
+                FirebaseService.markLastMessageAsSeen(roomId: _roomId);
                 List<Widget> messageList = [];
                 messageList.add(SizedBox(height: kDefaultPadding * 4)); //To Provide Gap After last message so that it can go above the text field level
                 if (snapshots.hasData && snapshots.data != null) {
