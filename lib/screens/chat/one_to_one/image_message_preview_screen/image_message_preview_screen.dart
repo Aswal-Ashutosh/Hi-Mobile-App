@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:hi/screens/chat/image_message_preview_screen/image_message_text_field.dart';
+import 'package:hi/screens/chat/one_to_one/image_message_preview_screen/image_message_text_field.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ImageMessagePreviewScreen extends StatelessWidget {

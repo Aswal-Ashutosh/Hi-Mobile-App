@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
-import 'package:hi/screens/chat/image_message_preview_screen/image_message_preview_screen.dart';
+import 'package:hi/screens/chat/one_to_one/image_message_preview_screen/image_message_preview_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 import 'package:hi/services/image_picker_service.dart';
 
