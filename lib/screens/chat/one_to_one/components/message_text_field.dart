@@ -6,19 +6,25 @@ import 'package:hi/screens/chat/image_message_preview_screen/image_message_previ
 import 'package:hi/services/firebase_service.dart';
 import 'package:hi/services/image_picker_service.dart';
 
-class MessageTextField extends StatelessWidget {
+class MessageTextField extends StatefulWidget {
   final String _roomId;
   final String _friendEmail;
+
+  MessageTextField({required final roomId, required final friendEmail})
+      : _friendEmail = friendEmail,
+        _roomId = roomId;
+
+  @override
+  _MessageTextFieldState createState() => _MessageTextFieldState();
+}
+
+class _MessageTextFieldState extends State<MessageTextField> {
   final TextEditingController _textEditingController = TextEditingController();
 
   final _borderRadius = const OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
     borderSide: BorderSide(color: Colors.white),
   );
-
-  MessageTextField({required final roomId, required final friendEmail})
-      : _friendEmail = friendEmail,
-        _roomId = roomId;
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +63,8 @@ class MessageTextField extends StatelessWidget {
                     onPressed: () {
                       Scaffold.of(context).showBottomSheet(
                         (context) => SharePopUpMenu(
-                          roomId: _roomId,
-                          friendEmail: _friendEmail,
+                          roomId: widget._roomId,
+                          friendEmail: widget._friendEmail,
                         ),
                       );
                     },
@@ -89,8 +95,8 @@ class MessageTextField extends StatelessWidget {
               if (message.isNotEmpty) {
                 _textEditingController.clear();
                 await FirebaseService.sendTextMessageToFriend(
-                  friendEmail: _friendEmail,
-                  roomId: _roomId,
+                  friendEmail: widget._friendEmail,
+                  roomId: widget._roomId,
                   message: message,
                 );
               }

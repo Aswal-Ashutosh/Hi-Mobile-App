@@ -4,7 +4,7 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/services/firebase_service.dart';
 
-class ImageMessageTextField extends StatelessWidget {
+class ImageMessageTextField extends StatefulWidget {
   final List<File> _images;
   final String _friendEmail;
   final String _roomId;
@@ -15,11 +15,19 @@ class ImageMessageTextField extends StatelessWidget {
       : _roomId = roomId,
         _friendEmail = friendEmail,
         _images = images;
+
+  @override
+  _ImageMessageTextFieldState createState() => _ImageMessageTextFieldState();
+}
+
+class _ImageMessageTextFieldState extends State<ImageMessageTextField> {
   final TextEditingController _textEditingController = TextEditingController();
+
   final _borderRadius = const OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
     borderSide: BorderSide(color: Colors.white),
   );
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -53,7 +61,7 @@ class ImageMessageTextField extends StatelessWidget {
             icon: Icons.send,
             onPressed: () async {
               final String? message = _textEditingController.text.trim().isNotEmpty ? _textEditingController.text.trim() : null;
-              await FirebaseService.sendImagesToFriend(friendEmail: _friendEmail, roomId: _roomId, images: _images, message: message);
+              await FirebaseService.sendImagesToFriend(friendEmail: widget._friendEmail, roomId: widget._roomId, images: widget._images, message: message);
               //TODO: Add loading
               Navigator.pop(context);
             },

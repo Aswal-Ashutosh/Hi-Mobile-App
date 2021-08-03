@@ -6,17 +6,23 @@ import 'package:hi/screens/chat/group_chat/image_message_preview_screen/group_im
 import 'package:hi/services/firebase_service.dart';
 import 'package:hi/services/image_picker_service.dart';
 
-class GroupMessageTextField extends StatelessWidget {
+class GroupMessageTextField extends StatefulWidget {
   final String _roomId;
+
+  GroupMessageTextField({required final roomId}):
+        _roomId = roomId;
+
+  @override
+  _GroupMessageTextFieldState createState() => _GroupMessageTextFieldState();
+}
+
+class _GroupMessageTextFieldState extends State<GroupMessageTextField> {
   final TextEditingController _textEditingController = TextEditingController();
 
   final _borderRadius = const OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
     borderSide: BorderSide(color: Colors.white),
   );
-
-  GroupMessageTextField({required final roomId}):
-        _roomId = roomId;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,7 @@ class GroupMessageTextField extends StatelessWidget {
                     onPressed: () {
                       Scaffold.of(context).showBottomSheet(
                         (context) => SharePopUpMenu(
-                          roomId: _roomId,
+                          roomId: widget._roomId,
                         ),
                       );
                     },
@@ -86,7 +92,7 @@ class GroupMessageTextField extends StatelessWidget {
               if (message.isNotEmpty) {
                 _textEditingController.clear();
                 await FirebaseService.sendTextMessageToRoom(
-                  roomId: _roomId,
+                  roomId: widget._roomId,
                   message: message,
                 );
               }

@@ -4,7 +4,7 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/services/firebase_service.dart';
 
-class GroupImageMessageTextField extends StatelessWidget {
+class GroupImageMessageTextField extends StatefulWidget {
   final List<File> _images;
   final String _roomId;
   GroupImageMessageTextField(
@@ -12,11 +12,19 @@ class GroupImageMessageTextField extends StatelessWidget {
       required final List<File> images})
       : _roomId = roomId,
         _images = images;
+
+  @override
+  _GroupImageMessageTextFieldState createState() => _GroupImageMessageTextFieldState();
+}
+
+class _GroupImageMessageTextFieldState extends State<GroupImageMessageTextField> {
   final TextEditingController _textEditingController = TextEditingController();
+
   final _borderRadius = const OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
     borderSide: BorderSide(color: Colors.white),
   );
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,7 +58,7 @@ class GroupImageMessageTextField extends StatelessWidget {
             icon: Icons.send,
             onPressed: () async {
               final String? message = _textEditingController.text.trim().isNotEmpty ? _textEditingController.text.trim() : null;
-              await FirebaseService.sendImagesToRoom(roomId: _roomId, images: _images, message: message);
+              await FirebaseService.sendImagesToRoom(roomId: widget._roomId, images: widget._images, message: message);
               //TODO: Add loading
               Navigator.pop(context);
             },
