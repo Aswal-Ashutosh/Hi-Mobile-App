@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
@@ -54,18 +53,26 @@ class GroupTextMessage extends StatelessWidget {
                 children: [
                   if (!isMe)
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircularProfilePicture(email: _sender, radius: displaySize.width * 0.03),
+                        CircularProfilePicture(
+                          email: _sender,
+                          radius: displaySize.width * 0.03,
+                        ),
                         SizedBox(width: kDefaultPadding / 4.0),
                         TextStreamBuilder(
-                            stream: FirebaseService.getStreamToUserData(email: _sender),
-                            key: UserDocumentField.DISPLAY_NAME,
-                            style: TextStyle(letterSpacing: 1.5, fontWeight: FontWeight.bold, color: Colors.white),
-                            )
+                          stream: FirebaseService.getStreamToUserData(
+                              email: _sender),
+                          key: UserDocumentField.DISPLAY_NAME,
+                          style: TextStyle(
+                            letterSpacing: 1.5,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        )
                       ],
                     ),
-                  if(!isMe)
-                    SizedBox(height: kDefaultPadding / 4.0),
+                  if (!isMe) SizedBox(height: kDefaultPadding / 4.0),
                   Text(_content,
                       style:
                           TextStyle(color: Colors.white, letterSpacing: 1.5)),
