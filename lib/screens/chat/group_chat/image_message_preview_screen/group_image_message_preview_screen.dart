@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:hi/screens/chat/group_chat/image_message_preview_screen.dart/group_image_message_text_field.dart';
+import 'package:hi/screens/chat/group_chat/image_message_preview_screen/group_image_message_text_field.dart';
 import 'package:photo_view/photo_view.dart';
 
 class GroupImageMessagePreviewScreen extends StatelessWidget {
