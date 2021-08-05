@@ -43,7 +43,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       child: Scaffold(
         body: SafeArea(
           child: Container(
-            child: Center(child: Text('Loading', style: TextStyle(letterSpacing: 1.5, fontWeight: FontWeight.bold, color: Colors.grey))),
+            child: Center(child: Text('Loading', style: TextStyle(letterSpacing: 1.5))),
           ),
         ),
       ),
