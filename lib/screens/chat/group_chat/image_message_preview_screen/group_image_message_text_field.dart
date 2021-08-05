@@ -7,17 +7,22 @@ import 'package:hi/services/firebase_service.dart';
 class GroupImageMessageTextField extends StatefulWidget {
   final List<File> _images;
   final String _roomId;
+  final Function _progressIndicatorCallback;
   GroupImageMessageTextField(
       {required final String roomId,
-      required final List<File> images})
+      required final List<File> images,
+      required final Function progressIndicatorCallback})
       : _roomId = roomId,
-        _images = images;
+        _images = images,
+        _progressIndicatorCallback = progressIndicatorCallback;
 
   @override
-  _GroupImageMessageTextFieldState createState() => _GroupImageMessageTextFieldState();
+  _GroupImageMessageTextFieldState createState() =>
+      _GroupImageMessageTextFieldState();
 }
 
-class _GroupImageMessageTextFieldState extends State<GroupImageMessageTextField> {
+class _GroupImageMessageTextFieldState
+    extends State<GroupImageMessageTextField> {
   final TextEditingController _textEditingController = TextEditingController();
 
   final _borderRadius = const OutlineInputBorder(
@@ -57,10 +62,19 @@ class _GroupImageMessageTextFieldState extends State<GroupImageMessageTextField>
           RoundIconButton(
             icon: Icons.send,
             onPressed: () async {
-              final String? message = _textEditingController.text.trim().isNotEmpty ? _textEditingController.text.trim() : null;
-              await FirebaseService.sendImagesToRoom(roomId: widget._roomId, images: widget._images, message: message);
-              //TODO: Add loading
-              Navigator.pop(context);
+              widget._progressIndicatorCallback(true);
+              final String? message =
+                  _textEditingController.text.trim().isNotEmpty
+                      ? _textEditingController.text.trim()
+                      : null;
+              await FirebaseService.sendImagesToRoom(
+                      roomId: widget._roomId,
+                      images: widget._images,
+                      message: message)
+                  .then((value) {
+                widget._progressIndicatorCallback(false);
+                Navigator.pop(context);
+              });
             },
             radius: 50.0,
           ),

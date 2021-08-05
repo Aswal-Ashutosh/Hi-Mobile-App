@@ -8,13 +8,16 @@ class ImageMessageTextField extends StatefulWidget {
   final List<File> _images;
   final String _friendEmail;
   final String _roomId;
+  final Function _progressIndicatorCallback;
   ImageMessageTextField(
       {required final String roomId,
       required final String friendEmail,
-      required final List<File> images})
+      required final List<File> images,
+      required final Function progressIndicatorCallback})
       : _roomId = roomId,
         _friendEmail = friendEmail,
-        _images = images;
+        _images = images,
+        _progressIndicatorCallback = progressIndicatorCallback;
 
   @override
   _ImageMessageTextFieldState createState() => _ImageMessageTextFieldState();
@@ -60,10 +63,12 @@ class _ImageMessageTextFieldState extends State<ImageMessageTextField> {
           RoundIconButton(
             icon: Icons.send,
             onPressed: () async {
+              widget._progressIndicatorCallback(true);
               final String? message = _textEditingController.text.trim().isNotEmpty ? _textEditingController.text.trim() : null;
-              await FirebaseService.sendImagesToFriend(friendEmail: widget._friendEmail, roomId: widget._roomId, images: widget._images, message: message);
-              //TODO: Add loading
-              Navigator.pop(context);
+              await FirebaseService.sendImagesToFriend(friendEmail: widget._friendEmail, roomId: widget._roomId, images: widget._images, message: message).then((value){
+                widget._progressIndicatorCallback(false);
+                Navigator.pop(context);
+              });
             },
             radius: 50.0,
           ),
