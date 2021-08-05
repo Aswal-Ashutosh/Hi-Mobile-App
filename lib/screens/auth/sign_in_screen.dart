@@ -173,7 +173,8 @@ class _SignInFormState extends State<SignInForm> {
                     widget.loadingIndicatorCallback(true);
                     if (FirebaseAuth.instance.currentUser!.emailVerified) {
                       if (await FirebaseService.userHasSetupProfile)
-                        Navigator.popAndPushNamed(context, HomeScreen.id);
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, HomeScreen.id, (route) => false);
                       else
                         Navigator.popAndPushNamed(
                             context, ProfileSetupScreen.id);
@@ -203,7 +204,7 @@ class _SignInFormState extends State<SignInForm> {
                     }
                   });
                 }
-               widget.loadingIndicatorCallback(false);
+                widget.loadingIndicatorCallback(false);
               }),
         ],
       ),
