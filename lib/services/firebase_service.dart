@@ -107,7 +107,7 @@ class FirebaseService {
     });
   }
 
-  static Future<void> pickAndUploadProfileImage() async {
+  static Future<bool> pickAndUploadProfileImage() async {
     File? image = await ImagePickerService.pickImageFromGallery();
     if (image != null) {
       Reference reference = _fStorage
@@ -122,7 +122,9 @@ class FirebaseService {
           .collection(Collections.USERS)
           .doc(email)
           .update({UserDocumentField.PROFILE_IMAGE: url});
+      return true;
     }
+    return false;
   }
 
   static getStreamToUserData({required final String email}) =>

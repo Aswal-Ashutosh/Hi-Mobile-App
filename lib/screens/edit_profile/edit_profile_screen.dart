@@ -3,6 +3,7 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
+import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -30,8 +31,13 @@ class EditProfileScreen extends StatelessWidget {
                   Positioned(
                     child: RoundIconButton(
                       icon: Icons.edit,
-                      onPressed: () {
-                        FirebaseService.pickAndUploadProfileImage();
+                      onPressed: () async {
+                        if (await FirebaseService.pickAndUploadProfileImage())
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Profile Picture Updated.'),
+                            ),
+                          );
                       },
                       color: Colors.blueGrey,
                     ),
@@ -48,7 +54,8 @@ class EditProfileScreen extends StatelessWidget {
                   Icon(Icons.person, color: Colors.grey[700]),
                   SizedBox(width: kDefaultPadding),
                   TextStreamBuilder(
-                     stream: FirebaseService.getStreamToUserData(email: FirebaseService.currentUserEmail),
+                    stream: FirebaseService.getStreamToUserData(
+                        email: FirebaseService.currentUserEmail),
                     key: UserDocumentField.DISPLAY_NAME,
                     style: TextStyle(
                       color: Colors.grey,
@@ -58,10 +65,14 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                   Spacer(),
                   TextButton(
-                    onPressed: () {
-                      showModalBottomSheet(
+                    onPressed: () async {
+                      final result = await showModalBottomSheet(
                           context: context,
                           builder: (context) => NameEditingSheet());
+                      if (result != null && result == true) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Name Updated.')));
+                      }
                     },
                     child: Text(
                       'Edit',
@@ -80,7 +91,8 @@ class EditProfileScreen extends StatelessWidget {
                   Flexible(
                     flex: 5,
                     child: TextStreamBuilder(
-                      stream: FirebaseService.getStreamToUserData(email: FirebaseService.currentUserEmail),
+                      stream: FirebaseService.getStreamToUserData(
+                          email: FirebaseService.currentUserEmail),
                       key: UserDocumentField.ABOUT,
                       style: TextStyle(
                         color: Colors.grey,
@@ -91,10 +103,14 @@ class EditProfileScreen extends StatelessWidget {
                   ),
                   Spacer(),
                   TextButton(
-                    onPressed: () {
-                      showModalBottomSheet(
+                    onPressed: () async {
+                      final result = await showModalBottomSheet(
                           context: context,
                           builder: (context) => AboutEditingSheet());
+                      if (result != null && result == true) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('About Updated.')));
+                      }
                     },
                     child: Text(
                       'Edit',
@@ -161,57 +177,75 @@ class _AboutEditingSheetState extends State<AboutEditingSheet> {
         await FirebaseService.currentUserAboutFieldData;
   }
 
+  bool isLoading = false;
+
+  void setLoading(bool condition) {
+    setState(() {
+      isLoading = condition;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xFF737373),
+    return ProgressHUD(
+      showIndicator: isLoading,
       child: Container(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding),
-              child: Form(
-                key: _formKey,
-                child: TextFormField(
-                  textInputAction: TextInputAction.done,
-                  controller: _textEditingController,
-                  validator: _validator,
-                  textAlign: TextAlign.left,
-                  minLines: 1,
-                  maxLines: 3,
-                  maxLength: 120,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: const Color(0x112EA043),
-                    labelText: 'About',
-                    enabledBorder: _borderRadius,
-                    focusedBorder: _borderRadius,
-                    errorBorder: _borderRadius,
-                    focusedErrorBorder: _borderRadius,
-                    prefixIcon: Icon(Icons.menu_book),
+        color: Color(0xFF737373),
+        child: Container(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultPadding / 2.0,
+                    vertical: kDefaultPadding),
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    textInputAction: TextInputAction.done,
+                    controller: _textEditingController,
+                    validator: _validator,
+                    textAlign: TextAlign.left,
+                    minLines: 1,
+                    maxLines: 3,
+                    maxLength: 120,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: const Color(0x112EA043),
+                      labelText: 'About',
+                      enabledBorder: _borderRadius,
+                      focusedBorder: _borderRadius,
+                      errorBorder: _borderRadius,
+                      focusedErrorBorder: _borderRadius,
+                      prefixIcon: Icon(Icons.menu_book),
+                    ),
                   ),
                 ),
               ),
+              SizedBox(height: kDefaultPadding / 4.0),
+              PrimaryButton(
+                displayText: 'Update',
+                onPressed: () async {
+                  setLoading(true);
+                  if (_formKey.currentState!.validate()) {
+                    await FirebaseService.updateCurrentUserAboutField(
+                            about: _textEditingController.text.trim())
+                        .then((value) {
+                      setLoading(false);
+                      Navigator.pop(context, true);
+                    });
+                  }
+                  setLoading(false);
+                },
+              )
+            ],
+          ),
+          height: MediaQuery.of(context).size.height / 2.0,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(kDefualtBorderRadius),
+              topRight: Radius.circular(kDefualtBorderRadius),
             ),
-            SizedBox(height: kDefaultPadding / 4.0),
-            PrimaryButton(
-              displayText: 'Update',
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  await FirebaseService.updateCurrentUserAboutField(
-                      about: _textEditingController.text.trim());
-                }
-              },
-            )
-          ],
-        ),
-        height: MediaQuery.of(context).size.height / 2.0,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(kDefualtBorderRadius),
-            topRight: Radius.circular(kDefualtBorderRadius),
           ),
         ),
       ),
@@ -247,54 +281,71 @@ class _NameEditingSheetState extends State<NameEditingSheet> {
     _textEditingController.text = await FirebaseService.currentUserName;
   }
 
+  bool isLoading = false;
+
+  void setLoading(bool condition) {
+    setState(() {
+      isLoading = condition;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xFF737373),
+    return ProgressHUD(
+      showIndicator: isLoading,
       child: Container(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding),
-              child: Form(
-                key: _formKey,
-                child: TextFormField(
-                  controller: _textEditingController,
-                  validator: _validator,
-                  textAlign: TextAlign.center,
-                  maxLength: 20,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: const Color(0x112EA043),
-                    labelText: 'Your Name',
-                    enabledBorder: _borderRadius,
-                    focusedBorder: _borderRadius,
-                    errorBorder: _borderRadius,
-                    focusedErrorBorder: _borderRadius,
-                    prefixIcon: Icon(Icons.mail),
+        color: Color(0xFF737373),
+        child: Container(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding),
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _textEditingController,
+                    validator: _validator,
+                    textAlign: TextAlign.center,
+                    maxLength: 20,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: const Color(0x112EA043),
+                      labelText: 'Your Name',
+                      enabledBorder: _borderRadius,
+                      focusedBorder: _borderRadius,
+                      errorBorder: _borderRadius,
+                      focusedErrorBorder: _borderRadius,
+                      prefixIcon: Icon(Icons.mail),
+                    ),
                   ),
                 ),
               ),
+              SizedBox(height: kDefaultPadding / 4.0),
+              PrimaryButton(
+                displayText: 'Update',
+                onPressed: () async {
+                  setLoading(true);
+                  if (_formKey.currentState!.validate()) {
+                    await FirebaseService.updateCurrentUserNameField(
+                            name: _textEditingController.text.trim())
+                        .then((value) {
+                      setLoading(false);
+                      Navigator.pop(context, true);
+                    });
+                  }
+                  setLoading(false);
+                },
+              )
+            ],
+          ),
+          height: MediaQuery.of(context).size.height / 2.0,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(kDefualtBorderRadius),
+              topRight: Radius.circular(kDefualtBorderRadius),
             ),
-            SizedBox(height: kDefaultPadding / 4.0),
-            PrimaryButton(
-              displayText: 'Update',
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  await FirebaseService.updateCurrentUserNameField(
-                      name: _textEditingController.text.trim());
-                }
-              },
-            )
-          ],
-        ),
-        height: MediaQuery.of(context).size.height / 2.0,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(kDefualtBorderRadius),
-            topRight: Radius.circular(kDefualtBorderRadius),
           ),
         ),
       ),
