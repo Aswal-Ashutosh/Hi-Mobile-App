@@ -2,55 +2,73 @@ import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/error.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
+import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/screens/auth/email_verification_screen.dart';
 import 'package:hi/screens/auth/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   static const id = 'sign_up_screen';
+
+  @override
+  _SignUpScreenState createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  bool isLoading = false;
+
+  void setLoading(bool condition){
+    setState(() {
+      isLoading = condition;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(child: Text('Sign Up', style: TextStyle(fontSize: 40))),
-              SizedBox(height: kDefaultPadding * 2),
-              SignUpForm(),
-              SizedBox(height: kDefaultPadding),
-              Row(
-                children: [
-                  Expanded(child: Divider(height: 1.5, color: Colors.black)),
-                  Text('OR', style: TextStyle(fontWeight: FontWeight.bold)),
-                  Expanded(child: Divider(height: 1.5, color: Colors.black)),
-                ],
-              ),
-              SizedBox(height: kDefaultPadding),
-              CircleAvatar(
-                child: Image.asset('assets/google.png'),
-                backgroundColor: Colors.grey,
-              ),
-              SizedBox(height: kDefaultPadding),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Already have an account?'),
-                  SizedBox(width: kDefaultPadding / 5.0),
-                  GestureDetector(
-                    onTap: () =>
-                        Navigator.popAndPushNamed(context, SignInScreen.id),
-                    child: Text(
-                      'Sign In',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  )
-                ],
-              )
-            ],
+    return ProgressHUD(
+      showIndicator: isLoading,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(child: Text('Sign Up', style: TextStyle(fontSize: 40))),
+                SizedBox(height: kDefaultPadding * 2),
+                SignUpForm(loadingIndicatorCallback: setLoading),
+                SizedBox(height: kDefaultPadding),
+                Row(
+                  children: [
+                    Expanded(child: Divider(height: 1.5, color: Colors.black)),
+                    Text('OR', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Expanded(child: Divider(height: 1.5, color: Colors.black)),
+                  ],
+                ),
+                SizedBox(height: kDefaultPadding),
+                CircleAvatar(
+                  child: Image.asset('assets/google.png'),
+                  backgroundColor: Colors.grey,
+                ),
+                SizedBox(height: kDefaultPadding),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Already have an account?'),
+                    SizedBox(width: kDefaultPadding / 5.0),
+                    GestureDetector(
+                      onTap: () =>
+                          Navigator.popAndPushNamed(context, SignInScreen.id),
+                      child: Text(
+                        'Sign In',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -59,6 +77,8 @@ class SignUpScreen extends StatelessWidget {
 }
 
 class SignUpForm extends StatefulWidget {
+  final Function loadingIndicatorCallback;
+  const SignUpForm({required this.loadingIndicatorCallback});
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }
@@ -140,11 +160,13 @@ class _SignUpFormState extends State<SignUpForm> {
             displayText: 'Sign Up',
             color: kSecondaryColor,
             onPressed: () async {
+              widget.loadingIndicatorCallback(true);
               firebaseEmailError = null;
               if (formKey.currentState!.validate()) {
                 await FirebaseAuth.instance
                 .createUserWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
                 .then((value) async{ 
+                  widget.loadingIndicatorCallback(false);
                   Navigator.pushNamed(context, EmailVerificatoinScreen.id);
                  })
                 .catchError((error) {
@@ -155,6 +177,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   }
                 });
               }
+              widget.loadingIndicatorCallback(false);
             },
           ),
         ],
