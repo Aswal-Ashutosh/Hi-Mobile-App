@@ -16,7 +16,7 @@ class AddFriends extends StatelessWidget {
           final result = await showModalBottomSheet(
               context: context, builder: (cotext) => AddByEmail());
           if(result != null && result == true){
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Request Sent')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Request Sent.')));
           }
         },
         child: Icon(Icons.add),
