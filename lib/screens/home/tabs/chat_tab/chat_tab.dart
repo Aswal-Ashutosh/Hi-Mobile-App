@@ -7,12 +7,7 @@ import 'package:hi/screens/home/tabs/chat_tab/components/chat_card_one_to_one.da
 import 'package:hi/screens/home/tabs/chat_tab/components/group_chat_card.dart';
 import 'package:hi/services/firebase_service.dart';
 
-class ChatTab extends StatefulWidget {
-  @override
-  _ChatTabState createState() => _ChatTabState();
-}
-
-class _ChatTabState extends State<ChatTab> {
+class ChatTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

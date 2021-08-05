@@ -32,7 +32,13 @@ class _GroupSetupScreenState extends State<GroupSetupScreen> {
 
   File? profileImage;
 
-  bool loading = false;
+  bool isLoading = false;
+
+  void setLoading(bool condition) {
+    setState(() {
+      isLoading = condition;
+    });
+  }
 
   @override
   void dispose() {
@@ -44,7 +50,7 @@ class _GroupSetupScreenState extends State<GroupSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return ProgressHUD(
-      showIndicator: loading,
+      showIndicator: isLoading,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar:
@@ -138,22 +144,19 @@ class _GroupSetupScreenState extends State<GroupSetupScreen> {
                       PrimaryButton(
                         displayText: 'Save',
                         onPressed: () async {
+                          setLoading(true);
                           if (_formKey.currentState!.validate()) {
-                            setState(() {
-                              loading = true;
-                            });
                             await FirebaseService.createNewGroup(
                                     members: widget._selectedUsers,
                                     groupName: _nameTextController.text.trim(),
-                                    aboutGroup: _aboutTextController.text.trim(),
+                                    aboutGroup:
+                                        _aboutTextController.text.trim(),
                                     groupImage: profileImage)
                                 .then(
-                              (value) => Navigator.pop(context, true),
+                              (value) {setLoading(false); Navigator.pop(context, true);},
                             );
-                            setState(() {
-                              loading = false;
-                            });
                           }
+                          setLoading(false);
                         },
                       ),
                     ],
