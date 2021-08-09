@@ -5,6 +5,7 @@ import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/one_to_one/chat_room.dart';
+import 'package:hi/screens/profile_view/user_profile_view_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 import 'package:hi/services/uid_generator.dart';
 
@@ -22,9 +23,18 @@ class FriendCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircularProfilePicture(
-              email: _friendEmail,
-              radius: kDefualtBorderRadius * 1.5,
+            InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      UserProfileScreen(userEmail: _friendEmail),
+                ),
+              ),
+              child: CircularProfilePicture(
+                email: _friendEmail,
+                radius: kDefualtBorderRadius * 1.5,
+              ),
             ),
             SizedBox(width: kDefaultPadding / 2.0),
             Flexible(
@@ -34,7 +44,8 @@ class FriendCard extends StatelessWidget {
                   Row(
                     children: [
                       TextStreamBuilder(
-                        stream: FirebaseService.getStreamToUserData(email: _friendEmail),
+                        stream: FirebaseService.getStreamToUserData(
+                            email: _friendEmail),
                         key: UserDocumentField.DISPLAY_NAME,
                         style: TextStyle(
                           color: Colors.black87,
@@ -47,7 +58,8 @@ class FriendCard extends StatelessWidget {
                     ],
                   ),
                   TextStreamBuilder(
-                    stream: FirebaseService.getStreamToUserData(email: _friendEmail),
+                    stream: FirebaseService.getStreamToUserData(
+                        email: _friendEmail),
                     key: UserDocumentField.ABOUT,
                     textOverflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -63,8 +75,13 @@ class FriendCard extends StatelessWidget {
         ),
       ),
       onTap: () {
-        final roomId = UidGenerator.getRoomIdFor(email1:_friendEmail , email2: FirebaseService.currentUserEmail);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(roomId: roomId, friendEamil: _friendEmail)));
+        final roomId = UidGenerator.getRoomIdFor(
+            email1: _friendEmail, email2: FirebaseService.currentUserEmail);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ChatRoom(roomId: roomId, friendEamil: _friendEmail)));
       },
     );
   }

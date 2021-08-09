@@ -8,6 +8,7 @@ import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/one_to_one/components/image_message.dart';
 import 'package:hi/screens/chat/one_to_one/components/message_text_field.dart';
 import 'package:hi/screens/chat/one_to_one/components/text_message.dart';
+import 'package:hi/screens/profile_view/user_profile_view_screen.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
 
@@ -22,28 +23,37 @@ class ChatRoom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(kDefaultPadding / 4.0),
-              child: CircularProfilePicture(
-                email: _friendEmail,
-                radius: kDefualtBorderRadius,
-              ),
+        title: InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserProfileScreen(userEmail: _friendEmail),
             ),
-            SizedBox(width: kDefaultPadding / 4.0),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                TextStreamBuilder(
-                  stream:
-                      FirebaseService.getStreamToUserData(email: _friendEmail),
-                  key: UserDocumentField.DISPLAY_NAME,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(kDefaultPadding / 4.0),
+                child: CircularProfilePicture(
+                  email: _friendEmail,
+                  radius: kDefualtBorderRadius,
                 ),
-                OnlineIndicatorText(email: _friendEmail)
-              ],
-            ),
-          ],
+              ),
+              SizedBox(width: kDefaultPadding / 4.0),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextStreamBuilder(
+                    stream: FirebaseService.getStreamToUserData(
+                        email: _friendEmail),
+                    key: UserDocumentField.DISPLAY_NAME,
+                  ),
+                  OnlineIndicatorText(email: _friendEmail)
+                ],
+              ),
+            ],
+          ),
         ),
         backgroundColor: kPrimaryColor,
       ),
@@ -56,7 +66,9 @@ class ChatRoom extends StatelessWidget {
                 //Setting last message as set whenever stream builder rebuilds itself
                 FirebaseService.markLastMessageAsSeen(roomId: _roomId);
                 List<Widget> messageList = [];
-                messageList.add(SizedBox(height: kDefaultPadding * 4)); //To Provide Gap After last message so that it can go above the text field level
+                messageList.add(SizedBox(
+                    height: kDefaultPadding *
+                        4)); //To Provide Gap After last message so that it can go above the text field level
                 if (snapshots.hasData && snapshots.data != null) {
                   final messages = snapshots.data!.docs;
                   for (final message in messages) {
@@ -65,7 +77,11 @@ class ChatRoom extends StatelessWidget {
                     final time = message[MessageDocumentField.TIME];
                     final type = message[MessageDocumentField.TYPE];
 
-                    String? content = message[MessageDocumentField.CONTENT] != null ? EncryptionService.decrypt(message[MessageDocumentField.CONTENT]) : null;
+                    String? content =
+                        message[MessageDocumentField.CONTENT] != null
+                            ? EncryptionService.decrypt(
+                                message[MessageDocumentField.CONTENT])
+                            : null;
 
                     if (type == MessageType.TEXT) {
                       messageList.add(

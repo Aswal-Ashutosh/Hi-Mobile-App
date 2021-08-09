@@ -484,4 +484,9 @@ class FirebaseService {
     lastMessageSeen[FirebaseService.currentUserEmail] = true;
     await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({ChatDBDocumentField.LAST_MESSAGE_SEEN: lastMessageSeen});
   }
+
+  //METHOD: TO CHECK WETHER THE CURRENT USER IS FRIEND WITH THE USER WITH THE PROVIDED EMAIL ID
+  static Future<bool> isFriend({required final String email}) async{
+    return await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.FRIENDS).doc(email).get().then((value) => value.exists);
+  }
 }
