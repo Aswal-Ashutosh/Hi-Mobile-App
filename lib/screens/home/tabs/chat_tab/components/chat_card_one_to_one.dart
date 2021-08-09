@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
@@ -62,7 +63,17 @@ class ChatCardOneToOne extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: kDefaultPadding / 4.0),
-                      OnlineIndicatorDot(email: _friendEmail),
+                      FutureBuilder<bool>(future: FirebaseService.isFriend(email: _friendEmail), builder: (context, snapshot){
+                        if(snapshot.connectionState == ConnectionState.done){
+                          if(snapshot.hasData  && snapshot.data == null){
+                            return Container();
+                          }else{
+                            return snapshot.data as bool? OnlineIndicatorDot(email: _friendEmail) : Container();
+                          }
+                        }else{
+                          return Container();
+                        }
+                      },),
                       if (_lastMessageSeen == false) Spacer(),
                       if (_lastMessageSeen == false)
                         Icon(Icons.message_rounded, color: Colors.green),
