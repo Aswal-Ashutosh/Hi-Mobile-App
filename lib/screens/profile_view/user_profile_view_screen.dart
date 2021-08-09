@@ -5,6 +5,7 @@ import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
+import 'package:hi/custom_widget/stream_builders/conditional_stream_builder.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/services/firebase_service.dart';
 
@@ -28,19 +29,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     });
   }
 
-  bool? isFriend;
-
   @override
   void initState() {
-    checkIfFriend();
     super.initState();
-  }
-
-  void checkIfFriend() async {
-    bool result = await FirebaseService.isFriend(email: widget._userEmail);
-    setState(() {
-      isFriend = result;
-    });
   }
 
   @override
@@ -58,14 +49,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           backgroundColor: kPrimaryColor,
         ),
         body: SafeArea(
-          child: isFriend != null
-              ? Body(
-                  userEmail: widget._userEmail,
-                  isFriend: isFriend as bool,
-                  progressIndicatorCallback: setLoading,
-                  scaffoldKey: _scaffoldKey,
-                  isFriendRefresh: checkIfFriend)
-              : Center(child: CircularProgressIndicator()),
+          child: Body(
+            userEmail: widget._userEmail,
+            progressIndicatorCallback: setLoading,
+            scaffoldKey: _scaffoldKey,
+          ),
         ),
       ),
     );
@@ -76,21 +64,15 @@ class Body extends StatelessWidget {
   const Body({
     Key? key,
     required final String userEmail,
-    required final bool isFriend,
     required final Function progressIndicatorCallback,
-    required final Function isFriendRefresh,
     required final GlobalKey<ScaffoldState> scaffoldKey,
   })  : _userEmail = userEmail,
-        _isFriend = isFriend,
         _progressIndicatorCallback = progressIndicatorCallback,
         _scaffoldKey = scaffoldKey,
-        _isFriendRefresh = isFriendRefresh,
         super(key: key);
 
   final String _userEmail;
-  final bool _isFriend;
   final Function _progressIndicatorCallback;
-  final Function _isFriendRefresh;
   final GlobalKey<ScaffoldState> _scaffoldKey;
 
   @override
@@ -162,35 +144,37 @@ class Body extends StatelessWidget {
             ],
           ),
           Spacer(),
-          _isFriend
-              ? PrimaryButton(
-                  displayText: 'Unfriend',
-                  onPressed: () async{
-                    _progressIndicatorCallback(true);
-                    await FirebaseService.unfriend(email: _userEmail);
-                    await _isFriendRefresh();
-                    _progressIndicatorCallback(false);
-                  },
-                  color: Colors.redAccent)
-              : PrimaryButton(
-                  displayText: 'Add Friend',
-                  onPressed: () async {
-                    _progressIndicatorCallback(true);
-                    String result = await FirebaseService.sendFriendRequest(
-                            recipientEmail: _userEmail)
-                        .then((value) => 'Request Sent.')
-                        .catchError((error) => error);
-                    ScaffoldMessenger.of(
-                            _scaffoldKey.currentContext as BuildContext)
-                        .showSnackBar(
-                      SnackBar(
-                        content: Text(result),
-                      ),
-                    );
-                    _progressIndicatorCallback(false);
-                  },
-                  color: kSecondaryColor,
-                )
+          ConditionalStreamBuilder(
+            stream: FirebaseService.getStreamToFriendDoc(email: _userEmail),
+            childIfExist: PrimaryButton(
+              displayText: 'Unfriend',
+              onPressed: () async {
+                _progressIndicatorCallback(true);
+                await FirebaseService.unfriend(email: _userEmail);
+                _progressIndicatorCallback(false);
+              },
+              color: Colors.redAccent,
+            ),
+            childIfDoNotExist: PrimaryButton(
+              displayText: 'Add Friend',
+              onPressed: () async {
+                _progressIndicatorCallback(true);
+                String result = await FirebaseService.sendFriendRequest(
+                        recipientEmail: _userEmail)
+                    .then((value) => 'Request Sent.')
+                    .catchError((error) => error);
+                ScaffoldMessenger.of(
+                        _scaffoldKey.currentContext as BuildContext)
+                    .showSnackBar(
+                  SnackBar(
+                    content: Text(result),
+                  ),
+                );
+                _progressIndicatorCallback(false);
+              },
+              color: kSecondaryColor,
+            ),
+          )
         ],
       ),
     );

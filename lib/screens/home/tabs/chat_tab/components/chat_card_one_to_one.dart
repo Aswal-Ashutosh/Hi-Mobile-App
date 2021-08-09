@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
+import 'package:hi/custom_widget/stream_builders/conditional_stream_builder.dart';
 import 'package:hi/custom_widget/stream_builders/online_indicator_dot.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/one_to_one/chat_room.dart';
@@ -63,17 +64,11 @@ class ChatCardOneToOne extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: kDefaultPadding / 4.0),
-                      FutureBuilder<bool>(future: FirebaseService.isFriend(email: _friendEmail), builder: (context, snapshot){
-                        if(snapshot.connectionState == ConnectionState.done){
-                          if(snapshot.hasData  && snapshot.data == null){
-                            return Container();
-                          }else{
-                            return snapshot.data as bool? OnlineIndicatorDot(email: _friendEmail) : Container();
-                          }
-                        }else{
-                          return Container();
-                        }
-                      },),
+                      ConditionalStreamBuilder(
+                        stream: FirebaseService.getStreamToFriendDoc(email: _friendEmail),
+                        childIfExist: OnlineIndicatorDot(email: _friendEmail),
+                        childIfDoNotExist: Container(),
+                      ),
                       if (_lastMessageSeen == false) Spacer(),
                       if (_lastMessageSeen == false)
                         Icon(Icons.message_rounded, color: Colors.green),

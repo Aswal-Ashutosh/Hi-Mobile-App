@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
+import 'package:hi/custom_widget/stream_builders/conditional_stream_builder.dart';
 import 'package:hi/custom_widget/stream_builders/online_indicator_text.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/one_to_one/components/image_message.dart';
@@ -21,33 +22,9 @@ class ChatRoom extends StatelessWidget {
         _friendEmail = friendEamil;
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: FirebaseService.isFriend(email: _friendEmail),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError || snapshot.data == null)
-            return Center(
-                child: Scaffold(
-              body: SafeArea(
-                child: Center(
-                  child: Text(
-                    'Something went wrong!',
-                    style: TextStyle(color: Colors.grey, fontSize: 15),
-                  ),
-                ),
-              ),
-            ));
-          else
-            return Body(
-                roomId: _roomId,
-                friendEmail: _friendEmail,
-                isFriend: snapshot.data as bool);
-        } else {
-          return Scaffold(
-              body:
-                  SafeArea(child: Center(child: CircularProgressIndicator())));
-        }
-      },
+    return Body(
+      roomId: _roomId,
+      friendEmail: _friendEmail,
     );
   }
 }
@@ -57,15 +34,12 @@ class Body extends StatelessWidget {
     Key? key,
     required String friendEmail,
     required String roomId,
-    required bool isFriend,
   })  : _friendEmail = friendEmail,
         _roomId = roomId,
-        _isFriend = isFriend,
         super(key: key);
 
   final String _friendEmail;
   final String _roomId;
-  final bool _isFriend;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +70,12 @@ class Body extends StatelessWidget {
                         email: _friendEmail),
                     key: UserDocumentField.DISPLAY_NAME,
                   ),
-                  if (_isFriend) OnlineIndicatorText(email: _friendEmail)
+                  ConditionalStreamBuilder(
+                    stream: FirebaseService.getStreamToFriendDoc(
+                        email: _friendEmail),
+                    childIfExist: OnlineIndicatorText(email: _friendEmail),
+                    childIfDoNotExist: Container(),
+                  ),
                 ],
               ),
             ],
@@ -162,12 +141,15 @@ class Body extends StatelessWidget {
             Positioned(
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                child: _isFriend
-                    ? MessageTextField(
-                        roomId: _roomId,
-                        friendEmail: _friendEmail,
-                      )
-                    : NoLongerFriends(),
+                child: ConditionalStreamBuilder(
+                  stream:
+                      FirebaseService.getStreamToFriendDoc(email: _friendEmail),
+                  childIfExist: MessageTextField(
+                    roomId: _roomId,
+                    friendEmail: _friendEmail,
+                  ),
+                  childIfDoNotExist: NoLongerFriends(),
+                ),
               ),
               bottom: 0,
             )

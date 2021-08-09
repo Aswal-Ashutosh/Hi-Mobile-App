@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/services/encryption_service.dart';
@@ -526,4 +525,7 @@ class FirebaseService {
     //DELETING CURRENT USER FROM PROVIDED USER FRIENDS LIST
     await _fStore.collection(Collections.USERS).doc(email).collection(Collections.FRIENDS).doc(FirebaseService.currentUserEmail).delete();
   }
+
+  //[METHOD]: TO GET FRIEND DOCUMENT FROM FRIENDS COLLECTION OF A CURRENT USER
+  static getStreamToFriendDoc({required final String email}) => _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.FRIENDS).doc(email).snapshots();
 }
