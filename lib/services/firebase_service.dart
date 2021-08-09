@@ -194,12 +194,8 @@ class FirebaseService {
         .collection(Collections.CHAT_DB)
         .doc(roomId)
         .get()
-        .then((value) => value.exists)) {
-          print('SUCCESSsssssss......');
-          return;
-        }
-
-    
+        .then((value) => value.exists)) return;
+        
     //IF BECOMING FRIENDS FOR THE FIRST TIME
 
     //Creating Chat refrence in current user collection
