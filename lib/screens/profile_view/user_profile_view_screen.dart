@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
@@ -62,7 +63,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   userEmail: widget._userEmail,
                   isFriend: isFriend as bool,
                   progressIndicatorCallback: setLoading,
-                  scaffoldKey: _scaffoldKey)
+                  scaffoldKey: _scaffoldKey,
+                  isFriendRefresh: checkIfFriend)
               : Center(child: CircularProgressIndicator()),
         ),
       ),
@@ -76,16 +78,19 @@ class Body extends StatelessWidget {
     required final String userEmail,
     required final bool isFriend,
     required final Function progressIndicatorCallback,
+    required final Function isFriendRefresh,
     required final GlobalKey<ScaffoldState> scaffoldKey,
   })  : _userEmail = userEmail,
         _isFriend = isFriend,
         _progressIndicatorCallback = progressIndicatorCallback,
         _scaffoldKey = scaffoldKey,
+        _isFriendRefresh = isFriendRefresh,
         super(key: key);
 
   final String _userEmail;
   final bool _isFriend;
   final Function _progressIndicatorCallback;
+  final Function _isFriendRefresh;
   final GlobalKey<ScaffoldState> _scaffoldKey;
 
   @override
@@ -160,7 +165,12 @@ class Body extends StatelessWidget {
           _isFriend
               ? PrimaryButton(
                   displayText: 'Unfriend',
-                  onPressed: () {},
+                  onPressed: () async{
+                    _progressIndicatorCallback(true);
+                    await FirebaseService.unfriend(email: _userEmail);
+                    await _isFriendRefresh();
+                    _progressIndicatorCallback(false);
+                  },
                   color: Colors.redAccent)
               : PrimaryButton(
                   displayText: 'Add Friend',
