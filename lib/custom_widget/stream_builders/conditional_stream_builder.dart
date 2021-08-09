@@ -1,12 +1,11 @@
-/*
-CONDTIONAL STREAM BUILDER WILL STREAM TO DOCUMENT AND TWO CHILD AS INPUT AND DEPENDING UPON WEATHER
-DOCUMENET EXIST IT WILL BUILD THE EITHER OF THE ONE CHILD
-*/
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ConditionalStreamBuilder extends StatelessWidget {
+  ///[CoditionalStreamBuilder] will take a stream to firebase document and depending upon wether
+  ///that document exist or not it will build one of the two child provided.
   const ConditionalStreamBuilder(
       {required final Stream<DocumentSnapshot<Object?>> stream,
       required final Widget childIfExist,
