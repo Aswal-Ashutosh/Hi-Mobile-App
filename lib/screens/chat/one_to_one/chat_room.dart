@@ -8,6 +8,7 @@ import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/one_to_one/components/image_message.dart';
 import 'package:hi/screens/chat/one_to_one/components/message_text_field.dart';
 import 'package:hi/screens/chat/one_to_one/components/text_message.dart';
+import 'package:hi/screens/profile_view/user_profile_view_screen.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
 
@@ -42,7 +43,9 @@ class ChatRoom extends StatelessWidget {
                 friendEmail: _friendEmail,
                 isFriend: snapshot.data as bool);
         } else {
-          return Scaffold(body: SafeArea(child: Center(child: CircularProgressIndicator())));
+          return Scaffold(
+              body:
+                  SafeArea(child: Center(child: CircularProgressIndicator())));
         }
       },
     );
@@ -68,29 +71,36 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(kDefaultPadding / 4.0),
-              child: CircularProfilePicture(
-                email: _friendEmail,
-                radius: kDefualtBorderRadius,
-              ),
+        title: InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserProfileScreen(userEmail: _friendEmail),
             ),
-            SizedBox(width: kDefaultPadding / 4.0),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                TextStreamBuilder(
-                  stream:
-                      FirebaseService.getStreamToUserData(email: _friendEmail),
-                  key: UserDocumentField.DISPLAY_NAME,
+          ),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(kDefaultPadding / 4.0),
+                child: CircularProfilePicture(
+                  email: _friendEmail,
+                  radius: kDefualtBorderRadius,
                 ),
-                if(_isFriend)
-                  OnlineIndicatorText(email: _friendEmail)
-              ],
-            ),
-          ],
+              ),
+              SizedBox(width: kDefaultPadding / 4.0),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextStreamBuilder(
+                    stream: FirebaseService.getStreamToUserData(
+                        email: _friendEmail),
+                    key: UserDocumentField.DISPLAY_NAME,
+                  ),
+                  if (_isFriend) OnlineIndicatorText(email: _friendEmail)
+                ],
+              ),
+            ],
+          ),
         ),
         backgroundColor: kPrimaryColor,
       ),
@@ -152,10 +162,12 @@ class Body extends StatelessWidget {
             Positioned(
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                child: _isFriend ? MessageTextField(
-                  roomId: _roomId,
-                  friendEmail: _friendEmail,
-                ) : NoLongerFriends(),
+                child: _isFriend
+                    ? MessageTextField(
+                        roomId: _roomId,
+                        friendEmail: _friendEmail,
+                      )
+                    : NoLongerFriends(),
               ),
               bottom: 0,
             )
@@ -175,7 +187,11 @@ class NoLongerFriends extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(kDefaultPadding),
-      child: Center(child: Text('You are no logner friends.', style: TextStyle(color: Colors.grey),)),
+      child: Center(
+          child: Text(
+        'You are no logner friends.',
+        style: TextStyle(color: Colors.grey),
+      )),
     );
   }
 }
