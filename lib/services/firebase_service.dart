@@ -168,6 +168,7 @@ class FirebaseService {
         .collection(Collections.FRIENDS)
         .doc(email)
         .set({FriendsDocumentField.EMAIL: email});
+
     //Adding current user to friend's friend list
     await _fStore
         .collection(Collections.USERS)
@@ -186,6 +187,20 @@ class FirebaseService {
     //Setting Room Id
     final String roomId = UidGenerator.getRoomIdFor(
         email1: email, email2: FirebaseService.currentUserEmail);
+
+    //IF USERS WERE ALREADY FRIENDS AND UNFIRNED THEM THEN IF THEY AGAIN WANT TO BECOME FRIEND,
+    //THEN WE DON'T NEED TO MAKE CHAT REFERENCE AGAIN AS THEY WILL BE THERE ONLY WITH VISIBLITY TRUE/FALSE.
+    if (await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .get()
+        .then((value) => value.exists)) {
+          print('SUCCESSsssssss......');
+          return;
+        }
+
+    
+    //IF BECOMING FRIENDS FOR THE FIRST TIME
 
     //Creating Chat refrence in current user collection
     await _fStore
@@ -282,7 +297,9 @@ class FirebaseService {
       ChatDBDocumentField.LAST_MESSAGE_TIME: timeOfSending,
       ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
       ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.TEXT,
-      ChatDBDocumentField.LAST_MESSAGE_SEEN: {FirebaseService.currentUserEmail: true},
+      ChatDBDocumentField.LAST_MESSAGE_SEEN: {
+        FirebaseService.currentUserEmail: true
+      },
       ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP: timeStamp,
     });
   }
@@ -356,7 +373,9 @@ class FirebaseService {
       ChatDBDocumentField.LAST_MESSAGE_TIME: timeOfSending,
       ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
       ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.IMAGE,
-      ChatDBDocumentField.LAST_MESSAGE_SEEN: {FirebaseService.currentUserEmail: true},
+      ChatDBDocumentField.LAST_MESSAGE_SEEN: {
+        FirebaseService.currentUserEmail: true
+      },
       ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP: timeStamp,
     });
   }
@@ -479,14 +498,36 @@ class FirebaseService {
     }
   }
 
-  static Future<void> markLastMessageAsSeen({required final String roomId}) async{
-    final Map<dynamic, dynamic> lastMessageSeen = await _fStore.collection(Collections.CHAT_DB).doc(roomId).get().then((value) => value[ChatDBDocumentField.LAST_MESSAGE_SEEN]);
+  static Future<void> markLastMessageAsSeen(
+      {required final String roomId}) async {
+    final Map<dynamic, dynamic> lastMessageSeen = await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .get()
+        .then((value) => value[ChatDBDocumentField.LAST_MESSAGE_SEEN]);
     lastMessageSeen[FirebaseService.currentUserEmail] = true;
-    await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({ChatDBDocumentField.LAST_MESSAGE_SEEN: lastMessageSeen});
+    await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .update({ChatDBDocumentField.LAST_MESSAGE_SEEN: lastMessageSeen});
   }
 
-  //METHOD: TO CHECK WETHER THE CURRENT USER IS FRIEND WITH THE USER WITH THE PROVIDED EMAIL ID
-  static Future<bool> isFriend({required final String email}) async{
-    return await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.FRIENDS).doc(email).get().then((value) => value.exists);
+  //[METHOD]: TO CHECK WETHER THE CURRENT USER IS FRIEND WITH THE USER WITH THE PROVIDED EMAIL ID
+  static Future<bool> isFriend({required final String email}) async {
+    return await _fStore
+        .collection(Collections.USERS)
+        .doc(FirebaseService.currentUserEmail)
+        .collection(Collections.FRIENDS)
+        .doc(email)
+        .get()
+        .then((value) => value.exists);
+  }
+
+  //[METHOD]: TO UNFRIEND A USER
+  static Future<void> unfriend({required final String email}) async{
+    //DELETING PROVIDED USER FROM CURRENT USER FRIENDS LIST
+    await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.FRIENDS).doc(email).delete();
+    //DELETING CURRENT USER FROM PROVIDED USER FRIENDS LIST
+    await _fStore.collection(Collections.USERS).doc(email).collection(Collections.FRIENDS).doc(FirebaseService.currentUserEmail).delete();
   }
 }
