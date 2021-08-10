@@ -194,7 +194,7 @@ class FirebaseService {
         .doc(roomId)
         .get()
         .then((value) => value.exists)) return;
-        
+
     //IF BECOMING FRIENDS FOR THE FIRST TIME
 
     //Creating Chat refrence in current user collection
@@ -519,13 +519,66 @@ class FirebaseService {
   }
 
   //[METHOD]: TO UNFRIEND A USER
-  static Future<void> unfriend({required final String email}) async{
+  static Future<void> unfriend({required final String email}) async {
     //DELETING PROVIDED USER FROM CURRENT USER FRIENDS LIST
-    await _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.FRIENDS).doc(email).delete();
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(FirebaseService.currentUserEmail)
+        .collection(Collections.FRIENDS)
+        .doc(email)
+        .delete();
     //DELETING CURRENT USER FROM PROVIDED USER FRIENDS LIST
-    await _fStore.collection(Collections.USERS).doc(email).collection(Collections.FRIENDS).doc(FirebaseService.currentUserEmail).delete();
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(email)
+        .collection(Collections.FRIENDS)
+        .doc(FirebaseService.currentUserEmail)
+        .delete();
   }
 
   //[METHOD]: TO GET FRIEND DOCUMENT FROM FRIENDS COLLECTION OF A CURRENT USER
-  static getStreamToFriendDoc({required final String email}) => _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.FRIENDS).doc(email).snapshots();
+  static getStreamToFriendDoc({required final String email}) => _fStore
+      .collection(Collections.USERS)
+      .doc(FirebaseService.currentUserEmail)
+      .collection(Collections.FRIENDS)
+      .doc(email)
+      .snapshots();
+
+  //[METHOD]: TO GET GROUP ADMIN
+  static Future<String> getGroupData(
+          {required final String roomId, required final String key}) async =>
+      await _fStore
+          .collection(Collections.CHAT_DB)
+          .doc(roomId)
+          .get()
+          .then((value) => value[key]);
+
+  //[METHOD]: TO UPDATE GROUP DATA STRING FIELDS
+  static Future<void> updateGroupData(
+          {required final String roomId,
+          required final String key,
+          required final String newValue}) async =>
+      await _fStore
+          .collection(Collections.CHAT_DB)
+          .doc(roomId)
+          .update({key: newValue});
+
+  //[METHOD]: TO UPDATE GROUP PROFILE PICTURE
+  static Future<bool> pickAndUploadGroupProfileImage({required final String roomId}) async {
+    File? image = await ImagePickerService.pickImageFromGallery();
+    if (image != null) {
+      Reference reference =
+          _fStorage.ref().child('group_profile_pictures/$roomId');
+      UploadTask task = reference.putFile(image);
+      TaskSnapshot snapshot = await task.whenComplete(() => task.snapshot);
+      String groupImageUrl = await snapshot.ref.getDownloadURL();
+
+      await _fStore
+          .collection(Collections.CHAT_DB)
+          .doc(roomId)
+          .update({ChatDBDocumentField.GROUP_IMAGE: groupImageUrl});
+      return true;
+    }
+    return false;
+  }
 }

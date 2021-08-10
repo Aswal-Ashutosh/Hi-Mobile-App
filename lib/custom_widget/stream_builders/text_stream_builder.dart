@@ -6,7 +6,11 @@ class TextStreamBuilder extends StatelessWidget {
   final String _key;
   final TextStyle? _style;
   final TextOverflow? _textOverflow;
-  const TextStreamBuilder({required final stream, required final String key, final TextStyle? style, final TextOverflow? textOverflow})
+  const TextStreamBuilder(
+      {required final stream,
+      required final String key,
+      final TextStyle? style,
+      final TextOverflow? textOverflow})
       : _stream = stream,
         _key = key,
         _textOverflow = textOverflow,
@@ -14,20 +18,21 @@ class TextStreamBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-        stream: _stream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data != null) {
-            final userData = snapshot.data;
-            final requiredData = userData?[_key];
-            return Text(
-              requiredData,
-              style: _style,
-              overflow: _textOverflow,
-            );
-          } else {
-            //TODO: Add Shimmer
-            return Text('Loading...', style: TextStyle(color: Colors.grey));
-          }
-        });
+      stream: _stream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          final userData = snapshot.data;
+          final requiredData = userData?[_key];
+          return Text(
+            requiredData,
+            style: _style,
+            overflow: _textOverflow,
+          );
+        } else {
+          //TODO: Add Shimmer
+          return Text('Loading...', style: TextStyle(color: Colors.grey));
+        }
+      },
+    );
   }
 }

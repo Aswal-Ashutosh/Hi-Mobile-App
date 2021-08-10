@@ -6,6 +6,7 @@ import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/group_chat/group_chat_room.dart';
+import 'package:hi/screens/profile_view/group_profile_view_screen.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
 
@@ -25,9 +26,17 @@ class GroupChatCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircularGroupProfilePicture(
-              roomId: _roomId,
-              radius: kDefualtBorderRadius * 1.5,
+            InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GroupProfileScreen(roomId: _roomId),
+                ),
+              ),
+              child: CircularGroupProfilePicture(
+                roomId: _roomId,
+                radius: kDefualtBorderRadius * 1.5,
+              ),
             ),
             SizedBox(width: kDefaultPadding / 2.0),
             Flexible(

@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
@@ -27,11 +26,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     setState(() {
       isLoading = condition;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
@@ -153,7 +147,7 @@ class Body extends StatelessWidget {
                 await FirebaseService.unfriend(email: _userEmail);
                 _progressIndicatorCallback(false);
               },
-              color: Colors.redAccent,
+              color: Colors.red,
             ),
             childIfDoNotExist: PrimaryButton(
               displayText: 'Add Friend',
