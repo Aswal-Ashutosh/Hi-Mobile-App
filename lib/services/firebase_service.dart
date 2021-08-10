@@ -564,7 +564,8 @@ class FirebaseService {
           .update({key: newValue});
 
   //[METHOD]: TO UPDATE GROUP PROFILE PICTURE
-  static Future<bool> pickAndUploadGroupProfileImage({required final String roomId}) async {
+  static Future<bool> pickAndUploadGroupProfileImage(
+      {required final String roomId}) async {
     File? image = await ImagePickerService.pickImageFromGallery();
     if (image != null) {
       Reference reference =
@@ -580,5 +581,47 @@ class FirebaseService {
       return true;
     }
     return false;
+  }
+
+  //[METHOD]: TO GET SET OF GROUP MEMBERS
+  static Future<Set<String>> getGroupMembers(
+      {required final String roomId}) async {
+    List<dynamic> membersList = await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .get()
+        .then((value) => value[ChatDBDocumentField.MEMBERS]);
+    Set<String> membersSet = {};
+    membersList.forEach((member) {
+      membersSet.add(member);
+    });
+    return membersSet;
+  }
+
+  static Future<void> addMembersInGroup({required final String roomId, required final List<String> newMembers}) async{
+    final List<dynamic> members = await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .get()
+        .then((value) => value[ChatDBDocumentField.MEMBERS]);
+    members.addAll(newMembers);
+    await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .update({ChatDBDocumentField.MEMBERS: members});
+
+    //Creating reference for each member
+    for (final String member in members) {
+      _fStore
+          .collection(Collections.USERS)
+          .doc(member)
+          .collection(Collections.CHATS)
+          .doc(roomId)
+          .set({
+        ChatDocumentField.ROOM_ID: roomId,
+        ChatDocumentField.VISIBILITY: true,
+        ChatDocumentField.SHOW_AFTER: DateTime.now(),
+      });
+    }
   }
 }

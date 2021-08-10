@@ -8,6 +8,7 @@ import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/group_member_card.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/screens/group/group_chat_add_member_screen.dart';
 import 'package:hi/screens/profile_view/user_profile_view_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 
@@ -247,14 +248,32 @@ class Body extends StatelessWidget {
               },
             ),
             SizedBox(height: kDefaultPadding / 2.0),
-            Divider(indent: MediaQuery.of(context).size.width * 0.10, endIndent: MediaQuery.of(context).size.width * 0.10),
+            Divider(
+                indent: MediaQuery.of(context).size.width * 0.10,
+                endIndent: MediaQuery.of(context).size.width * 0.10),
             _isCurrentUserAdmin
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       PrimaryButton(
                         displayText: 'Add Members',
-                        onPressed: () {},
+                        onPressed: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  GroupChatAddMemberScreen(roomId: _roomId),
+                            ),
+                          );
+                          if (result != null && result == true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('New members added successfully.'),
+                              ),
+                            );
+                          }
+                        },
                         color: kSecondaryColor,
                       ),
                       SizedBox(width: kDefaultPadding),
