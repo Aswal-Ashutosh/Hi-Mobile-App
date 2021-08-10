@@ -49,7 +49,7 @@ class _SelectionCardState extends State<SelectionCard> {
                           letterSpacing: 2.5,
                         ),
                       ),
-                      if(isSelected) Icon(Icons.done, color: Colors.green,)
+                      if(isSelected) ClipOval(child: Container(child: Icon(Icons.done, color: Colors.white, size: 20), color: Colors.green))
                     ],
                   ),
                   TextStreamBuilder(
