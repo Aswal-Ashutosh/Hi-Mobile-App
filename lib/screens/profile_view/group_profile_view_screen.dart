@@ -52,6 +52,7 @@ class _GroupProfileScreenState extends State<GroupProfileScreen> {
     return ProgressHUD(
       showIndicator: isLoading,
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: TextStreamBuilder(
             stream:
@@ -239,7 +240,10 @@ class Body extends StatelessWidget {
                   members.forEach((email) {
                     memberCards.add(GroupMemberCard(
                       memberEmail: email,
+                      roomId: _roomId,
                       isCurrentUserAdmin: _isCurrentUserAdmin,
+                      progressIndicatorCallback: _progressIndicatorCallback,
+                      scaffoldKey: _scaffoldKey,
                     ));
                   });
                   return Column(children: memberCards);

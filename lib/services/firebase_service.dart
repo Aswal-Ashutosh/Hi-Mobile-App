@@ -410,6 +410,17 @@ class FirebaseService {
       .orderBy(MessageDocumentField.TIME_STAMP, descending: true)
       .snapshots();
 
+  //METHOD: To get stream to chat room messages
+  static getStreamToRemovedChatRoomMessages(
+          {required final String roomId, required final Timestamp removedAt}) =>
+      _fStore
+          .collection(Collections.CHAT_DB)
+          .doc(roomId)
+          .collection(Collections.MESSAGES)
+          .where(MessageDocumentField.TIME_STAMP, isLessThan: removedAt)
+          .orderBy(MessageDocumentField.TIME_STAMP, descending: true)
+          .snapshots();
+
   static get currentUserStreamToChats => _fStore
       .collection(Collections.USERS)
       .doc(FirebaseService.currentUserEmail)
@@ -600,7 +611,9 @@ class FirebaseService {
     return membersSet;
   }
 
-  static Future<void> addMembersInGroup({required final String roomId, required final List<String> newMembers}) async{
+  static Future<void> addMembersInGroup(
+      {required final String roomId,
+      required final List<String> newMembers}) async {
     final List<dynamic> members = await _fStore
         .collection(Collections.CHAT_DB)
         .doc(roomId)
@@ -614,19 +627,72 @@ class FirebaseService {
 
     //Creating reference for each member
     for (final String member in members) {
-      _fStore
+      if (await _fStore
           .collection(Collections.USERS)
           .doc(member)
           .collection(Collections.CHATS)
           .doc(roomId)
-          .set({
-        ChatDocumentField.ROOM_ID: roomId,
-        ChatDocumentField.VISIBILITY: true,
-        ChatDocumentField.SHOW_AFTER: DateTime.now(),
-      });
+          .get()
+          .then((value) => value.exists)) {
+        _fStore
+            .collection(Collections.USERS)
+            .doc(member)
+            .collection(Collections.CHATS)
+            .doc(roomId)
+            .update({
+          ChatDocumentField.REMOVED: false,
+          ChatDocumentField.REMOVED_AT: null,
+        });
+      } else {
+        _fStore
+            .collection(Collections.USERS)
+            .doc(member)
+            .collection(Collections.CHATS)
+            .doc(roomId)
+            .set({
+          ChatDocumentField.ROOM_ID: roomId,
+          ChatDocumentField.VISIBILITY: true,
+          ChatDocumentField.SHOW_AFTER: DateTime.now(),
+          ChatDocumentField.REMOVED: false,
+          ChatDocumentField.REMOVED_AT: null,
+        });
+      }
     }
   }
 
   //[METHOD]: THIS METHOD WILL RETURN STREAM TO USER SIDE CHAT REFERENCE OF A CHAT
-  static getStreamToUserChatRef({required final String roomId}) => _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.CHATS).doc(roomId).snapshots();
+  static getStreamToUserChatRef({required final String roomId}) => _fStore
+      .collection(Collections.USERS)
+      .doc(FirebaseService.currentUserEmail)
+      .collection(Collections.CHATS)
+      .doc(roomId)
+      .snapshots();
+
+  //[METHOD]: TO REMOVE MEMBER FROM THE GROUP
+  static Future<void> removeMemberFromGroup(
+      {required final String roomId,
+      required final String memeberEmail}) async {
+    //Removing from member array
+    final List<dynamic> members = await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .get()
+        .then((value) => value[ChatDBDocumentField.MEMBERS]);
+    members.remove(memeberEmail);
+    await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .update({ChatDBDocumentField.MEMBERS: members});
+
+    //Marking removed in user chat reference to group
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(memeberEmail)
+        .collection(Collections.CHATS)
+        .doc(roomId)
+        .update({
+      ChatDocumentField.REMOVED: true,
+      ChatDocumentField.REMOVED_AT: DateTime.now(),
+    });
+  }
 }

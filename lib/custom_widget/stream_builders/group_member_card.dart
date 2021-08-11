@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hi/constants/constants.dart';
@@ -11,12 +10,22 @@ import 'online_indicator_dot.dart';
 
 class GroupMemberCard extends StatelessWidget {
   final String _memberEmail;
+  final String _roomId;
   final bool _isCurrentUserAdmin;
-  const GroupMemberCard(
-      {required final String memberEmail,
-      required final bool isCurrentUserAdmin})
-      : _memberEmail = memberEmail,
-        _isCurrentUserAdmin = isCurrentUserAdmin;
+  final Function _progressIndicatorCallback;
+  final GlobalKey<ScaffoldState> _scaffoldKey;
+
+  const GroupMemberCard({
+    required final String memberEmail,
+    required final String roomId,
+    required final bool isCurrentUserAdmin,
+    required final Function progressIndicatorCallback,
+    required final GlobalKey<ScaffoldState> scaffoldKey,
+  })  : _memberEmail = memberEmail,
+        _roomId = roomId,
+        _isCurrentUserAdmin = isCurrentUserAdmin,
+        _progressIndicatorCallback = progressIndicatorCallback,
+        _scaffoldKey = scaffoldKey;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +77,7 @@ class GroupMemberCard extends StatelessWidget {
             if (_isCurrentUserAdmin &&
                 _memberEmail != FirebaseService.currentUserEmail)
               IconButton(
-                onPressed: () async{
+                onPressed: () async {
                   final result = await showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -102,8 +111,18 @@ class GroupMemberCard extends StatelessWidget {
                       ],
                     ),
                   );
-                  if(result != null && result != false){
-                    //TODO:Remove User From GROUP
+                  if (result != null && result == true) {
+                    _progressIndicatorCallback(true);
+                    await FirebaseService.removeMemberFromGroup(
+                        roomId: _roomId, memeberEmail: _memberEmail);
+                    _progressIndicatorCallback(false);
+                    ScaffoldMessenger.of(
+                            _scaffoldKey.currentContext as BuildContext)
+                        .showSnackBar(
+                      SnackBar(
+                        content: Text('Removed Successfully.'),
+                      ),
+                    );
                   }
                 },
                 icon: Icon(Icons.exit_to_app_outlined),
