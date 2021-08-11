@@ -402,8 +402,8 @@ class FirebaseService {
         .update({ChatDocumentField.VISIBILITY: true});
   }
 
-  //METHOD: To get stream to chat room
-  static getStreamToChatRoom({required final String roomId}) => _fStore
+  //METHOD: To get stream to chat room messages
+  static getStreamToChatRoomMessages({required final String roomId}) => _fStore
       .collection(Collections.CHAT_DB)
       .doc(roomId)
       .collection(Collections.MESSAGES)
@@ -489,6 +489,8 @@ class FirebaseService {
         ChatDocumentField.ROOM_ID: roomId,
         ChatDocumentField.VISIBILITY: true,
         ChatDocumentField.SHOW_AFTER: timeStamp,
+        ChatDocumentField.REMOVED: false,
+        ChatDocumentField.REMOVED_AT: null,
       });
     }
   }
@@ -624,4 +626,7 @@ class FirebaseService {
       });
     }
   }
+
+  //[METHOD]: THIS METHOD WILL RETURN STREAM TO USER SIDE CHAT REFERENCE OF A CHAT
+  static getStreamToUserChatRef({required final String roomId}) => _fStore.collection(Collections.USERS).doc(FirebaseService.currentUserEmail).collection(Collections.CHATS).doc(roomId).snapshots();
 }

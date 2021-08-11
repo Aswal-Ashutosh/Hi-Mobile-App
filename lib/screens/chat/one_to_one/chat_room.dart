@@ -87,7 +87,7 @@ class Body extends StatelessWidget {
         child: Stack(
           children: [
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseService.getStreamToChatRoom(roomId: _roomId),
+              stream: FirebaseService.getStreamToChatRoomMessages(roomId: _roomId),
               builder: (context, snapshots) {
                 //Setting last message as set whenever stream builder rebuilds itself
                 FirebaseService.markLastMessageAsSeen(roomId: _roomId);

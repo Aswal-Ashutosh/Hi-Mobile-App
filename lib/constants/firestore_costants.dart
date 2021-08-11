@@ -30,6 +30,8 @@ class ChatDocumentField{
   static const ROOM_ID = 'room_id';
   static const VISIBILITY = 'visibility';
   static const SHOW_AFTER = 'show_after';
+  static const REMOVED = 'removed';
+  static const REMOVED_AT = 'removed_at';
 }
 
 

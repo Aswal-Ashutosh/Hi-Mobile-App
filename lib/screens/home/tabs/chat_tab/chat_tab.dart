@@ -14,7 +14,6 @@ class ChatTab extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseService.currentUserStreamToChats,
         builder: (context, snapshots) {
-          List<String> chats = [];
           if (snapshots.hasData &&
               snapshots.data != null &&
               snapshots.data!.docs.isNotEmpty) {
