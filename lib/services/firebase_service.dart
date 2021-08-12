@@ -695,4 +695,9 @@ class FirebaseService {
       ChatDocumentField.REMOVED_AT: DateTime.now(),
     });
   }
+
+  //[METHOD]: TO LEAVE A GROUP
+  static Future<void> leaveGroup({required final roomId}) async =>
+      await FirebaseService.removeMemberFromGroup(
+          roomId: roomId, memeberEmail: FirebaseService.currentUserEmail);
 }

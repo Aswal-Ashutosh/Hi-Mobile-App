@@ -291,7 +291,29 @@ class Body extends StatelessWidget {
                   )
                 : PrimaryButton(
                     displayText: 'Leave Group',
-                    onPressed: () {},
+                    onPressed: () async {
+                      final result = await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Leave Group'),
+                          content: Text('Are you sure to leave the group?'),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: Text('Yes')),
+                            TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: Text('No')),
+                          ],
+                        ),
+                      );
+                      if (result != null && result == true) {
+                        _progressIndicatorCallback(true);
+                        await FirebaseService.leaveGroup(roomId: _roomId);
+                        _progressIndicatorCallback(false);
+                        Navigator.pop(context);
+                      }
+                    },
                     color: Colors.red,
                   )
           ],
