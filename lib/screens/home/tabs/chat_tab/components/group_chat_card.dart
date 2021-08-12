@@ -26,17 +26,37 @@ class GroupChatCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            InkWell(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GroupProfileScreen(roomId: _roomId),
-                ),
-              ),
-              child: CircularGroupProfilePicture(
-                roomId: _roomId,
-                radius: kDefualtBorderRadius * 1.5,
-              ),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseService.getStreamToUserChatRef(roomId: _roomId),
+              builder: (context, snapshot) {
+                if (snapshot.hasData &&
+                    snapshot.data != null &&
+                    snapshot.data!.exists) {
+                  final doc = snapshot.data;
+                  late void Function()? onTap;
+                  if (doc![ChatDocumentField.REMOVED]) {
+                    onTap = () => ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'You need to be a member to see group profile.'),
+                          ),
+                        );
+                  } else {
+                    onTap = () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GroupProfileScreen(
+                              roomId: _roomId,
+                            ),
+                          ),
+                        );
+                  }
+                  return GroupProfileImage(roomId: _roomId, onTap: onTap);
+                } else {
+                  return Text('Loading...',
+                      style: TextStyle(color: Colors.grey));
+                }
+              },
             ),
             SizedBox(width: kDefaultPadding / 2.0),
             Flexible(
@@ -81,6 +101,29 @@ class GroupChatCard extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class GroupProfileImage extends StatelessWidget {
+  const GroupProfileImage({
+    Key? key,
+    required String roomId,
+    required final void Function()? onTap,
+  })  : _roomId = roomId,
+        _onTap = onTap,
+        super(key: key);
+
+  final String _roomId;
+  final void Function()? _onTap;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: _onTap,
+      child: CircularGroupProfilePicture(
+        roomId: _roomId,
+        radius: kDefualtBorderRadius * 1.5,
+      ),
     );
   }
 }

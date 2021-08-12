@@ -7,6 +7,7 @@ import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/group_chat/components/group_image_message.dart';
 import 'package:hi/screens/chat/group_chat/components/group_message_text_field.dart';
 import 'package:hi/screens/chat/group_chat/components/group_text_message.dart';
+import 'package:hi/screens/profile_view/group_profile_view_screen.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
 
@@ -18,21 +19,39 @@ class GroupChatRoom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(kDefaultPadding / 4.0),
-              child: CircularGroupProfilePicture(
+        title: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseService.getStreamToUserChatRef(roomId: _roomId),
+          builder: (context, snapshot) {
+            if (snapshot.hasData &&
+                snapshot.data != null &&
+                snapshot.data!.exists) {
+              final doc = snapshot.data;
+              late void Function()? onTap;
+              if (doc![ChatDocumentField.REMOVED]){
+                onTap = () => ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            'You need to be a member to see group profile.'),
+                      ),
+                    );
+              }else{
+                onTap = () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GroupProfileScreen(
+                          roomId: _roomId,
+                        ),
+                      ),
+                    );
+              }
+              return AppBarTitle(
                 roomId: _roomId,
-                radius: kDefualtBorderRadius,
-              ),
-            ),
-            SizedBox(width: kDefaultPadding / 4.0),
-            TextStreamBuilder(
-              stream: FirebaseService.getStreamToGroupData(roomId: _roomId),
-              key: ChatDBDocumentField.GROUP_NAME,
-            ),
-          ],
+                onTap: onTap,
+              );
+            } else {
+              return Text('Loading...', style: TextStyle(color: Colors.grey));
+            }
+          },
         ),
         backgroundColor: kPrimaryColor,
       ),
@@ -55,6 +74,41 @@ class GroupChatRoom extends StatelessWidget {
             }
           },
         ),
+      ),
+    );
+  }
+}
+
+class AppBarTitle extends StatelessWidget {
+  const AppBarTitle({
+    Key? key,
+    required final String roomId,
+    required final void Function()? onTap,
+  })  : _roomId = roomId,
+        _onTap = onTap,
+        super(key: key);
+
+  final String _roomId;
+  final void Function()? _onTap;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: _onTap,
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(kDefaultPadding / 4.0),
+            child: CircularGroupProfilePicture(
+              roomId: _roomId,
+              radius: kDefualtBorderRadius,
+            ),
+          ),
+          SizedBox(width: kDefaultPadding / 4.0),
+          TextStreamBuilder(
+            stream: FirebaseService.getStreamToGroupData(roomId: _roomId),
+            key: ChatDBDocumentField.GROUP_NAME,
+          ),
+        ],
       ),
     );
   }
