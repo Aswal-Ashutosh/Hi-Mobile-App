@@ -4,6 +4,7 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/profile_view/user_profile_view_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 import 'online_indicator_dot.dart';
@@ -130,12 +131,18 @@ class GroupMemberCard extends StatelessWidget {
           ],
         ),
       ),
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => UserProfileScreen(userEmail: _memberEmail),
-        ),
-      ),
+      onTap: () {
+        if (_memberEmail == FirebaseService.currentUserEmail) {
+          Navigator.pushNamed(context, EditProfileScreen.id);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserProfileScreen(userEmail: _memberEmail),
+            ),
+          );
+        }
+      },
     );
   }
 }

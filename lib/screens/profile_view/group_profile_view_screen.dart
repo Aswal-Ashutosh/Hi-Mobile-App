@@ -8,6 +8,7 @@ import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/group_member_card.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/group/group_chat_add_member_screen.dart';
 import 'package:hi/screens/profile_view/user_profile_view_screen.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -528,12 +529,18 @@ class Admin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => UserProfileScreen(userEmail: _adminEmail),
-        ),
-      ),
+      onTap: () {
+        if (_adminEmail == FirebaseService.currentUserEmail) {
+          Navigator.pushNamed(context, EditProfileScreen.id);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserProfileScreen(userEmail: _adminEmail),
+            ),
+          );
+        }
+      },
       child: TextStreamBuilder(
         stream: FirebaseService.getStreamToUserData(email: _adminEmail),
         key: UserDocumentField.DISPLAY_NAME,
