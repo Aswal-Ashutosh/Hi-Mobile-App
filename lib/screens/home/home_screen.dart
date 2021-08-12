@@ -19,16 +19,15 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
- 
- @override
- void initState() {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  @override
+  void initState() {
     FirebaseService.setCurrentUserOnline(state: true);
     WidgetsBinding.instance?.addObserver(this);
     super.initState();
   }
 
- @override
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed)
       FirebaseService.setCurrentUserOnline(state: true);
@@ -110,21 +109,27 @@ class _HomeScreenState extends State<HomeScreen>  with WidgetsBindingObserver {
                     email: FirebaseService.currentUserEmail,
                   ),
                   ListTile(
-                    leading: Icon(Icons.person),
+                    leading: Icon(Icons.person, color: Colors.black),
                     title: TextStreamBuilder(
-                      stream: FirebaseService.getStreamToUserData(email: FirebaseService.currentUserEmail),
+                      stream: FirebaseService.getStreamToUserData(
+                          email: FirebaseService.currentUserEmail),
                       key: UserDocumentField.DISPLAY_NAME,
                       style: TextStyle(
                         fontSize: 10,
                         letterSpacing: 2.5,
+                        color: Colors.black54,
                       ),
                     ),
                   ),
                   ListTile(
-                    leading: Icon(Icons.email),
+                    leading: Icon(Icons.email, color: Colors.black),
                     title: Text(
                       FirebaseService.currentUserEmail,
-                      style: TextStyle(fontSize: 10, letterSpacing: 2.5),
+                      style: TextStyle(
+                        fontSize: 10,
+                        letterSpacing: 2.5,
+                        color: Colors.black54,
+                      ),
                     ),
                   ),
                   RoundIconButton(
