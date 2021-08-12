@@ -41,6 +41,13 @@ class GroupChatCard extends StatelessWidget {
                                 'You need to be a member to see group profile.'),
                           ),
                         );
+                  } else if (doc[ChatDBDocumentField.DELETED]) {
+                    onTap = () => ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'This group no longer exist.'),
+                          ),
+                        );
                   } else {
                     onTap = () => Navigator.push(
                           context,
@@ -67,7 +74,7 @@ class GroupChatCard extends StatelessWidget {
                       snapshot.data != null &&
                       snapshot.data!.exists) {
                     final doc = snapshot.data;
-                    if (doc![ChatDocumentField.REMOVED])
+                    if (doc![ChatDocumentField.REMOVED] || doc[ChatDBDocumentField.DELETED])
                       return TextStreamBuilder(
                         stream: FirebaseService.getStreamToGroupData(
                             roomId: _roomId),

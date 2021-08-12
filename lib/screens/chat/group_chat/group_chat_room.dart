@@ -27,14 +27,20 @@ class GroupChatRoom extends StatelessWidget {
                 snapshot.data!.exists) {
               final doc = snapshot.data;
               late void Function()? onTap;
-              if (doc![ChatDocumentField.REMOVED]){
+              if (doc![ChatDocumentField.REMOVED]) {
                 onTap = () => ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                             'You need to be a member to see group profile.'),
                       ),
                     );
-              }else{
+              } else if (doc[ChatDBDocumentField.DELETED]) {
+                onTap = () => ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('This group no longer exist.'),
+                      ),
+                    );
+              } else {
                 onTap = () => Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -63,12 +69,15 @@ class GroupChatRoom extends StatelessWidget {
                 snapshot.data != null &&
                 snapshot.data!.exists) {
               final doc = snapshot.data;
-              if (doc![ChatDocumentField.REMOVED])
+              if (doc![ChatDocumentField.REMOVED]) {
                 return BodyIfNotMember(
                     roomId: _roomId,
                     removedAt: doc[ChatDocumentField.REMOVED_AT]);
-              else
-                return BodyIfMember(roomId: _roomId);
+              } else if (doc[ChatDBDocumentField.DELETED]) {
+                return BodyIfMember(roomId: _roomId, groupDeleted: true);
+              } else {
+                return BodyIfMember(roomId: _roomId, groupDeleted: false);
+              }
             } else {
               return Text('Loading...', style: TextStyle(color: Colors.grey));
             }
@@ -118,10 +127,13 @@ class BodyIfMember extends StatelessWidget {
   const BodyIfMember({
     Key? key,
     required String roomId,
+    required bool groupDeleted,
   })  : _roomId = roomId,
+        _groupDeleted = groupDeleted,
         super(key: key);
 
   final String _roomId;
+  final bool _groupDeleted;
 
   @override
   Widget build(BuildContext context) {
@@ -181,9 +193,11 @@ class BodyIfMember extends StatelessWidget {
         Positioned(
           child: Container(
             width: MediaQuery.of(context).size.width,
-            child: GroupMessageTextField(
-              roomId: _roomId,
-            ),
+            child: _groupDeleted
+                ? GroupDeleted()
+                : GroupMessageTextField(
+                    roomId: _roomId,
+                  ),
           ),
           bottom: 0,
         )
@@ -282,6 +296,24 @@ class NotMember extends StatelessWidget {
       child: Center(
           child: Text(
         'You are no logner member of the group.',
+        style: TextStyle(color: Colors.grey),
+      )),
+    );
+  }
+}
+
+class GroupDeleted extends StatelessWidget {
+  const GroupDeleted({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(kDefaultPadding),
+      child: Center(
+          child: Text(
+        'This group no longer exist.',
         style: TextStyle(color: Colors.grey),
       )),
     );

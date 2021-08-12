@@ -284,7 +284,31 @@ class Body extends StatelessWidget {
                       SizedBox(width: kDefaultPadding),
                       PrimaryButton(
                         displayText: 'Delete Group',
-                        onPressed: () {},
+                        onPressed: () async {
+                          final result = await showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Delete Group'),
+                              content: Text('Are you sure to delete the group?'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: Text('Yes')),
+                                TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: Text('No')),
+                              ],
+                            ),
+                          );
+                          if (result != null && result == true) {
+                            _progressIndicatorCallback(true);
+                            await FirebaseService.deleteGroup(roomId: _roomId);
+                            _progressIndicatorCallback(false);
+                            Navigator.pop(context);
+                          }
+                        },
                         color: Colors.red,
                       ),
                     ],

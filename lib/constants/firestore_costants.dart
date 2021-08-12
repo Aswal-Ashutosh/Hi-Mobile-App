@@ -32,6 +32,7 @@ class ChatDocumentField{
   static const SHOW_AFTER = 'show_after';
   static const REMOVED = 'removed';
   static const REMOVED_AT = 'removed_at';
+  static const DELETED = 'deleted';
 }
 
 
@@ -50,6 +51,7 @@ class ChatDBDocumentField{
   static const LAST_MESSAGE_TYPE = 'last_message_type';
   static const LAST_MESSAGE_TIME_STAMP = 'last_message_time_stamp';
   static const MEMBERS = 'members';
+  static const DELETED = 'deleted';
 }
 
 class MessageDocumentField{

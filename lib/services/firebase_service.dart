@@ -502,6 +502,7 @@ class FirebaseService {
         ChatDocumentField.SHOW_AFTER: timeStamp,
         ChatDocumentField.REMOVED: false,
         ChatDocumentField.REMOVED_AT: null,
+        ChatDBDocumentField.DELETED: false,
       });
     }
   }
@@ -700,4 +701,25 @@ class FirebaseService {
   static Future<void> leaveGroup({required final roomId}) async =>
       await FirebaseService.removeMemberFromGroup(
           roomId: roomId, memeberEmail: FirebaseService.currentUserEmail);
+
+  //[METHOD]: TO DELETE THE GROUP
+  static Future<void> deleteGroup({required roomId}) async {
+    await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .update({ChatDBDocumentField.DELETED: true});
+    final List<dynamic> members = await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .get()
+        .then((value) => value[ChatDBDocumentField.MEMBERS]);
+    for (final member in members) {
+      await _fStore
+          .collection(Collections.USERS)
+          .doc(member)
+          .collection(Collections.CHATS)
+          .doc(roomId)
+          .update({ChatDocumentField.DELETED: true});
+    }
+  }
 }
