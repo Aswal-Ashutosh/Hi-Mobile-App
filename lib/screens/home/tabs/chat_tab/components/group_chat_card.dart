@@ -44,8 +44,7 @@ class GroupChatCard extends StatelessWidget {
                   } else if (doc[ChatDBDocumentField.DELETED]) {
                     onTap = () => ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                                'This group no longer exist.'),
+                            content: Text('This group no longer exist.'),
                           ),
                         );
                   } else {
@@ -60,8 +59,15 @@ class GroupChatCard extends StatelessWidget {
                   }
                   return GroupProfileImage(roomId: _roomId, onTap: onTap);
                 } else {
-                  return Text('Loading...',
-                      style: TextStyle(color: Colors.grey));
+                  return CircleAvatar(
+                    child: Icon(
+                      Icons.group,
+                      color: Colors.grey,
+                      size: kDefualtBorderRadius * 3,
+                    ),
+                    backgroundColor: Colors.blueGrey,
+                    radius: kDefualtBorderRadius * 3,
+                  );
                 }
               },
             ),
@@ -74,7 +80,8 @@ class GroupChatCard extends StatelessWidget {
                       snapshot.data != null &&
                       snapshot.data!.exists) {
                     final doc = snapshot.data;
-                    if (doc![ChatDocumentField.REMOVED] || doc[ChatDBDocumentField.DELETED])
+                    if (doc![ChatDocumentField.REMOVED] ||
+                        doc[ChatDBDocumentField.DELETED])
                       return TextStreamBuilder(
                         stream: FirebaseService.getStreamToGroupData(
                             roomId: _roomId),
