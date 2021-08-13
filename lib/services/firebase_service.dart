@@ -643,6 +643,7 @@ class FirebaseService {
             .update({
           ChatDocumentField.REMOVED: false,
           ChatDocumentField.REMOVED_AT: null,
+          ChatDocumentField.VISIBILITY: true,
         });
       } else {
         _fStore
@@ -720,6 +721,40 @@ class FirebaseService {
           .collection(Collections.CHATS)
           .doc(roomId)
           .update({ChatDocumentField.DELETED: true});
+    }
+  }
+
+  //[METHOD]: THIS METHOD WILL RETURN TRUE IF GROUP IS DELETED
+  static Future<bool> isGroupDeleted({required final String roomId}) async =>
+      await _fStore
+          .collection(Collections.USERS)
+          .doc(FirebaseService.currentUserEmail)
+          .collection(Collections.CHATS)
+          .doc(roomId)
+          .get()
+          .then((value) => value[ChatDocumentField.DELETED]);
+
+  //[METHOD]: THIS METHOD WILL RETURN TRUE IF CURRENT USER IF REMOVED FROM THE GROUP
+  static Future<bool> isCurrentUserRemovedFromGroup(
+          {required final String roomId}) async =>
+      await _fStore
+          .collection(Collections.USERS)
+          .doc(FirebaseService.currentUserEmail)
+          .collection(Collections.CHATS)
+          .doc(roomId)
+          .get()
+          .then((value) => value[ChatDocumentField.REMOVED]);
+
+  //[METHOD]: TO DELETE CHATS OF CURRENT USER
+  static Future<void> deleteCurrentUserChats(
+      {required final List<String> roomIds}) async {
+    for (final String roomId in roomIds) {
+      await _fStore
+          .collection(Collections.USERS)
+          .doc(FirebaseService.currentUserEmail)
+          .collection(Collections.CHATS)
+          .doc(roomId)
+          .update({ChatDocumentField.VISIBILITY: false});
     }
   }
 }

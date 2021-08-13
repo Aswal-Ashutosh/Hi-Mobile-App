@@ -7,27 +7,44 @@ import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/conditional_stream_builder.dart';
 import 'package:hi/custom_widget/stream_builders/online_indicator_dot.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/provider/selected_chats.dart';
 import 'package:hi/screens/chat/one_to_one/chat_room.dart';
 import 'package:hi/screens/profile_view/user_profile_view_screen.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
+import 'package:provider/provider.dart';
 
-class ChatCardOneToOne extends StatelessWidget {
+class ChatCardOneToOne extends StatefulWidget {
   final String _roomId;
   final String _friendEmail;
   final bool _lastMessageSeen;
+  final bool _selectionMode;
+  final _selectionModeManager;
   const ChatCardOneToOne(
       {required final String roomId,
       required final String friendEmail,
-      required final bool lastMessageSeen})
+      required final bool lastMessageSeen,
+      required final selectionMode,
+      required final selectionModeManager})
       : _roomId = roomId,
         _friendEmail = friendEmail,
-        _lastMessageSeen = lastMessageSeen;
+        _lastMessageSeen = lastMessageSeen,
+        _selectionMode = selectionMode,
+        _selectionModeManager = selectionModeManager;
 
+  @override
+  _ChatCardOneToOneState createState() => _ChatCardOneToOneState();
+}
+
+class _ChatCardOneToOneState extends State<ChatCardOneToOne> {
+  bool isSelected = false;
   @override
   Widget build(BuildContext context) {
     return InkWell(
       child: Container(
+        color: isSelected
+            ? Color(0x552EA043)
+            : Theme.of(context).scaffoldBackgroundColor,
         padding: const EdgeInsets.all(kDefaultPadding / 4.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -37,11 +54,11 @@ class ChatCardOneToOne extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      UserProfileScreen(userEmail: _friendEmail),
+                      UserProfileScreen(userEmail: widget._friendEmail),
                 ),
               ),
               child: CircularProfilePicture(
-                email: _friendEmail,
+                email: widget._friendEmail,
                 radius: kDefualtBorderRadius * 1.5,
               ),
             ),
@@ -54,7 +71,7 @@ class ChatCardOneToOne extends StatelessWidget {
                     children: [
                       TextStreamBuilder(
                         stream: FirebaseService.getStreamToUserData(
-                            email: _friendEmail),
+                            email: widget._friendEmail),
                         key: UserDocumentField.DISPLAY_NAME,
                         style: TextStyle(
                           color: Colors.black87,
@@ -64,18 +81,20 @@ class ChatCardOneToOne extends StatelessWidget {
                       ),
                       SizedBox(width: kDefaultPadding / 4.0),
                       ConditionalStreamBuilder(
-                        stream: FirebaseService.getStreamToFriendDoc(email: _friendEmail),
-                        childIfExist: OnlineIndicatorDot(email: _friendEmail),
+                        stream: FirebaseService.getStreamToFriendDoc(
+                            email: widget._friendEmail),
+                        childIfExist:
+                            OnlineIndicatorDot(email: widget._friendEmail),
                         childIfDoNotExist: Container(),
                       ),
-                      if (_lastMessageSeen == false) Spacer(),
-                      if (_lastMessageSeen == false)
+                      if (widget._lastMessageSeen == false) Spacer(),
+                      if (widget._lastMessageSeen == false)
                         Icon(Icons.message_rounded, color: Colors.green),
                     ],
                   ),
                   StreamBuilder<DocumentSnapshot>(
-                    stream:
-                        FirebaseService.getStreamToChatRoomDoc(roomId: _roomId),
+                    stream: FirebaseService.getStreamToChatRoomDoc(
+                        roomId: widget._roomId),
                     builder: (context, snapshot) {
                       if (snapshot.hasData && snapshot.data != null) {
                         final docData = snapshot.data;
@@ -107,12 +126,12 @@ class ChatCardOneToOne extends StatelessWidget {
                                       lastMessage,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        color: _lastMessageSeen
+                                        color: widget._lastMessageSeen
                                             ? Colors.grey
                                             : Colors.blueGrey,
                                         fontSize: 12,
                                         letterSpacing: 2.5,
-                                        fontWeight: _lastMessageSeen
+                                        fontWeight: widget._lastMessageSeen
                                             ? FontWeight.normal
                                             : FontWeight.bold,
                                       ),
@@ -125,12 +144,12 @@ class ChatCardOneToOne extends StatelessWidget {
                               '$lastMessageDate at $lastMessageTime',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                color: _lastMessageSeen
+                                color: widget._lastMessageSeen
                                     ? Colors.grey
                                     : Colors.blueGrey,
                                 fontSize: 10,
                                 letterSpacing: 2.5,
-                                fontWeight: _lastMessageSeen
+                                fontWeight: widget._lastMessageSeen
                                     ? FontWeight.normal
                                     : FontWeight.bold,
                               ),
@@ -150,17 +169,39 @@ class ChatCardOneToOne extends StatelessWidget {
           ],
         ),
       ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatRoom(
-              roomId: _roomId,
-              friendEamil: _friendEmail,
-            ),
-          ),
-        );
-      },
+      onTap: widget._selectionMode
+          ? () {
+              if (isSelected) {
+                Provider.of<SelectedChats>(context, listen: false)
+                    .removeChat(roomId: widget._roomId);
+
+                if (Provider.of<SelectedChats>(context, listen: false).isEmpty)
+                  widget._selectionModeManager(false);
+              } else {
+                Provider.of<SelectedChats>(context, listen: false)
+                    .addChat(roomId: widget._roomId);
+              }
+              setState(() {
+                isSelected = !isSelected;
+              });
+            }
+          : () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatRoom(
+                      roomId: widget._roomId, friendEamil: widget._friendEmail),
+                ),
+              ),
+      onLongPress: widget._selectionMode
+          ? null
+          : () {
+              Provider.of<SelectedChats>(context, listen: false)
+                  .addChat(roomId: widget._roomId);
+              setState(() {
+                isSelected = true;
+              });
+              widget._selectionModeManager(true);
+            },
     );
   }
 }

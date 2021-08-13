@@ -5,117 +5,188 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/provider/selected_chats.dart';
 import 'package:hi/screens/chat/group_chat/group_chat_room.dart';
 import 'package:hi/screens/profile_view/group_profile_view_screen.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
+import 'package:provider/provider.dart';
 
-class GroupChatCard extends StatelessWidget {
+class GroupChatCard extends StatefulWidget {
   final String _roomId;
   final bool _lastMessageSeen;
+  final bool _selectionMode;
+  final _selectionModeManager;
   const GroupChatCard(
-      {required final String roomId, required final bool lastMessageSeen})
+      {required final String roomId,
+      required final bool lastMessageSeen,
+      required final bool selectionMode,
+      required final selectionModeManager})
       : _roomId = roomId,
-        _lastMessageSeen = lastMessageSeen;
+        _lastMessageSeen = lastMessageSeen,
+        _selectionMode = selectionMode,
+        _selectionModeManager = selectionModeManager;
+
+  @override
+  _GroupChatCardState createState() => _GroupChatCardState();
+}
+
+class _GroupChatCardState extends State<GroupChatCard> {
+  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child: Container(
-        padding: const EdgeInsets.all(kDefaultPadding / 4.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseService.getStreamToUserChatRef(roomId: _roomId),
-              builder: (context, snapshot) {
-                if (snapshot.hasData &&
-                    snapshot.data != null &&
-                    snapshot.data!.exists) {
-                  final doc = snapshot.data;
-                  late void Function()? onTap;
-                  if (doc![ChatDocumentField.REMOVED]) {
-                    onTap = () => ScaffoldMessenger.of(context).showSnackBar(
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseService.getStreamToUserChatRef(roomId: widget._roomId),
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.data != null &&
+              snapshot.data!.exists) {
+            final doc = snapshot.data;
+            final bool isRemoved = doc?[ChatDocumentField.REMOVED];
+            final bool isDeleted = doc?[ChatDocumentField.DELETED];
+            final bool isDeletable = isRemoved || isDeleted;
+            return InkWell(
+              child: Container(
+                color: isSelected
+                    ? Color(0x552EA043)
+                    : Theme.of(context).scaffoldBackgroundColor,
+                padding: const EdgeInsets.all(kDefaultPadding / 4.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (isRemoved)
+                      GroupProfileImage(
+                        roomId: widget._roomId,
+                        onTap: () => ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
                                 'You need to be a member to see group profile.'),
                           ),
-                        );
-                  } else if (doc[ChatDBDocumentField.DELETED]) {
-                    onTap = () => ScaffoldMessenger.of(context).showSnackBar(
+                        ),
+                      ),
+                    if (isDeleted)
+                      GroupProfileImage(
+                        roomId: widget._roomId,
+                        onTap: () => ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('This group no longer exist.'),
                           ),
-                        );
-                  } else {
-                    onTap = () => Navigator.push(
+                        ),
+                      ),
+                    if (isDeleted == false && isRemoved == false)
+                      GroupProfileImage(
+                        roomId: widget._roomId,
+                        onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => GroupProfileScreen(
-                              roomId: _roomId,
+                              roomId: widget._roomId,
                             ),
                           ),
-                        );
-                  }
-                  return GroupProfileImage(roomId: _roomId, onTap: onTap);
-                } else {
-                  return CircleAvatar(
-                    child: Icon(
-                      Icons.group,
-                      color: Colors.grey,
-                      size: kDefualtBorderRadius * 3,
-                    ),
-                    backgroundColor: Colors.blueGrey,
-                    radius: kDefualtBorderRadius * 3,
-                  );
-                }
-              },
-            ),
-            SizedBox(width: kDefaultPadding / 2.0),
-            Flexible(
-              child: StreamBuilder<DocumentSnapshot>(
-                stream: FirebaseService.getStreamToUserChatRef(roomId: _roomId),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData &&
-                      snapshot.data != null &&
-                      snapshot.data!.exists) {
-                    final doc = snapshot.data;
-                    if (doc![ChatDocumentField.REMOVED] ||
-                        doc[ChatDBDocumentField.DELETED])
-                      return TextStreamBuilder(
-                        stream: FirebaseService.getStreamToGroupData(
-                            roomId: _roomId),
-                        key: ChatDBDocumentField.GROUP_NAME,
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 15,
-                          letterSpacing: 2.5,
                         ),
-                      );
-                    else
-                      return BodyIfMember(
-                          roomId: _roomId, lastMessageSeen: _lastMessageSeen);
-                  } else {
-                    return Text('Loading...',
-                        style: TextStyle(color: Colors.grey));
-                  }
-                },
+                      ),
+                    SizedBox(width: kDefaultPadding / 2.0),
+                    if (isRemoved || isDeleted)
+                      Flexible(
+                        child: TextStreamBuilder(
+                          stream: FirebaseService.getStreamToGroupData(
+                              roomId: widget._roomId),
+                          key: ChatDBDocumentField.GROUP_NAME,
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 15,
+                            letterSpacing: 2.5,
+                          ),
+                        ),
+                      ),
+                    if (isRemoved == false && isDeleted == false)
+                      Flexible(
+                        child: BodyIfMember(
+                          roomId: widget._roomId,
+                          lastMessageSeen: widget._lastMessageSeen,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            )
-          ],
-        ),
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GroupChatRoom(
-              roomId: _roomId,
-            ),
-          ),
-        );
-      },
-    );
+              onTap: widget._selectionMode
+                  ? isDeletable
+                      ? () {
+                          if (isSelected) {
+                            Provider.of<SelectedChats>(context, listen: false)
+                                .removeChat(roomId: widget._roomId);
+
+                            if (Provider.of<SelectedChats>(context,
+                                    listen: false)
+                                .isEmpty) widget._selectionModeManager(false);
+                          } else {
+                            Provider.of<SelectedChats>(context, listen: false)
+                                .addChat(roomId: widget._roomId);
+                          }
+                          setState(() {
+                            isSelected = !isSelected;
+                          });
+                        }
+                      : () => ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('Active group chat can\'t be deleted.'),
+                            ),
+                          )
+                  : () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GroupChatRoom(
+                            roomId: widget._roomId,
+                          ),
+                        ),
+                      ),
+              onLongPress: widget._selectionMode
+                  ? null
+                  : isDeletable
+                      ? () {
+                          Provider.of<SelectedChats>(context, listen: false)
+                              .addChat(roomId: widget._roomId);
+                          setState(() {
+                            isSelected = true;
+                          });
+                          widget._selectionModeManager(true);
+                        }
+                      : () => ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('Active group chat can\'t be deleted.'),
+                            ),
+                          ),
+            );
+          } else {
+            return Container(
+              padding: const EdgeInsets.all(kDefaultPadding / 4.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircularGroupProfilePicture(
+                      roomId: widget._roomId,
+                      radius: kDefualtBorderRadius * 1.5),
+                  SizedBox(width: kDefaultPadding / 2.0),
+                  Flexible(
+                    child: TextStreamBuilder(
+                      stream: FirebaseService.getStreamToGroupData(
+                          roomId: widget._roomId),
+                      key: ChatDBDocumentField.GROUP_NAME,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 15,
+                        letterSpacing: 2.5,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        });
   }
 }
 
