@@ -5,6 +5,7 @@ import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/provider/selected_chats.dart';
 import 'package:hi/screens/group/group_chat_selection_screen.dart';
+import 'package:hi/screens/home/tabs/chat_tab/components/chat_card.dart';
 import 'package:hi/screens/home/tabs/chat_tab/components/chat_card_one_to_one.dart';
 import 'package:hi/screens/home/tabs/chat_tab/components/group_chat_card.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -44,61 +45,19 @@ class _ChatTabState extends State<ChatTab> {
                   snapshots.data != null &&
                   snapshots.data!.docs.isNotEmpty) {
                 final chats = snapshots.data?.docs;
-                List<String> roomId = [];
+                List<String> rooms = [];
 
-                if (chats != null)
-                  for (final chat in chats) roomId.add(chat.id);
-
-                return StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseService.getStreamToChatDBWhereRoomIdIn(
-                      roomId: roomId),
-                  builder: (context, snapshots) {
-                    List<Widget> chatCards = [];
-                    if (snapshots.hasData &&
-                        snapshots.data != null &&
-                        snapshots.data!.docs.isNotEmpty) {
-                      final chats = snapshots.data?.docs;
-                      chats?.forEach((element) {
-                        final Map<dynamic, dynamic> lastMessageSeen =
-                            element[ChatDBDocumentField.LAST_MESSAGE_SEEN];
-                        if (element[ChatDBDocumentField.TYPE] ==
-                            ChatType.ONE_TO_ONE) {
-                          late String friendEmail;
-                          for (final email
-                              in element[ChatDBDocumentField.MEMBERS])
-                            if (email != FirebaseService.currentUserEmail)
-                              friendEmail = email;
-
-                          chatCards.add(
-                            ChatCardOneToOne(
-                              roomId: element[ChatDBDocumentField.ROOM_ID],
-                              friendEmail: friendEmail,
-                              lastMessageSeen: lastMessageSeen.containsKey(
-                                FirebaseService.currentUserEmail,
-                              ),
-                              selectionMode: selectionMode,
-                              selectionModeManager: selectionModeManager,
-                            ),
-                          );
-                        } else {
-                          chatCards.add(
-                            GroupChatCard(
-                              roomId: element[ChatDBDocumentField.ROOM_ID],
-                              lastMessageSeen: lastMessageSeen.containsKey(
-                                FirebaseService.currentUserEmail,
-                              ),
-                              selectionMode: selectionMode,
-                              selectionModeManager: selectionModeManager,
-                            ),
-                          );
-                        }
-                      });
-                    }
-                    return ListView(
-                      children: chatCards,
-                    );
-                  },
-                );
+                if (chats != null) for (final chat in chats) rooms.add(chat.id);
+                List<ChatCard> chatCards = [];
+                for (final String roomId in rooms) {
+                  chatCards.add(
+                    ChatCard(
+                        roomId: roomId,
+                        selectionMode: selectionMode,
+                        selectionModeManager: selectionModeManager),
+                  );
+                }
+                return ListView(children: chatCards);
               } else {
                 return Center(
                   child: Text(
