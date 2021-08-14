@@ -1,13 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/provider/selected_chats.dart';
 import 'package:hi/screens/group/group_chat_selection_screen.dart';
 import 'package:hi/screens/home/tabs/chat_tab/components/chat_card.dart';
-import 'package:hi/screens/home/tabs/chat_tab/components/chat_card_one_to_one.dart';
-import 'package:hi/screens/home/tabs/chat_tab/components/group_chat_card.dart';
 import 'package:hi/services/firebase_service.dart';
 import 'package:provider/provider.dart';
 
@@ -52,9 +49,10 @@ class _ChatTabState extends State<ChatTab> {
                 for (final String roomId in rooms) {
                   chatCards.add(
                     ChatCard(
-                        roomId: roomId,
-                        selectionMode: selectionMode,
-                        selectionModeManager: selectionModeManager),
+                      roomId: roomId,
+                      selectionMode: selectionMode,
+                      selectionModeManager: selectionModeManager,
+                    ),
                   );
                 }
                 return ListView(children: chatCards);
