@@ -74,44 +74,47 @@ class _BodyState extends State<Body> {
           backgroundColor:
               Theme.of(context).scaffoldBackgroundColor.withOpacity(.9),
           appBar: AppBar(
-            title: InkWell(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      UserProfileScreen(userEmail: widget._friendEmail),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(kDefaultPadding / 4.0),
-                    child: CircularProfilePicture(
-                      email: widget._friendEmail,
-                      radius: kDefualtBorderRadius,
+            automaticallyImplyLeading: !selectionMode,
+            title: selectionMode == false
+                ? InkWell(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            UserProfileScreen(userEmail: widget._friendEmail),
+                      ),
                     ),
-                  ),
-                  SizedBox(width: kDefaultPadding / 4.0),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      TextStreamBuilder(
-                        stream: FirebaseService.getStreamToUserData(
-                            email: widget._friendEmail),
-                        key: UserDocumentField.DISPLAY_NAME,
-                      ),
-                      ConditionalStreamBuilder(
-                        stream: FirebaseService.getStreamToFriendDoc(
-                            email: widget._friendEmail),
-                        childIfExist:
-                            OnlineIndicatorText(email: widget._friendEmail),
-                        childIfDoNotExist: Container(),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(kDefaultPadding / 4.0),
+                          child: CircularProfilePicture(
+                            email: widget._friendEmail,
+                            radius: kDefualtBorderRadius,
+                          ),
+                        ),
+                        SizedBox(width: kDefaultPadding / 4.0),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            TextStreamBuilder(
+                              stream: FirebaseService.getStreamToUserData(
+                                  email: widget._friendEmail),
+                              key: UserDocumentField.DISPLAY_NAME,
+                            ),
+                            ConditionalStreamBuilder(
+                              stream: FirebaseService.getStreamToFriendDoc(
+                                  email: widget._friendEmail),
+                              childIfExist: OnlineIndicatorText(
+                                  email: widget._friendEmail),
+                              childIfDoNotExist: Container(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                : null,
             actions: selectionMode
                 ? [
                     Consumer<SelectedMessages>(
@@ -243,8 +246,16 @@ class _BodyState extends State<Body> {
                           }
                           messageList.add(
                             ImageMessage(
-                              message: Message(messageId: id, content: content, imageUrls: imageUrl, sender: sender, time: time, date: date, timestamp: timeStamp),
-                              selectionMode: selectionMode, selectionModeManager: selectionModeManager,
+                              message: Message(
+                                  messageId: id,
+                                  content: content,
+                                  imageUrls: imageUrl,
+                                  sender: sender,
+                                  time: time,
+                                  date: date,
+                                  timestamp: timeStamp),
+                              selectionMode: selectionMode,
+                              selectionModeManager: selectionModeManager,
                             ),
                           );
                         }
