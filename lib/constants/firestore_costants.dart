@@ -63,6 +63,8 @@ class MessageDocumentField{
   static const DATE = 'date';
   static const TIME_STAMP = 'time_stamp';
   static const TYPE = 'type';
+  static const DELETED_FOR_EVERYONE = 'deleted_for_everyone';
+  static const DELETED_BY = 'deleted_by';
 }
 
 class MessageType{

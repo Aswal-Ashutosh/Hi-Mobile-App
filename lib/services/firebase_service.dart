@@ -285,6 +285,8 @@ class FirebaseService {
       MessageDocumentField.TIME: timeOfSending,
       MessageDocumentField.TIME_STAMP: timeStamp,
       MessageDocumentField.TYPE: MessageType.TEXT,
+      MessageDocumentField.DELETED_BY: {},
+      MessageDocumentField.DELETED_FOR_EVERYONE: false,
     });
 
     await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({
@@ -361,6 +363,8 @@ class FirebaseService {
       MessageDocumentField.TIME: timeOfSending,
       MessageDocumentField.TIME_STAMP: timeStamp,
       MessageDocumentField.TYPE: MessageType.IMAGE,
+      MessageDocumentField.DELETED_BY: {},
+      MessageDocumentField.DELETED_FOR_EVERYONE: false,
     });
 
     await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({
@@ -755,6 +759,40 @@ class FirebaseService {
           .collection(Collections.CHATS)
           .doc(roomId)
           .update({ChatDocumentField.VISIBILITY: false});
+    }
+  }
+
+  //[METHOD]: TO DELETE MESSAGE FOR CURRENT USER ONLY
+  static Future<void> deleteMessageForCurrentUserOnly(
+      {required roomId, required List<String> messageIds}) async {
+    for (final messageId in messageIds) {
+      final Map<dynamic, dynamic> deletedBy = await _fStore
+          .collection(Collections.CHAT_DB)
+          .doc(roomId)
+          .collection(Collections.MESSAGES)
+          .doc(messageId)
+          .get()
+          .then((value) => value[MessageDocumentField.DELETED_BY]);
+      deletedBy[FirebaseService.currentUserEmail] = true;
+      await _fStore
+          .collection(Collections.CHAT_DB)
+          .doc(roomId)
+          .collection(Collections.MESSAGES)
+          .doc(messageId)
+          .update({MessageDocumentField.DELETED_BY: deletedBy});
+    }
+  }
+
+  //[METHOD]: TO DELETE MESSAGE FOR EVERYONE
+  static Future<void> deleteMessageForEveryOne(
+      {required roomId, required List<String> messageIds}) async {
+    for (final messageId in messageIds) {
+      await _fStore
+          .collection(Collections.CHAT_DB)
+          .doc(roomId)
+          .collection(Collections.MESSAGES)
+          .doc(messageId)
+          .update({MessageDocumentField.DELETED_FOR_EVERYONE: true});
     }
   }
 }

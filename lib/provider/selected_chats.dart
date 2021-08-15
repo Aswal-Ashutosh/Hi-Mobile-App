@@ -15,9 +15,9 @@ class SelectedChats extends ChangeNotifier{
   }
 
   List<String> get toList {
-    List<String> users = [];
-    _selectedChats.forEach((element) { users.add(element); });
-    return users;
+    List<String> chats = [];
+    _selectedChats.forEach((element) { chats.add(element); });
+    return chats;
   }
 
   bool get isNotEmpty => _selectedChats.isNotEmpty;
