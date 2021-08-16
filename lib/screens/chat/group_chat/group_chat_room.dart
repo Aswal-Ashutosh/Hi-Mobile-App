@@ -10,6 +10,7 @@ import 'package:hi/provider/selected_messages.dart';
 import 'package:hi/screens/chat/group_chat/components/group_image_message.dart';
 import 'package:hi/screens/chat/group_chat/components/group_message_text_field.dart';
 import 'package:hi/screens/chat/group_chat/components/group_text_message.dart';
+import 'package:hi/screens/forward_message_screen/forward_message_screen.dart';
 import 'package:hi/screens/profile_view/group_profile_view_screen.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -165,7 +166,29 @@ class _MainBodyState extends State<MainBody> {
                     Consumer<SelectedMessages>(
                       builder: (context, selectedMessages, _) {
                         return IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            List<Message> messages = selectedMessages.toList
+                              ..sort(
+                                (a, b) => a.timestamp.compareTo(b.timestamp),
+                              );
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ForwardMessageScreen(messages: messages),
+                              ),
+                            );
+                            if (result == true) {
+                              selectedMessages.clear();
+                              selectionModeManager(false);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                      Text('Messages forwarded successfully.'),
+                                ),
+                              );
+                            }
+                          },
                           icon: Transform(
                             transform: Matrix4.rotationY(Math.pi),
                             alignment: Alignment.center,
