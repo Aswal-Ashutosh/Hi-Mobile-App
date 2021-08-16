@@ -65,6 +65,7 @@ class MessageDocumentField{
   static const TYPE = 'type';
   static const DELETED_FOR_EVERYONE = 'deleted_for_everyone';
   static const DELETED_BY = 'deleted_by';
+  static const FORWARDED_MESSAGE = 'forwarded_message';
 }
 
 class MessageType{

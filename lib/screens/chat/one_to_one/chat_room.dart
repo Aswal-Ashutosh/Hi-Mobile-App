@@ -7,10 +7,12 @@ import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/conditional_stream_builder.dart';
 import 'package:hi/custom_widget/stream_builders/online_indicator_text.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/provider/helper/message.dart';
 import 'package:hi/provider/selected_messages.dart';
 import 'package:hi/screens/chat/one_to_one/components/image_message.dart';
 import 'package:hi/screens/chat/one_to_one/components/message_text_field.dart';
 import 'package:hi/screens/chat/one_to_one/components/text_message.dart';
+import 'package:hi/screens/forward_message_screen/forward_message_screen.dart';
 import 'package:hi/screens/profile_view/user_profile_view_screen.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -172,7 +174,28 @@ class _BodyState extends State<Body> {
                     Consumer<SelectedMessages>(
                       builder: (context, selectedMessages, _) {
                         return IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            List<Message> messages = selectedMessages.toList
+                              ..sort(
+                                (a, b) => a.timestamp.compareTo(b.timestamp),
+                              );
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ForwardMessageScreen(messages: messages),
+                              ),
+                            );
+                            if (result == true) {
+                              selectedMessages.clear();
+                              selectionModeManager(false);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Messages forwarded successfully.'),
+                                ),
+                              );
+                            }
+                          },
                           icon: Transform(
                             transform: Matrix4.rotationY(Math.pi),
                             alignment: Alignment.center,
@@ -228,12 +251,14 @@ class _BodyState extends State<Body> {
                           messageList.add(
                             TextMessage(
                               message: Message(
-                                  messageId: id,
-                                  sender: sender,
-                                  time: time,
-                                  date: date,
-                                  content: content,
-                                  timestamp: timeStamp),
+                                messageId: id,
+                                sender: sender,
+                                time: time,
+                                date: date,
+                                content: content,
+                                timestamp: timeStamp,
+                                type: type,
+                              ),
                               selectionMode: selectionMode,
                               selectionModeManager: selectionModeManager,
                             ),
@@ -247,13 +272,15 @@ class _BodyState extends State<Body> {
                           messageList.add(
                             ImageMessage(
                               message: Message(
-                                  messageId: id,
-                                  content: content,
-                                  imageUrls: imageUrl,
-                                  sender: sender,
-                                  time: time,
-                                  date: date,
-                                  timestamp: timeStamp),
+                                messageId: id,
+                                content: content,
+                                imageUrls: imageUrl,
+                                sender: sender,
+                                time: time,
+                                date: date,
+                                timestamp: timeStamp,
+                                type: type,
+                              ),
                               selectionMode: selectionMode,
                               selectionModeManager: selectionModeManager,
                             ),

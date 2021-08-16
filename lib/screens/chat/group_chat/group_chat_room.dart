@@ -5,6 +5,7 @@ import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/provider/helper/message.dart';
 import 'package:hi/provider/selected_messages.dart';
 import 'package:hi/screens/chat/group_chat/components/group_image_message.dart';
 import 'package:hi/screens/chat/group_chat/components/group_message_text_field.dart';
@@ -304,12 +305,14 @@ class BodyIfMember extends StatelessWidget {
                   messageList.add(
                     GroupTextMessage(
                       message: Message(
-                          messageId: id,
-                          sender: sender,
-                          time: time,
-                          date: date,
-                          content: content,
-                          timestamp: timeStamp),
+                        messageId: id,
+                        sender: sender,
+                        time: time,
+                        date: date,
+                        content: content,
+                        timestamp: timeStamp,
+                        type: type,
+                      ),
                       selectionMode: _selectionMode,
                       selectionModeManager: _selectionModeManager,
                     ),
@@ -322,13 +325,15 @@ class BodyIfMember extends StatelessWidget {
                   messageList.add(
                     GroupImageMessage(
                       message: Message(
-                          messageId: id,
-                          content: content,
-                          imageUrls: imageUrl,
-                          sender: sender,
-                          time: time,
-                          date: date,
-                          timestamp: timeStamp),
+                        messageId: id,
+                        content: content,
+                        imageUrls: imageUrl,
+                        sender: sender,
+                        time: time,
+                        date: date,
+                        timestamp: timeStamp,
+                        type: type,
+                      ),
                       selectionMode: _selectionMode,
                       selectionModeManager: _selectionModeManager,
                     ),
@@ -409,12 +414,14 @@ class BodyIfNotMember extends StatelessWidget {
                   messageList.add(
                     GroupTextMessage(
                       message: Message(
-                          messageId: id,
-                          sender: sender,
-                          time: time,
-                          date: date,
-                          content: content,
-                          timestamp: timeStamp),
+                        messageId: id,
+                        sender: sender,
+                        time: time,
+                        date: date,
+                        content: content,
+                        timestamp: timeStamp,
+                        type: type,
+                      ),
                       selectionMode: _selectionMode,
                       selectionModeManager: _selectionModeManager,
                     ),
@@ -427,13 +434,15 @@ class BodyIfNotMember extends StatelessWidget {
                   messageList.add(
                     GroupImageMessage(
                       message: Message(
-                          messageId: id,
-                          content: content,
-                          imageUrls: imageUrl,
-                          sender: sender,
-                          time: time,
-                          date: date,
-                          timestamp: timeStamp),
+                        messageId: id,
+                        content: content,
+                        imageUrls: imageUrl,
+                        sender: sender,
+                        time: time,
+                        date: date,
+                        timestamp: timeStamp,
+                        type: type,
+                      ),
                       selectionMode: _selectionMode,
                       selectionModeManager: _selectionModeManager,
                     ),

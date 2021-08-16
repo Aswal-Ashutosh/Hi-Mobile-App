@@ -3,6 +3,7 @@ import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/provider/helper/message.dart';
 import 'package:hi/provider/selected_messages.dart';
 import 'package:hi/services/firebase_service.dart';
 import 'package:provider/provider.dart';

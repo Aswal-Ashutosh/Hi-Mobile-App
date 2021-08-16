@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/provider/helper/chat.dart';
+import 'package:hi/provider/helper/message.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/image_picker_service.dart';
 import 'package:hi/services/uid_generator.dart';
@@ -287,6 +289,7 @@ class FirebaseService {
       MessageDocumentField.TYPE: MessageType.TEXT,
       MessageDocumentField.DELETED_BY: {},
       MessageDocumentField.DELETED_FOR_EVERYONE: false,
+      MessageDocumentField.FORWARDED_MESSAGE: false,
     });
 
     await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({
@@ -365,6 +368,7 @@ class FirebaseService {
       MessageDocumentField.TYPE: MessageType.IMAGE,
       MessageDocumentField.DELETED_BY: {},
       MessageDocumentField.DELETED_FOR_EVERYONE: false,
+      MessageDocumentField.FORWARDED_MESSAGE: false,
     });
 
     await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({
@@ -795,4 +799,187 @@ class FirebaseService {
           .update({MessageDocumentField.DELETED_FOR_EVERYONE: true});
     }
   }
+
+  //[METHODS]: TO FORWARD MESSAGES TO CHATS
+  static Future<void> forwardTextMessageToRoom(
+      {required String roomId, required String message}) async {
+    //Sending Message
+    final encryptedMessage = EncryptionService.encrypt(message);
+    final messageId = UidGenerator.uniqueId;
+    final timeStamp = DateTime.now();
+    final timeOfSending = DateFormat.jm().format(timeStamp);
+    final dateOfSending = DateFormat.yMMMMEEEEd().format(timeStamp);
+
+    await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .collection(Collections.MESSAGES)
+        .doc(messageId)
+        .set({
+      MessageDocumentField.MESSAGE_ID: messageId,
+      MessageDocumentField.SENDER: FirebaseService.currentUserEmail,
+      MessageDocumentField.CONTENT: encryptedMessage,
+      MessageDocumentField.DATE: dateOfSending,
+      MessageDocumentField.TIME: timeOfSending,
+      MessageDocumentField.TIME_STAMP: timeStamp,
+      MessageDocumentField.TYPE: MessageType.TEXT,
+      MessageDocumentField.DELETED_BY: {},
+      MessageDocumentField.DELETED_FOR_EVERYONE: false,
+      MessageDocumentField.FORWARDED_MESSAGE: true,
+    });
+
+    await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({
+      ChatDBDocumentField.LAST_MESSAGE: encryptedMessage,
+      ChatDBDocumentField.LAST_MESSAGE_TIME: timeOfSending,
+      ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
+      ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.TEXT,
+      ChatDBDocumentField.LAST_MESSAGE_SEEN: {
+        FirebaseService.currentUserEmail: true
+      },
+      ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP: timeStamp,
+    });
+  }
+
+  static Future<void> forwardTextMessageToFriend(
+      {required String friendEmail,
+      required String roomId,
+      required String message}) async {
+    //Sending Message
+    await FirebaseService.forwardTextMessageToRoom(
+        roomId: roomId, message: message);
+
+    //Setting visiblity as true for current user chat reference.
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(FirebaseService.currentUserEmail)
+        .collection(Collections.CHATS)
+        .doc(roomId)
+        .update({ChatDocumentField.VISIBILITY: true});
+    //Setting visiblity as true for friends chat reference.
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(friendEmail)
+        .collection(Collections.CHATS)
+        .doc(roomId)
+        .update({ChatDocumentField.VISIBILITY: true});
+  }
+
+  static Future<void> forwardImagesToRoom({
+    required String roomId,
+    required List<String> imageUrls,
+    required String? message,
+  }) async {
+    List<String> encryptedUrl = [];
+    for (String url in imageUrls)
+      encryptedUrl.add(EncryptionService.encrypt(url));
+
+    final encryptedMessage =
+        message != null ? EncryptionService.encrypt(message) : null;
+    final messageId = UidGenerator.uniqueId;
+    final timeStamp = DateTime.now();
+    final timeOfSending = DateFormat.jm().format(timeStamp);
+    final dateOfSending = DateFormat.yMMMMEEEEd().format(timeStamp);
+
+    await _fStore
+        .collection(Collections.CHAT_DB)
+        .doc(roomId)
+        .collection(Collections.MESSAGES)
+        .doc(messageId)
+        .set({
+      MessageDocumentField.MESSAGE_ID: messageId,
+      MessageDocumentField.SENDER: FirebaseService.currentUserEmail,
+      MessageDocumentField.IMAGES: encryptedUrl,
+      MessageDocumentField.CONTENT: encryptedMessage,
+      MessageDocumentField.DATE: dateOfSending,
+      MessageDocumentField.TIME: timeOfSending,
+      MessageDocumentField.TIME_STAMP: timeStamp,
+      MessageDocumentField.TYPE: MessageType.IMAGE,
+      MessageDocumentField.DELETED_BY: {},
+      MessageDocumentField.DELETED_FOR_EVERYONE: false,
+      MessageDocumentField.FORWARDED_MESSAGE: true,
+    });
+
+    await _fStore.collection(Collections.CHAT_DB).doc(roomId).update({
+      ChatDBDocumentField.LAST_MESSAGE: encryptedMessage,
+      ChatDBDocumentField.LAST_MESSAGE_TIME: timeOfSending,
+      ChatDBDocumentField.LAST_MESSAGE_DATE: dateOfSending,
+      ChatDBDocumentField.LAST_MESSAGE_TYPE: MessageType.IMAGE,
+      ChatDBDocumentField.LAST_MESSAGE_SEEN: {
+        FirebaseService.currentUserEmail: true
+      },
+      ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP: timeStamp,
+    });
+  }
+
+  //METHOD: to send photos to friend
+  static Future<void> forwardImagesToFriend({
+    required String friendEmail,
+    required String roomId,
+    required List<String> imageUrls,
+    required String? message,
+  }) async {
+    await FirebaseService.forwardImagesToRoom(
+        roomId: roomId, imageUrls: imageUrls, message: message);
+
+    //Setting visiblity as true for current user chat reference.
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(FirebaseService.currentUserEmail)
+        .collection(Collections.CHATS)
+        .doc(roomId)
+        .update({ChatDocumentField.VISIBILITY: true});
+
+    //Setting visiblity as true for friends chat reference.
+    await _fStore
+        .collection(Collections.USERS)
+        .doc(friendEmail)
+        .collection(Collections.CHATS)
+        .doc(roomId)
+        .update({ChatDocumentField.VISIBILITY: true});
+  }
+
+  static Future<void> forwardMessagesToOneToOneChat(
+      List<Message> messages, Chat chat) async {
+        for(final message in messages){
+          switch(message.type){
+            case MessageType.TEXT: await FirebaseService.forwardTextMessageToFriend(friendEmail: chat.friendEmail as String, roomId: chat.roomId, message: message.content as String); break;
+            case MessageType.IMAGE: await FirebaseService.forwardImagesToFriend(friendEmail: chat.friendEmail as String, roomId: chat.roomId, imageUrls: message.imageUrls as List<String>, message: message.content); break;
+            default: assert(false);
+          }
+        }
+      }
+
+  static Future<void> forwardMessagesToGroupChat(
+      List<Message> messages, Chat chat) async {
+        for(final message in messages){
+          switch(message.type){
+            case MessageType.TEXT: await FirebaseService.forwardTextMessageToRoom(roomId: chat.roomId, message: message.content as String); break;
+            case MessageType.IMAGE: await FirebaseService.forwardImagesToRoom(roomId: chat.roomId, imageUrls: message.imageUrls as List<String>, message: message.content); break;
+            default: assert(false);
+          }
+        }
+      }
+
+  static Future<void> forwardMessages(
+      {required final List<Message> messages,
+      required final List<Chat> chats}) async {
+    for (final chat in chats) {
+      switch (chat.type) {
+        case ChatType.ONE_TO_ONE:
+          await FirebaseService.forwardMessagesToOneToOneChat(messages, chat);
+          break;
+        case ChatType.GROUP:
+          await FirebaseService.forwardMessagesToGroupChat(messages, chat);
+          break;
+        default:
+          assert(false);
+      }
+    }
+  }
+
+  static get currentUserStreamToAllChats => _fStore
+      .collection(Collections.USERS)
+      .doc(FirebaseService.currentUserEmail)
+      .collection(Collections.CHATS)
+      .snapshots();
 }

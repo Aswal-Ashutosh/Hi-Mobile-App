@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
+import 'package:hi/provider/helper/message.dart';
 import 'package:hi/provider/selected_messages.dart';
 import 'package:hi/screens/chat/image_view_screen.dart/image_view_screen.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -100,7 +101,7 @@ class _ImageMessageState extends State<ImageMessage> {
                       Text(
                         widget._message.content as String,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           letterSpacing: 1.5,
                         ),
                       ),

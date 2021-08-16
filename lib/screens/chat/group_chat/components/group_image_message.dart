@@ -4,6 +4,7 @@ import 'package:hi/constants/firestore_costants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/provider/helper/message.dart';
 import 'package:hi/provider/selected_messages.dart';
 import 'package:hi/screens/chat/image_view_screen.dart/image_view_screen.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -124,7 +125,7 @@ class _GroupImageMessageState extends State<GroupImageMessage> {
                       Text(
                         widget._message.content as String,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           letterSpacing: 1.5,
                         ),
                       ),
