@@ -43,16 +43,14 @@ class SelectedMessages extends ChangeNotifier {
       {required final String roomId}) async {
     await FirebaseService.deleteMessageForCurrentUserOnly(
         roomId: roomId, messageIds: _selectedMessagesIds.toList());
-    _selectedMessages.clear();
-    _selectedMessagesIds.clear();
+    this.clear();
   }
 
   Future<void> deleteSelectedMessageForEveryOne(
       {required final String roomId}) async {
     await FirebaseService.deleteMessageForEveryOne(
         roomId: roomId, messageIds: _selectedMessagesIds.toList());
-    _selectedMessages.clear();
-    _selectedMessagesIds.clear();
+    this.clear();
   }
 
   void clear() {
