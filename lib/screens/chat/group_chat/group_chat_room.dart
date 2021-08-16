@@ -2,14 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/provider/selected_messages.dart';
 import 'package:hi/screens/chat/group_chat/components/group_image_message.dart';
 import 'package:hi/screens/chat/group_chat/components/group_message_text_field.dart';
 import 'package:hi/screens/chat/group_chat/components/group_text_message.dart';
 import 'package:hi/screens/profile_view/group_profile_view_screen.dart';
 import 'package:hi/services/encryption_service.dart';
 import 'package:hi/services/firebase_service.dart';
+import 'package:provider/provider.dart';
+import 'dart:math' as Math;
 
 class GroupChatRoom extends StatelessWidget {
   final String _roomId;
@@ -17,71 +21,193 @@ class GroupChatRoom extends StatelessWidget {
   GroupChatRoom({required final String roomId}) : _roomId = roomId;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseService.getStreamToUserChatRef(roomId: _roomId),
-          builder: (context, snapshot) {
-            if (snapshot.hasData &&
-                snapshot.data != null &&
-                snapshot.data!.exists) {
-              final doc = snapshot.data;
-              late void Function()? onTap;
-              if (doc![ChatDocumentField.REMOVED]) {
-                onTap = () => ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                            'You need to be a member to see group profile.'),
-                      ),
+    return MainBody(roomId: _roomId);
+  }
+}
+
+class MainBody extends StatefulWidget {
+  const MainBody({
+    Key? key,
+    required String roomId,
+  })  : _roomId = roomId,
+        super(key: key);
+
+  final String _roomId;
+
+  @override
+  _MainBodyState createState() => _MainBodyState();
+}
+
+class _MainBodyState extends State<MainBody> {
+  bool selectionMode = false;
+  void selectionModeManager(bool condition) {
+    setState(() {
+      selectionMode = condition;
+    });
+  }
+
+  bool isLoading = false;
+  void setLoading(bool condition) {
+    setState(() {
+      isLoading = condition;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => SelectedMessages(),
+      child: ProgressHUD(
+        showIndicator: isLoading,
+        child: Scaffold(
+          appBar: AppBar(
+            title: selectionMode == false
+                ? StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseService.getStreamToUserChatRef(
+                        roomId: widget._roomId),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData &&
+                          snapshot.data != null &&
+                          snapshot.data!.exists) {
+                        final doc = snapshot.data;
+                        late void Function()? onTap;
+                        if (doc![ChatDocumentField.REMOVED]) {
+                          onTap =
+                              () => ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'You need to be a member to see group profile.'),
+                                    ),
+                                  );
+                        } else if (doc[ChatDBDocumentField.DELETED]) {
+                          onTap = () =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('This group no longer exist.'),
+                                ),
+                              );
+                        } else {
+                          onTap = () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GroupProfileScreen(
+                                    roomId: widget._roomId,
+                                  ),
+                                ),
+                              );
+                        }
+                        return AppBarTitle(
+                          roomId: widget._roomId,
+                          onTap: onTap,
+                        );
+                      } else {
+                        return Text('Loading...',
+                            style: TextStyle(color: Colors.grey));
+                      }
+                    },
+                  )
+                : null,
+            actions: selectionMode
+                ? [
+                    Consumer<SelectedMessages>(
+                      builder: (context, selectedMessages, _) {
+                        return IconButton(
+                          onPressed: () async {
+                            final result = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Delete selected messages?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: Text('Delete for me'),
+                                  ),
+                                  if (selectedMessages.canBeDeletedForEveryone)
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context, false);
+                                      },
+                                      child: Text('Delete for everyone'),
+                                    ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text('Cancel'),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (result == true) {
+                              //Delete for me
+                              setLoading(true);
+                              await selectedMessages
+                                  .deleteSelectedMessageForCurrentUser(
+                                      roomId: widget._roomId);
+                              setLoading(false);
+                              selectionModeManager(false);
+                            } else if (result == false) {
+                              //Delete for every one
+                              setLoading(true);
+                              await selectedMessages
+                                  .deleteSelectedMessageForEveryOne(
+                                      roomId: widget._roomId);
+                              setLoading(false);
+                              selectionModeManager(false);
+                            }
+                          },
+                          icon: Icon(Icons.delete),
+                        );
+                      },
+                    ),
+                    Consumer<SelectedMessages>(
+                      builder: (context, selectedMessages, _) {
+                        return IconButton(
+                          onPressed: () {},
+                          icon: Transform(
+                            transform: Matrix4.rotationY(Math.pi),
+                            alignment: Alignment.center,
+                            child: Icon(Icons.reply),
+                          ),
+                        );
+                      },
+                    ),
+                  ]
+                : null,
+            backgroundColor: kPrimaryColor,
+          ),
+          body: SafeArea(
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseService.getStreamToUserChatRef(
+                  roomId: widget._roomId),
+              builder: (context, snapshot) {
+                if (snapshot.hasData &&
+                    snapshot.data != null &&
+                    snapshot.data!.exists) {
+                  final doc = snapshot.data;
+                  if (doc![ChatDocumentField.REMOVED]) {
+                    return BodyIfNotMember(
+                      roomId: widget._roomId,
+                      removedAt: doc[ChatDocumentField.REMOVED_AT],
+                      selectionMode: selectionMode,
+                      selectionModeManager: selectionModeManager,
                     );
-              } else if (doc[ChatDBDocumentField.DELETED]) {
-                onTap = () => ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('This group no longer exist.'),
-                      ),
+                  } else {
+                    return BodyIfMember(
+                      roomId: widget._roomId,
+                      groupDeleted: doc[ChatDBDocumentField.DELETED],
+                      selectionMode: selectionMode,
+                      selectionModeManager: selectionModeManager,
                     );
-              } else {
-                onTap = () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GroupProfileScreen(
-                          roomId: _roomId,
-                        ),
-                      ),
-                    );
-              }
-              return AppBarTitle(
-                roomId: _roomId,
-                onTap: onTap,
-              );
-            } else {
-              return Text('Loading...', style: TextStyle(color: Colors.grey));
-            }
-          },
-        ),
-        backgroundColor: kPrimaryColor,
-      ),
-      body: SafeArea(
-        child: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseService.getStreamToUserChatRef(roomId: _roomId),
-          builder: (context, snapshot) {
-            if (snapshot.hasData &&
-                snapshot.data != null &&
-                snapshot.data!.exists) {
-              final doc = snapshot.data;
-              if (doc![ChatDocumentField.REMOVED]) {
-                return BodyIfNotMember(
-                    roomId: _roomId,
-                    removedAt: doc[ChatDocumentField.REMOVED_AT]);
-              } else if (doc[ChatDBDocumentField.DELETED]) {
-                return BodyIfMember(roomId: _roomId, groupDeleted: true);
-              } else {
-                return BodyIfMember(roomId: _roomId, groupDeleted: false);
-              }
-            } else {
-              return Text('Loading...', style: TextStyle(color: Colors.grey));
-            }
-          },
+                  }
+                } else {
+                  return Text('Loading...',
+                      style: TextStyle(color: Colors.grey));
+                }
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -128,12 +254,18 @@ class BodyIfMember extends StatelessWidget {
     Key? key,
     required String roomId,
     required bool groupDeleted,
+    required bool selectionMode,
+    required selectionModeManager,
   })  : _roomId = roomId,
         _groupDeleted = groupDeleted,
+        _selectionMode = selectionMode,
+        _selectionModeManager = selectionModeManager,
         super(key: key);
 
   final String _roomId;
   final bool _groupDeleted;
+  final bool _selectionMode;
+  final _selectionModeManager;
 
   @override
   Widget build(BuildContext context) {
@@ -151,9 +283,16 @@ class BodyIfMember extends StatelessWidget {
             if (snapshots.hasData && snapshots.data != null) {
               final messages = snapshots.data!.docs;
               for (final message in messages) {
+                if (message[MessageDocumentField.DELETED_FOR_EVERYONE])
+                  continue;
+                if ((message[MessageDocumentField.DELETED_BY]
+                        as Map<dynamic, dynamic>)
+                    .containsKey(FirebaseService.currentUserEmail)) continue;
                 final id = message[MessageDocumentField.MESSAGE_ID];
                 final sender = message[MessageDocumentField.SENDER];
                 final time = message[MessageDocumentField.TIME];
+                final date = message[MessageDocumentField.DATE];
+                final timeStamp = message[MessageDocumentField.TIME_STAMP];
                 final type = message[MessageDocumentField.TYPE];
 
                 String? content = message[MessageDocumentField.CONTENT] != null
@@ -164,10 +303,15 @@ class BodyIfMember extends StatelessWidget {
                 if (type == MessageType.TEXT) {
                   messageList.add(
                     GroupTextMessage(
-                      id: id,
-                      sender: sender,
-                      content: content as String,
-                      time: time,
+                      message: Message(
+                          messageId: id,
+                          sender: sender,
+                          time: time,
+                          date: date,
+                          content: content,
+                          timestamp: timeStamp),
+                      selectionMode: _selectionMode,
+                      selectionModeManager: _selectionModeManager,
                     ),
                   );
                 } else if (type == MessageType.IMAGE) {
@@ -177,11 +321,16 @@ class BodyIfMember extends StatelessWidget {
                   }
                   messageList.add(
                     GroupImageMessage(
-                      id: id,
-                      sender: sender,
-                      content: content,
-                      time: time,
-                      imageUrl: imageUrl,
+                      message: Message(
+                          messageId: id,
+                          content: content,
+                          imageUrls: imageUrl,
+                          sender: sender,
+                          time: time,
+                          date: date,
+                          timestamp: timeStamp),
+                      selectionMode: _selectionMode,
+                      selectionModeManager: _selectionModeManager,
                     ),
                   );
                 }
@@ -211,12 +360,18 @@ class BodyIfNotMember extends StatelessWidget {
     Key? key,
     required String roomId,
     required Timestamp removedAt,
+    required bool selectionMode,
+    required selectionModeManager,
   })  : _roomId = roomId,
         _removedAt = removedAt,
+        _selectionMode = selectionMode,
+        _selectionModeManager = selectionModeManager,
         super(key: key);
 
   final String _roomId;
   final Timestamp _removedAt;
+  final bool _selectionMode;
+  final _selectionModeManager;
 
   @override
   Widget build(BuildContext context) {
@@ -233,9 +388,16 @@ class BodyIfNotMember extends StatelessWidget {
             if (snapshots.hasData && snapshots.data != null) {
               final messages = snapshots.data!.docs;
               for (final message in messages) {
+                if (message[MessageDocumentField.DELETED_FOR_EVERYONE])
+                  continue;
+                if ((message[MessageDocumentField.DELETED_BY]
+                        as Map<dynamic, dynamic>)
+                    .containsKey(FirebaseService.currentUserEmail)) continue;
                 final id = message[MessageDocumentField.MESSAGE_ID];
                 final sender = message[MessageDocumentField.SENDER];
                 final time = message[MessageDocumentField.TIME];
+                final date = message[MessageDocumentField.DATE];
+                final timeStamp = message[MessageDocumentField.TIME_STAMP];
                 final type = message[MessageDocumentField.TYPE];
 
                 String? content = message[MessageDocumentField.CONTENT] != null
@@ -246,10 +408,15 @@ class BodyIfNotMember extends StatelessWidget {
                 if (type == MessageType.TEXT) {
                   messageList.add(
                     GroupTextMessage(
-                      id: id,
-                      sender: sender,
-                      content: content as String,
-                      time: time,
+                      message: Message(
+                          messageId: id,
+                          sender: sender,
+                          time: time,
+                          date: date,
+                          content: content,
+                          timestamp: timeStamp),
+                      selectionMode: _selectionMode,
+                      selectionModeManager: _selectionModeManager,
                     ),
                   );
                 } else if (type == MessageType.IMAGE) {
@@ -259,11 +426,16 @@ class BodyIfNotMember extends StatelessWidget {
                   }
                   messageList.add(
                     GroupImageMessage(
-                      id: id,
-                      sender: sender,
-                      content: content,
-                      time: time,
-                      imageUrl: imageUrl,
+                      message: Message(
+                          messageId: id,
+                          content: content,
+                          imageUrls: imageUrl,
+                          sender: sender,
+                          time: time,
+                          date: date,
+                          timestamp: timeStamp),
+                      selectionMode: _selectionMode,
+                      selectionModeManager: _selectionModeManager,
                     ),
                   );
                 }
