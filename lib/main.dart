@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hi/screens/auth/email_verification_screen.dart';
 import 'package:hi/screens/auth/profile_setup_screen.dart';
 import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
-import 'package:hi/screens/forward_message_screen/forward_message_screen.dart';
 import 'package:hi/screens/group/group_chat_selection_screen.dart';
 import 'package:hi/screens/home/home_screen.dart';
 import 'package:hi/screens/loading_screen.dart';
