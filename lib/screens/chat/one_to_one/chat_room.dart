@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/conditional_stream_builder.dart';
@@ -23,9 +23,9 @@ class ChatRoom extends StatelessWidget {
   final String _roomId;
   final String _friendEmail;
 
-  ChatRoom({required final String roomId, required final String friendEamil})
+  ChatRoom({required final String roomId, required final String friendEmail})
       : _roomId = roomId,
-        _friendEmail = friendEamil;
+        _friendEmail = friendEmail;
   @override
   Widget build(BuildContext context) {
     return Body(
@@ -92,7 +92,7 @@ class _BodyState extends State<Body> {
                           padding: const EdgeInsets.all(kDefaultPadding / 4.0),
                           child: CircularProfilePicture(
                             email: widget._friendEmail,
-                            radius: kDefualtBorderRadius,
+                            radius: kDefaultBorderRadius,
                           ),
                         ),
                         SizedBox(width: kDefaultPadding / 4.0),
@@ -326,7 +326,7 @@ class NoLongerFriends extends StatelessWidget {
       padding: const EdgeInsets.all(kDefaultPadding),
       child: Center(
           child: Text(
-        'You are no logner friends.',
+        'You are no longer friends.',
         style: TextStyle(color: Colors.grey),
       )),
     );

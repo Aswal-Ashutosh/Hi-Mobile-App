@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
@@ -259,7 +259,7 @@ class AppBarTitle extends StatelessWidget {
             padding: const EdgeInsets.all(kDefaultPadding / 4.0),
             child: CircularGroupProfilePicture(
               roomId: _roomId,
-              radius: kDefualtBorderRadius,
+              radius: kDefaultBorderRadius,
             ),
           ),
           SizedBox(width: kDefaultPadding / 4.0),
@@ -499,7 +499,7 @@ class NotMember extends StatelessWidget {
       padding: const EdgeInsets.all(kDefaultPadding),
       child: Center(
           child: Text(
-        'You are no logner member of the group.',
+        'You are no longer member of the group.',
         style: TextStyle(color: Colors.grey),
       )),
     );

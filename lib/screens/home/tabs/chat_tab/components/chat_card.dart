@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/screens/home/tabs/chat_tab/components/chat_card_one_to_one.dart';
 import 'package:hi/screens/home/tabs/chat_tab/components/group_chat_card.dart';
 import 'package:hi/services/firebase_service.dart';
@@ -45,7 +45,6 @@ class ChatCard extends StatelessWidget {
               );
           }
         }else{
-          //TODO:Add shimmer
           return Container();
         }
       },

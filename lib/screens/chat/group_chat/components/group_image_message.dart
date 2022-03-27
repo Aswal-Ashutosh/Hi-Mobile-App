@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
@@ -35,11 +35,11 @@ class _GroupImageMessageState extends State<GroupImageMessage> {
     final displaySize = MediaQuery.of(context).size;
     bool isMe = widget._message.sender == FirebaseService.currentUserEmail;
     bool multiImages = widget._message.imageUrls!.length > 1;
-    final borderRaidus = BorderRadius.only(
-      topLeft: Radius.circular(kDefualtBorderRadius),
-      topRight: Radius.circular(kDefualtBorderRadius),
-      bottomRight: isMe ? Radius.zero : Radius.circular(kDefualtBorderRadius),
-      bottomLeft: isMe ? Radius.circular(kDefualtBorderRadius) : Radius.zero,
+    final borderRadius = BorderRadius.only(
+      topLeft: Radius.circular(kDefaultBorderRadius),
+      topRight: Radius.circular(kDefaultBorderRadius),
+      bottomRight: isMe ? Radius.zero : Radius.circular(kDefaultBorderRadius),
+      bottomLeft: isMe ? Radius.circular(kDefaultBorderRadius) : Radius.zero,
     );
     return InkWell(
       child: Container(
@@ -59,7 +59,7 @@ class _GroupImageMessageState extends State<GroupImageMessage> {
                   : isMe
                       ? Colors.white
                       : Color(0x992EA043),
-              borderRadius: borderRaidus,
+              borderRadius: borderRadius,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -103,7 +103,7 @@ class _GroupImageMessageState extends State<GroupImageMessage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (cotext) => ImageViewScreen(
+                                          builder: (context) => ImageViewScreen(
                                               imageURLs: widget._message
                                                   .imageUrls as List<String>),
                                         ),
@@ -116,8 +116,8 @@ class _GroupImageMessageState extends State<GroupImageMessage> {
                         ],
                       ),
                       borderRadius: isMe
-                          ? borderRaidus
-                          : borderRaidus.copyWith(topLeft: Radius.circular(0)),
+                          ? borderRadius
+                          : borderRadius.copyWith(topLeft: Radius.circular(0)),
                     ),
                     if (widget._message.content != null)
                       SizedBox(height: kDefaultPadding / 5.0),
@@ -162,7 +162,7 @@ class _GroupImageMessageState extends State<GroupImageMessage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (cotext) => ImageViewScreen(
+                  builder: (context) => ImageViewScreen(
                       imageURLs: widget._message.imageUrls as List<String>),
                 ),
               );

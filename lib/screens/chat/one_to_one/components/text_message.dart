@@ -49,12 +49,12 @@ class _TextMessageState extends State<TextMessage> {
                       ? Colors.white
                       : Color(0x992EA043),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(kDefualtBorderRadius),
-                topRight: Radius.circular(kDefualtBorderRadius),
+                topLeft: Radius.circular(kDefaultBorderRadius),
+                topRight: Radius.circular(kDefaultBorderRadius),
                 bottomRight:
-                    isMe ? Radius.zero : Radius.circular(kDefualtBorderRadius),
+                    isMe ? Radius.zero : Radius.circular(kDefaultBorderRadius),
                 bottomLeft:
-                    isMe ? Radius.circular(kDefualtBorderRadius) : Radius.zero,
+                    isMe ? Radius.circular(kDefaultBorderRadius) : Radius.zero,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

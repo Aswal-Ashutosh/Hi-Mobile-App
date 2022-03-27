@@ -7,7 +7,7 @@ class RoundIconButton extends StatelessWidget {
   final Color color;
   final radius;
 
-  const RoundIconButton({required this.icon, required this.onPressed, this.color = kPrimaryColor, this.radius = kDefualtBorderRadius * 2});
+  const RoundIconButton({required this.icon, required this.onPressed, this.color = kPrimaryColor, this.radius = kDefaultBorderRadius * 2});
 
   @override
   Widget build(BuildContext context) {

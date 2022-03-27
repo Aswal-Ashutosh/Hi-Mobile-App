@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/chat/one_to_one/chat_room.dart';
@@ -32,7 +32,7 @@ class FriendCard extends StatelessWidget {
               ),
               child: CircularProfilePicture(
                 email: _friendEmail,
-                radius: kDefualtBorderRadius * 1.5,
+                radius: kDefaultBorderRadius * 1.5,
               ),
             ),
             SizedBox(width: kDefaultPadding / 2.0),
@@ -80,7 +80,7 @@ class FriendCard extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ChatRoom(roomId: roomId, friendEamil: _friendEmail)));
+                    ChatRoom(roomId: roomId, friendEmail: _friendEmail)));
       },
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
@@ -37,7 +37,7 @@ class GroupMemberCard extends StatelessWidget {
           children: [
             CircularProfilePicture(
               email: _memberEmail,
-              radius: kDefualtBorderRadius * 1.5,
+              radius: kDefaultBorderRadius * 1.5,
             ),
             SizedBox(width: kDefaultPadding / 2.0),
             Flexible(
@@ -94,7 +94,7 @@ class GroupMemberCard extends StatelessWidget {
                                   'Are you sure to remove ${snapshot.data as String}?');
                           }
                           return Text(
-                            'Loadig....',
+                            'Loading....',
                             style: TextStyle(color: Colors.grey),
                           );
                         },
@@ -114,7 +114,7 @@ class GroupMemberCard extends StatelessWidget {
                   if (result != null && result == true) {
                     _progressIndicatorCallback(true);
                     await FirebaseService.removeMemberFromGroup(
-                        roomId: _roomId, memeberEmail: _memberEmail);
+                        roomId: _roomId, memberEmail: _memberEmail);
                     _progressIndicatorCallback(false);
                     ScaffoldMessenger.of(
                             _scaffoldKey.currentContext as BuildContext)

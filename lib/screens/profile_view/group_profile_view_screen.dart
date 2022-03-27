@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/progressHud/progress_hud.dart';
@@ -128,7 +128,7 @@ class Body extends StatelessWidget {
                     ),
                     right: 0,
                     bottom: 0,
-                    width: kDefualtBorderRadius * 2.0,
+                    width: kDefaultBorderRadius * 2.0,
                   )
               ],
             ),
@@ -357,7 +357,7 @@ class AboutEditingSheet extends StatefulWidget {
 
 class _AboutEditingSheetState extends State<AboutEditingSheet> {
   final _borderRadius = OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
+    borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadius * 2)),
     borderSide: BorderSide(color: kPrimaryColor),
   );
 
@@ -447,8 +447,8 @@ class _AboutEditingSheetState extends State<AboutEditingSheet> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(kDefualtBorderRadius),
-              topRight: Radius.circular(kDefualtBorderRadius),
+              topLeft: Radius.circular(kDefaultBorderRadius),
+              topRight: Radius.circular(kDefaultBorderRadius),
             ),
           ),
         ),
@@ -466,7 +466,7 @@ class NameEditingSheet extends StatefulWidget {
 
 class _NameEditingSheetState extends State<NameEditingSheet> {
   final _borderRadius = OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
+    borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadius * 2)),
     borderSide: BorderSide(color: kPrimaryColor),
   );
 
@@ -553,8 +553,8 @@ class _NameEditingSheetState extends State<NameEditingSheet> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(kDefualtBorderRadius),
-              topRight: Radius.circular(kDefualtBorderRadius),
+              topLeft: Radius.circular(kDefaultBorderRadius),
+              topRight: Radius.circular(kDefaultBorderRadius),
             ),
           ),
         ),

@@ -27,7 +27,7 @@ class _ImageMessageTextFieldState extends State<ImageMessageTextField> {
   final TextEditingController _textEditingController = TextEditingController();
 
   final _borderRadius = const OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
+    borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadius * 2)),
     borderSide: BorderSide(color: Colors.white),
   );
 

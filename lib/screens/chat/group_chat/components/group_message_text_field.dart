@@ -20,7 +20,7 @@ class _GroupMessageTextFieldState extends State<GroupMessageTextField> {
   final TextEditingController _textEditingController = TextEditingController();
 
   final _borderRadius = const OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
+    borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadius * 2)),
     borderSide: BorderSide(color: Colors.white),
   );
 
@@ -70,7 +70,7 @@ class _GroupMessageTextFieldState extends State<GroupMessageTextField> {
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
-                  Radius.circular(kDefualtBorderRadius * 2.0),
+                  Radius.circular(kDefaultBorderRadius * 2.0),
                 ),
                 color: Colors.white,
                 boxShadow: <BoxShadow>[

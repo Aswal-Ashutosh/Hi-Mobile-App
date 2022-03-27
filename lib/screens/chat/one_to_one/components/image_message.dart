@@ -32,11 +32,11 @@ class _ImageMessageState extends State<ImageMessage> {
     final displaySize = MediaQuery.of(context).size;
     bool isMe = widget._message.sender == FirebaseService.currentUserEmail;
     bool multiImages = widget._message.imageUrls!.length > 1;
-    final borderRaidus = BorderRadius.only(
-      topLeft: Radius.circular(kDefualtBorderRadius),
-      topRight: Radius.circular(kDefualtBorderRadius),
-      bottomRight: isMe ? Radius.zero : Radius.circular(kDefualtBorderRadius),
-      bottomLeft: isMe ? Radius.circular(kDefualtBorderRadius) : Radius.zero,
+    final borderRadius = BorderRadius.only(
+      topLeft: Radius.circular(kDefaultBorderRadius),
+      topRight: Radius.circular(kDefaultBorderRadius),
+      bottomRight: isMe ? Radius.zero : Radius.circular(kDefaultBorderRadius),
+      bottomLeft: isMe ? Radius.circular(kDefaultBorderRadius) : Radius.zero,
     );
     return InkWell(
       child: Container(
@@ -56,7 +56,7 @@ class _ImageMessageState extends State<ImageMessage> {
                   : isMe
                       ? Colors.white
                       : Color(0x992EA043),
-              borderRadius: borderRaidus,
+              borderRadius: borderRadius,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -81,7 +81,7 @@ class _ImageMessageState extends State<ImageMessage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (cotext) => ImageViewScreen(
+                                          builder: (context) => ImageViewScreen(
                                               imageURLs: widget._message
                                                   .imageUrls as List<String>),
                                         ),
@@ -93,7 +93,7 @@ class _ImageMessageState extends State<ImageMessage> {
                             ),
                         ],
                       ),
-                      borderRadius: borderRaidus,
+                      borderRadius: borderRadius,
                     ),
                     if (widget._message.content != null)
                       SizedBox(height: kDefaultPadding / 5.0),
@@ -138,7 +138,7 @@ class _ImageMessageState extends State<ImageMessage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (cotext) => ImageViewScreen(
+                  builder: (context) => ImageViewScreen(
                       imageURLs: widget._message.imageUrls as List<String>),
                 ),
               );

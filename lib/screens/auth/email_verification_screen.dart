@@ -6,14 +6,14 @@ import 'package:hi/constants/error.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/screens/auth/profile_setup_screen.dart';
 
-class EmailVerificatoinScreen extends StatefulWidget {
+class EmailVerificationScreen extends StatefulWidget {
   static const id = 'email_verification_screen';
   @override
-  _EmailVerificatoinScreenState createState() =>
-      _EmailVerificatoinScreenState();
+  _EmailVerificationScreenState createState() =>
+      _EmailVerificationScreenState();
 }
 
-class _EmailVerificatoinScreenState extends State<EmailVerificatoinScreen> {
+class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   Timer? timer;
 
   bool resendButtonEnabled = false;
@@ -67,7 +67,7 @@ class _EmailVerificatoinScreenState extends State<EmailVerificatoinScreen> {
               Center(
                   child: Text('Verification', style: TextStyle(fontSize: 40))),
               SizedBox(height: kDefaultPadding * 2),
-              VerificatonMessage(),
+              VerificationMessage(),
               SizedBox(height: kDefaultPadding * 2),
               if (resendButtonEnabled == false)
                 TweenAnimationBuilder(
@@ -110,7 +110,7 @@ class _EmailVerificatoinScreenState extends State<EmailVerificatoinScreen> {
   }
 }
 
-class VerificatonMessage extends StatelessWidget {
+class VerificationMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -150,7 +150,7 @@ class VerificatonMessage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Color(0x332EA043),
         borderRadius: BorderRadius.all(
-          Radius.circular(kDefualtBorderRadius / 2.0),
+          Radius.circular(kDefaultBorderRadius / 2.0),
         ),
       ),
     );

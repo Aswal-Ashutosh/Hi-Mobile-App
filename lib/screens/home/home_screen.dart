@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/buttons/primary_button.dart';
 import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 padding: const EdgeInsets.all(kDefaultPadding / 4.0),
                 child: CircularProfilePicture(
                   email: FirebaseService.currentUserEmail,
-                  radius: kDefualtBorderRadius,
+                  radius: kDefaultBorderRadius,
                 ),
               ),
             ),

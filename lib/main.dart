@@ -26,7 +26,7 @@ class Hi extends StatelessWidget {
         WelcomeScreen.id: (context) => WelcomeScreen(),
         SignInScreen.id: (context) => SignInScreen(),
         SignUpScreen.id: (context) => SignUpScreen(),
-        EmailVerificatoinScreen.id: (context) => EmailVerificatoinScreen(),
+        EmailVerificationScreen.id: (context) => EmailVerificationScreen(),
         HomeScreen.id: (context) => HomeScreen(),
         LoadingScreen.id: (context) => LoadingScreen(),
         EditProfileScreen.id: (context) => EditProfileScreen(),

@@ -14,7 +14,7 @@ class AddFriends extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () async{
           final result = await showModalBottomSheet(
-              context: context, builder: (cotext) => AddByEmail());
+              context: context, builder: (context) => AddByEmail());
           if(result != null && result == true){
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Request Sent.')));
           }
@@ -42,7 +42,7 @@ class AddByEmail extends StatefulWidget {
 
 class _AddByEmailState extends State<AddByEmail> {
   final _borderRadius = OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
+    borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadius * 2)),
     borderSide: BorderSide(color: kPrimaryColor),
   );
 
@@ -123,8 +123,8 @@ class _AddByEmailState extends State<AddByEmail> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(kDefualtBorderRadius),
-              topRight: Radius.circular(kDefualtBorderRadius),
+              topLeft: Radius.circular(kDefaultBorderRadius),
+              topRight: Radius.circular(kDefaultBorderRadius),
             ),
           ),
         ),
@@ -138,7 +138,7 @@ class SearchTextField extends StatelessWidget {
   const SearchTextField(
       {final OutlineInputBorder borderRadius = const OutlineInputBorder(
         borderRadius:
-            BorderRadius.all(Radius.circular(kDefualtBorderRadius / 2.0)),
+            BorderRadius.all(Radius.circular(kDefaultBorderRadius / 2.0)),
         borderSide: BorderSide(color: kPrimaryColor),
       )})
       : _borderRadius = borderRadius;
@@ -160,7 +160,7 @@ class SearchTextField extends StatelessWidget {
       ),
       decoration: BoxDecoration(
           borderRadius:
-              BorderRadius.all(Radius.circular(kDefualtBorderRadius / 2.0)),
+              BorderRadius.all(Radius.circular(kDefaultBorderRadius / 2.0)),
           color: Colors.white,
           boxShadow: <BoxShadow>[BoxShadow(blurRadius: 0.2)]),
     );

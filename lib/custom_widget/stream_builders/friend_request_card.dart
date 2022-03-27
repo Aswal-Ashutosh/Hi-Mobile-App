@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/profile_view/user_profile_view_screen.dart';
@@ -34,7 +34,7 @@ class FriendRequestCard extends StatelessWidget {
           children: [
             CircularProfilePicture(
               email: _senderEmail,
-              radius: kDefualtBorderRadius * 2.5,
+              radius: kDefaultBorderRadius * 2.5,
             ),
             SizedBox(width: kDefaultPadding / 5.0),
             Flexible(
@@ -77,7 +77,7 @@ class FriendRequestCard extends StatelessWidget {
                             style: TextStyle(color: Colors.green),
                           )),
                       TextButton(
-                        onPressed: () => FirebaseService.rejectFreindRequest(
+                        onPressed: () => FirebaseService.rejectFriendRequest(
                             email: _senderEmail),
                         child: Text(
                           'REJECT',

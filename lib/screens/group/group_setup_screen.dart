@@ -26,7 +26,7 @@ class _GroupSetupScreenState extends State<GroupSetupScreen> {
       value!.trim().isEmpty ? "This field can't be empty." : null;
 
   final borderRadius = OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
+    borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadius * 2)),
     borderSide: BorderSide(color: kPrimaryColor),
   );
 
@@ -67,15 +67,15 @@ class _GroupSetupScreenState extends State<GroupSetupScreen> {
                             child: Icon(
                               Icons.group,
                               color: Colors.grey,
-                              size: kDefualtBorderRadius * 3,
+                              size: kDefaultBorderRadius * 3,
                             ),
                             backgroundColor: Colors.blueGrey,
-                            radius: kDefualtBorderRadius * 3,
+                            radius: kDefaultBorderRadius * 3,
                           )
                         : CircleAvatar(
                             backgroundImage: FileImage(profileImage as File),
                             backgroundColor: Colors.blueGrey,
-                            radius: kDefualtBorderRadius * 3,
+                            radius: kDefaultBorderRadius * 3,
                           ),
                     Positioned(
                       child: RoundIconButton(
@@ -94,7 +94,7 @@ class _GroupSetupScreenState extends State<GroupSetupScreen> {
                       ),
                       right: 0,
                       bottom: 0,
-                      width: kDefualtBorderRadius * 2.0,
+                      width: kDefaultBorderRadius * 2.0,
                     )
                   ],
                 ),

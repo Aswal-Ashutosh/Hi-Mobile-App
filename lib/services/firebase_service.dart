@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/provider/helper/chat.dart';
 import 'package:hi/provider/helper/message.dart';
 import 'package:hi/services/encryption_service.dart';
@@ -52,7 +52,7 @@ class FirebaseService {
   static Future<void> sendFriendRequest(
       {required String recipientEmail}) async {
     final senderEmail = FirebaseService.currentUserEmail;
-    //Sending request to yourselft
+    //Sending request to yourself
     if (senderEmail == recipientEmail)
       throw ('Can\'t send request to yourself.');
 
@@ -137,7 +137,7 @@ class FirebaseService {
   static getStreamToGroupData({required final String roomId}) =>
       _fStore.collection(Collections.CHAT_DB).doc(roomId).snapshots();
 
-  static get currentUserStreamToFirendRequests => _fStore
+  static get currentUserStreamToFriendRequests => _fStore
       .collection(Collections.USERS)
       .doc(FirebaseService.currentUserEmail)
       .collection(Collections.FRIEND_REQUESTS)
@@ -189,8 +189,8 @@ class FirebaseService {
     final String roomId = UidGenerator.getRoomIdFor(
         email1: email, email2: FirebaseService.currentUserEmail);
 
-    //IF USERS WERE ALREADY FRIENDS AND UNFIRNED THEM THEN IF THEY AGAIN WANT TO BECOME FRIEND,
-    //THEN WE DON'T NEED TO MAKE CHAT REFERENCE AGAIN AS THEY WILL BE THERE ONLY WITH VISIBLITY TRUE/FALSE.
+    //IF USERS WERE ALREADY FRIENDS AND UNFRIEND THEM THEN IF THEY AGAIN WANT TO BECOME FRIEND,
+    //THEN WE DON'T NEED TO MAKE CHAT REFERENCE AGAIN AS THEY WILL BE THERE ONLY WITH VISIBILITY TRUE/FALSE.
     if (await _fStore
         .collection(Collections.CHAT_DB)
         .doc(roomId)
@@ -199,7 +199,7 @@ class FirebaseService {
 
     //IF BECOMING FRIENDS FOR THE FIRST TIME
 
-    //Creating Chat refrence in current user collection
+    //Creating Chat reference in current user collection
     await _fStore
         .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
@@ -211,7 +211,7 @@ class FirebaseService {
       ChatDocumentField.SHOW_AFTER: DateTime.now(),
     });
 
-    //Creating Chat refrence in friend collection
+    //Creating Chat reference in friend collection
     await _fStore
         .collection(Collections.USERS)
         .doc(email)
@@ -231,7 +231,7 @@ class FirebaseService {
     });
   }
 
-  static Future<void> rejectFreindRequest({required final String email}) async {
+  static Future<void> rejectFriendRequest({required final String email}) async {
     await _fStore
         .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
@@ -312,14 +312,14 @@ class FirebaseService {
     await FirebaseService.sendTextMessageToRoom(
         roomId: roomId, message: message);
 
-    //Setting visiblity as true for current user chat reference.
+    //Setting visibility as true for current user chat reference.
     await _fStore
         .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
         .collection(Collections.CHATS)
         .doc(roomId)
         .update({ChatDocumentField.VISIBILITY: true});
-    //Setting visiblity as true for friends chat reference.
+    //Setting visibility as true for friends chat reference.
     await _fStore
         .collection(Collections.USERS)
         .doc(friendEmail)
@@ -393,7 +393,7 @@ class FirebaseService {
     await FirebaseService.sendImagesToRoom(
         roomId: roomId, images: images, message: message);
 
-    //Setting visiblity as true for current user chat reference.
+    //Setting visibility as true for current user chat reference.
     await _fStore
         .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
@@ -401,7 +401,7 @@ class FirebaseService {
         .doc(roomId)
         .update({ChatDocumentField.VISIBILITY: true});
 
-    //Setting visiblity as true for friends chat reference.
+    //Setting visibility as true for friends chat reference.
     await _fStore
         .collection(Collections.USERS)
         .doc(friendEmail)
@@ -681,14 +681,14 @@ class FirebaseService {
   //[METHOD]: TO REMOVE MEMBER FROM THE GROUP
   static Future<void> removeMemberFromGroup(
       {required final String roomId,
-      required final String memeberEmail}) async {
+      required final String memberEmail}) async {
     //Removing from member array
     final List<dynamic> members = await _fStore
         .collection(Collections.CHAT_DB)
         .doc(roomId)
         .get()
         .then((value) => value[ChatDBDocumentField.MEMBERS]);
-    members.remove(memeberEmail);
+    members.remove(memberEmail);
     await _fStore
         .collection(Collections.CHAT_DB)
         .doc(roomId)
@@ -697,7 +697,7 @@ class FirebaseService {
     //Marking removed in user chat reference to group
     await _fStore
         .collection(Collections.USERS)
-        .doc(memeberEmail)
+        .doc(memberEmail)
         .collection(Collections.CHATS)
         .doc(roomId)
         .update({
@@ -709,7 +709,7 @@ class FirebaseService {
   //[METHOD]: TO LEAVE A GROUP
   static Future<void> leaveGroup({required final roomId}) async =>
       await FirebaseService.removeMemberFromGroup(
-          roomId: roomId, memeberEmail: FirebaseService.currentUserEmail);
+          roomId: roomId, memberEmail: FirebaseService.currentUserEmail);
 
   //[METHOD]: TO DELETE THE GROUP
   static Future<void> deleteGroup({required roomId}) async {
@@ -848,14 +848,14 @@ class FirebaseService {
     await FirebaseService.forwardTextMessageToRoom(
         roomId: roomId, message: message);
 
-    //Setting visiblity as true for current user chat reference.
+    //Setting visibility as true for current user chat reference.
     await _fStore
         .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
         .collection(Collections.CHATS)
         .doc(roomId)
         .update({ChatDocumentField.VISIBILITY: true});
-    //Setting visiblity as true for friends chat reference.
+    //Setting visibility as true for friends chat reference.
     await _fStore
         .collection(Collections.USERS)
         .doc(friendEmail)
@@ -921,7 +921,7 @@ class FirebaseService {
     await FirebaseService.forwardImagesToRoom(
         roomId: roomId, imageUrls: imageUrls, message: message);
 
-    //Setting visiblity as true for current user chat reference.
+    //Setting visibility as true for current user chat reference.
     await _fStore
         .collection(Collections.USERS)
         .doc(FirebaseService.currentUserEmail)
@@ -929,7 +929,7 @@ class FirebaseService {
         .doc(roomId)
         .update({ChatDocumentField.VISIBILITY: true});
 
-    //Setting visiblity as true for friends chat reference.
+    //Setting visibility as true for friends chat reference.
     await _fStore
         .collection(Collections.USERS)
         .doc(friendEmail)

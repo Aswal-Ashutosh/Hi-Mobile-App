@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_group_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/provider/selected_chats.dart';
@@ -44,7 +44,7 @@ class _GroupChatCardState extends State<GroupChatCard> {
             final doc = snapshot.data;
             final bool isRemoved = doc?[ChatDocumentField.REMOVED];
             final bool isDeleted = doc?[ChatDocumentField.DELETED];
-            final bool isDeletable = isRemoved || isDeleted;
+            final bool isDeletable = isRemoved || isDeleted; 
             return InkWell(
               child: Container(
                 color: isSelected
@@ -167,7 +167,7 @@ class _GroupChatCardState extends State<GroupChatCard> {
                 children: [
                   CircularGroupProfilePicture(
                       roomId: widget._roomId,
-                      radius: kDefualtBorderRadius * 1.5),
+                      radius: kDefaultBorderRadius * 1.5),
                   SizedBox(width: kDefaultPadding / 2.0),
                   Flexible(
                     child: TextStreamBuilder(
@@ -206,7 +206,7 @@ class GroupProfileImage extends StatelessWidget {
       onTap: _onTap,
       child: CircularGroupProfilePicture(
         roomId: _roomId,
-        radius: kDefualtBorderRadius * 1.5,
+        radius: kDefaultBorderRadius * 1.5,
       ),
     );
   }
@@ -322,7 +322,6 @@ class BodyIfMember extends StatelessWidget {
                 );
               }
             } else {
-              //TODO: Add Shimmer
               return Text('Loading...', style: TextStyle(color: Colors.grey));
             }
           },

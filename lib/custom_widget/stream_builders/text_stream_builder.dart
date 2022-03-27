@@ -29,7 +29,6 @@ class TextStreamBuilder extends StatelessWidget {
             overflow: _textOverflow,
           );
         } else {
-          //TODO: Add Shimmer
           return Text('Loading...', style: TextStyle(color: Colors.grey));
         }
       },

@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/services/firebase_service.dart';
 
 class CircularGroupProfilePicture extends StatelessWidget {
   final _roomId;
   final _radius;
-  const CircularGroupProfilePicture({required final String roomId, final radius = kDefualtBorderRadius * 3}) : _roomId = roomId, _radius = radius;
+  const CircularGroupProfilePicture({required final String roomId, final radius = kDefaultBorderRadius * 3}) : _roomId = roomId, _radius = radius;
 
   @override
   Widget build(BuildContext context) {

@@ -104,7 +104,7 @@ class _SignInFormState extends State<SignInForm> {
   String? firebasePasswordError;
 
   final borderRadius = OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(kDefualtBorderRadius * 2)),
+    borderRadius: BorderRadius.all(Radius.circular(kDefaultBorderRadius * 2)),
     borderSide: BorderSide(color: kPrimaryColor),
   );
 
@@ -180,7 +180,7 @@ class _SignInFormState extends State<SignInForm> {
                             context, ProfileSetupScreen.id);
                     } else {
                       Navigator.popAndPushNamed(
-                          context, EmailVerificatoinScreen.id);
+                          context, EmailVerificationScreen.id);
                     }
                   }).catchError((error) {
                     switch (error.code) {

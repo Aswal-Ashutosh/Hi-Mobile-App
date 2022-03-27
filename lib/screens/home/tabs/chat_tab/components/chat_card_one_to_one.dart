@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/conditional_stream_builder.dart';
 import 'package:hi/custom_widget/stream_builders/online_indicator_dot.dart';
@@ -58,7 +58,7 @@ class _ChatCardOneToOneState extends State<ChatCardOneToOne> {
               ),
               child: CircularProfilePicture(
                 email: widget._friendEmail,
-                radius: kDefualtBorderRadius * 1.5,
+                radius: kDefaultBorderRadius * 1.5,
               ),
             ),
             SizedBox(width: kDefaultPadding / 2.0),
@@ -156,7 +156,6 @@ class _ChatCardOneToOneState extends State<ChatCardOneToOne> {
                           ],
                         );
                       } else {
-                        //TODO: Add Shimmer
                         return Text('Loading...',
                             style: TextStyle(color: Colors.grey));
                       }
@@ -188,7 +187,7 @@ class _ChatCardOneToOneState extends State<ChatCardOneToOne> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ChatRoom(
-                      roomId: widget._roomId, friendEamil: widget._friendEmail),
+                      roomId: widget._roomId, friendEmail: widget._friendEmail),
                 ),
               ),
       onLongPress: widget._selectionMode

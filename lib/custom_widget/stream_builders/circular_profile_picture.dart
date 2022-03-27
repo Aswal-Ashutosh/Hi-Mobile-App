@@ -6,7 +6,7 @@ import 'package:hi/services/firebase_service.dart';
 class CircularProfilePicture extends StatelessWidget {
   final _email;
   final _radius;
-  const CircularProfilePicture({required final String email, final radius = kDefualtBorderRadius * 3}) : _email = email, _radius = radius;
+  const CircularProfilePicture({required final String email, final radius = kDefaultBorderRadius * 3}) : _email = email, _radius = radius;
 
   @override
   Widget build(BuildContext context) {

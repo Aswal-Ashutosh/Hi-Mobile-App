@@ -9,8 +9,8 @@ class RequestsTab extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseService.currentUserStreamToFirendRequests,
-        builder: (conext, snapshot) {
+        stream: FirebaseService.currentUserStreamToFriendRequests,
+        builder: (context, snapshot) {
           List<FriendRequestCard> friendRequests = [];
           if(snapshot.hasData && snapshot.data!.docs.isNotEmpty){
             final requests = snapshot.data?.docs;

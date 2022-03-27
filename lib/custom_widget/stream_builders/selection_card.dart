@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/provider/selected_users.dart';
@@ -28,7 +28,7 @@ class _SelectionCardState extends State<SelectionCard> {
           children: [
             CircularProfilePicture(
               email: widget._friendEmail,
-              radius: kDefualtBorderRadius * 1.5,
+              radius: kDefaultBorderRadius * 1.5,
             ),
             SizedBox(width: kDefaultPadding / 2.0),
             Flexible(

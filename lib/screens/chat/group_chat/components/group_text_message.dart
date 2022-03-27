@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
-import 'package:hi/constants/firestore_costants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/provider/helper/message.dart';
@@ -51,12 +51,12 @@ class _GroupTextMessageState extends State<GroupTextMessage> {
                       ? Colors.white
                       : Color(0x992EA043),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(kDefualtBorderRadius),
-                topRight: Radius.circular(kDefualtBorderRadius),
+                topLeft: Radius.circular(kDefaultBorderRadius),
+                topRight: Radius.circular(kDefaultBorderRadius),
                 bottomRight:
-                    isMe ? Radius.zero : Radius.circular(kDefualtBorderRadius),
+                    isMe ? Radius.zero : Radius.circular(kDefaultBorderRadius),
                 bottomLeft:
-                    isMe ? Radius.circular(kDefualtBorderRadius) : Radius.zero,
+                    isMe ? Radius.circular(kDefaultBorderRadius) : Radius.zero,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),

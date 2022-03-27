@@ -167,7 +167,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 .createUserWithEmailAndPassword(email: emailTextController.text.trim(), password: passwordTextController.text.trim())
                 .then((value) async{ 
                   widget.loadingIndicatorCallback(false);
-                  Navigator.pushNamed(context, EmailVerificatoinScreen.id);
+                  Navigator.pushNamed(context, EmailVerificationScreen.id);
                  })
                 .catchError((error) {
                   switch(error.code){
