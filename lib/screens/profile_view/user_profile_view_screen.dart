@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_constants.dart';
@@ -6,6 +7,7 @@ import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/conditional_stream_builder.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/screens/edit_profile/profile_view_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -75,8 +77,32 @@ class Body extends StatelessWidget {
       padding: const EdgeInsets.all(kDefaultPadding),
       child: Column(
         children: [
-          CircularProfilePicture(
-            email: _userEmail,
+          StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseService.getStreamToUserData(
+                email: _userEmail),
+            builder: (context, snapshots) {
+              void Function()? onTap = () {};
+              if (snapshots.hasData &&
+                  snapshots.data != null &&
+                  snapshots.data?['profile_image'] != null) {
+                final imageUrl = snapshots.data?['profile_image'];
+                onTap = () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ProfileViewScreen(imageUrl: imageUrl),
+                    ),
+                  );
+                };
+              }
+              return GestureDetector(
+                child: CircularProfilePicture(
+                  email: _userEmail,
+                ),
+                onTap: onTap,
+              );
+            },
           ),
           SizedBox(height: kDefaultPadding),
           Row(

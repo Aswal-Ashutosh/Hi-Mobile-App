@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-class ImageViewScreen extends StatelessWidget {
-  final List<String> _imageURLs;
-  const ImageViewScreen({required final List<String> imageURLs})
-      : _imageURLs = imageURLs;
+class ProfileViewScreen extends StatelessWidget {
+  final String imageUrl;
+  const ProfileViewScreen({required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -12,12 +11,8 @@ class ImageViewScreen extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            PageView.builder(
-              scrollDirection: Axis.vertical,
-              itemBuilder: (context, index) => PhotoView(
-                imageProvider: NetworkImage(_imageURLs[index]),
-              ),
-              itemCount: _imageURLs.length,
+            PhotoView(
+              imageProvider: NetworkImage(imageUrl),
             ),
             IconButton(
               icon: Icon(

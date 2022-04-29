@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_constants.dart';
@@ -6,6 +7,7 @@ import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
+import 'package:hi/screens/edit_profile/profile_view_screen.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/screens/home/tabs/chat_tab/chat_tab.dart';
 import 'package:hi/screens/home/tabs/friends_tab/friends_tab.dart';
@@ -105,8 +107,32 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   vertical: kDefaultPadding / 4.0),
               child: Column(
                 children: [
-                  CircularProfilePicture(
-                    email: FirebaseService.currentUserEmail,
+                  StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseService.getStreamToUserData(
+                        email: FirebaseService.currentUserEmail),
+                    builder: (context, snapshots) {
+                      void Function()? onTap = () {};
+                      if (snapshots.hasData &&
+                          snapshots.data != null &&
+                          snapshots.data?['profile_image'] != null) {
+                        final imageUrl = snapshots.data?['profile_image'];
+                        onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProfileViewScreen(imageUrl: imageUrl),
+                            ),
+                          );
+                        };
+                      }
+                      return GestureDetector(
+                        child: CircularProfilePicture(
+                          email: FirebaseService.currentUserEmail,
+                        ),
+                        onTap: onTap,
+                      );
+                    },
                   ),
                   ListTile(
                     leading: Icon(Icons.person, color: Colors.black),

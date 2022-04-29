@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
 import 'package:hi/constants/firestore_constants.dart';
@@ -6,6 +7,7 @@ import 'package:hi/custom_widget/buttons/round_icon_button.dart';
 import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
+import 'package:hi/screens/edit_profile/profile_view_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -25,8 +27,32 @@ class EditProfileScreen extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  CircularProfilePicture(
-                    email: FirebaseService.currentUserEmail,
+                  StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseService.getStreamToUserData(
+                        email: FirebaseService.currentUserEmail),
+                    builder: (context, snapshots) {
+                      void Function()? onTap = () {};
+                      if (snapshots.hasData &&
+                          snapshots.data != null &&
+                          snapshots.data?['profile_image'] != null) {
+                        final imageUrl = snapshots.data?['profile_image'];
+                        onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileViewScreen(
+                                  imageUrl: imageUrl),
+                            ),
+                          );
+                        };
+                      }
+                      return GestureDetector(
+                        child: CircularProfilePicture(
+                          email: FirebaseService.currentUserEmail,
+                        ),
+                        onTap: onTap,
+                      );
+                    },
                   ),
                   Positioned(
                     child: RoundIconButton(
@@ -300,7 +326,8 @@ class _NameEditingSheetState extends State<NameEditingSheet> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: kDefaultPadding / 2.0, vertical: kDefaultPadding),
+                    horizontal: kDefaultPadding / 2.0,
+                    vertical: kDefaultPadding),
                 child: Form(
                   key: _formKey,
                   child: TextFormField(
