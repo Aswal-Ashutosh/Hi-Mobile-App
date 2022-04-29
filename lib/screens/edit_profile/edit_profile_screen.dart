@@ -10,9 +10,23 @@ import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/edit_profile/profile_view_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 
-class EditProfileScreen extends StatelessWidget {
+class EditProfileScreen extends StatefulWidget {
   static const id = 'edit_profile_screen';
 
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+
+  bool isLoading = false;
+
+  void setLoading(bool condition){
+    setState(() {
+      isLoading = condition;
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,151 +35,157 @@ class EditProfileScreen extends StatelessWidget {
         backgroundColor: kPrimaryColor,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(kDefaultPadding),
-          child: Column(
-            children: [
-              Stack(
-                children: [
-                  StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseService.getStreamToUserData(
-                        email: FirebaseService.currentUserEmail),
-                    builder: (context, snapshots) {
-                      void Function()? onTap = () {};
-                      if (snapshots.hasData &&
-                          snapshots.data != null &&
-                          snapshots.data?['profile_image'] != null) {
-                        final imageUrl = snapshots.data?['profile_image'];
-                        onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfileViewScreen(
-                                  imageUrl: imageUrl),
-                            ),
-                          );
-                        };
-                      }
-                      return GestureDetector(
-                        child: CircularProfilePicture(
-                          email: FirebaseService.currentUserEmail,
-                        ),
-                        onTap: onTap,
-                      );
-                    },
-                  ),
-                  Positioned(
-                    child: RoundIconButton(
-                      icon: Icons.edit,
-                      onPressed: () async {
-                        if (await FirebaseService.pickAndUploadProfileImage())
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Profile Picture Updated.'),
-                            ),
-                          );
-                      },
-                      color: Colors.blueGrey,
-                    ),
-                    right: 0,
-                    bottom: 0,
-                    width: kDefaultBorderRadius * 2.0,
-                  )
-                ],
-              ),
-              SizedBox(height: kDefaultPadding),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.person, color: Colors.grey[700]),
-                  SizedBox(width: kDefaultPadding),
-                  TextStreamBuilder(
-                    stream: FirebaseService.getStreamToUserData(
-                        email: FirebaseService.currentUserEmail),
-                    key: UserDocumentField.DISPLAY_NAME,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                      letterSpacing: 2.5,
-                    ),
-                  ),
-                  Spacer(),
-                  TextButton(
-                    onPressed: () async {
-                      final result = await showModalBottomSheet(
-                          context: context,
-                          builder: (context) => NameEditingSheet());
-                      if (result != null && result == true) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Name Updated.')));
-                      }
-                    },
-                    child: Text(
-                      'Edit',
-                      style: TextStyle(color: Colors.teal),
-                    ),
-                  ),
-                ],
-              ),
-              Divider(),
-              SizedBox(height: kDefaultPadding),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.menu_book, color: Colors.grey[700]),
-                  SizedBox(width: kDefaultPadding),
-                  Flexible(
-                    flex: 5,
-                    child: TextStreamBuilder(
+        child: ProgressHUD(
+          showIndicator: isLoading,
+          child: Padding(
+            padding: const EdgeInsets.all(kDefaultPadding),
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    StreamBuilder<DocumentSnapshot>(
                       stream: FirebaseService.getStreamToUserData(
                           email: FirebaseService.currentUserEmail),
-                      key: UserDocumentField.ABOUT,
+                      builder: (context, snapshots) {
+                        void Function()? onTap = () {};
+                        if (snapshots.hasData &&
+                            snapshots.data != null &&
+                            snapshots.data?['profile_image'] != null) {
+                          final imageUrl = snapshots.data?['profile_image'];
+                          onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfileViewScreen(
+                                    imageUrl: imageUrl),
+                              ),
+                            );
+                          };
+                        }
+                        return GestureDetector(
+                          child: CircularProfilePicture(
+                            email: FirebaseService.currentUserEmail,
+                          ),
+                          onTap: onTap,
+                        );
+                      },
+                    ),
+                    Positioned(
+                      child: RoundIconButton(
+                        icon: Icons.edit,
+                        onPressed: () async {
+                          setLoading(true);
+                          if (await FirebaseService.pickAndUploadProfileImage()){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Profile Picture Updated.'),
+                              ),
+                            );
+                          }
+                          setLoading(false);
+                        },
+                        color: Colors.blueGrey,
+                      ),
+                      right: 0,
+                      bottom: 0,
+                      width: kDefaultBorderRadius * 2.0,
+                    )
+                  ],
+                ),
+                SizedBox(height: kDefaultPadding),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.person, color: Colors.grey[700]),
+                    SizedBox(width: kDefaultPadding),
+                    TextStreamBuilder(
+                      stream: FirebaseService.getStreamToUserData(
+                          email: FirebaseService.currentUserEmail),
+                      key: UserDocumentField.DISPLAY_NAME,
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
                         letterSpacing: 2.5,
                       ),
                     ),
-                  ),
-                  Spacer(),
-                  TextButton(
-                    onPressed: () async {
-                      final result = await showModalBottomSheet(
-                          context: context,
-                          builder: (context) => AboutEditingSheet());
-                      if (result != null && result == true) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('About Updated.')));
-                      }
-                    },
-                    child: Text(
-                      'Edit',
-                      style: TextStyle(color: Colors.teal),
-                    ),
-                  ),
-                ],
-              ),
-              Divider(),
-              SizedBox(height: kDefaultPadding),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.email, color: Colors.grey[700]),
-                  SizedBox(width: kDefaultPadding),
-                  Flexible(
-                    flex: 5,
-                    child: Text(
-                      FirebaseService.currentUserEmail,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                        letterSpacing: 2.5,
+                    Spacer(),
+                    TextButton(
+                      onPressed: () async {
+                        final result = await showModalBottomSheet(
+                            context: context,
+                            builder: (context) => NameEditingSheet());
+                        if (result != null && result == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Name Updated.')));
+                        }
+                      },
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(color: Colors.teal),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+                Divider(),
+                SizedBox(height: kDefaultPadding),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.menu_book, color: Colors.grey[700]),
+                    SizedBox(width: kDefaultPadding),
+                    Flexible(
+                      flex: 5,
+                      child: TextStreamBuilder(
+                        stream: FirebaseService.getStreamToUserData(
+                            email: FirebaseService.currentUserEmail),
+                        key: UserDocumentField.ABOUT,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                          letterSpacing: 2.5,
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    TextButton(
+                      onPressed: () async {
+                        final result = await showModalBottomSheet(
+                            context: context,
+                            builder: (context) => AboutEditingSheet());
+                        if (result != null && result == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('About Updated.')));
+                        }
+                      },
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(color: Colors.teal),
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(),
+                SizedBox(height: kDefaultPadding),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.email, color: Colors.grey[700]),
+                    SizedBox(width: kDefaultPadding),
+                    Flexible(
+                      flex: 5,
+                      child: Text(
+                        FirebaseService.currentUserEmail,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                          letterSpacing: 2.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
