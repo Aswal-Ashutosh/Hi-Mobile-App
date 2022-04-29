@@ -8,6 +8,7 @@ import 'package:hi/custom_widget/stream_builders/circular_profile_picture.dart';
 import 'package:hi/custom_widget/stream_builders/text_stream_builder.dart';
 import 'package:hi/screens/edit_profile/edit_profile_screen.dart';
 import 'package:hi/screens/edit_profile/profile_view_screen.dart';
+import 'package:hi/screens/home/tabs/friends_tab/components/my_friends.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/screens/home/tabs/chat_tab/chat_tab.dart';
 import 'package:hi/screens/home/tabs/friends_tab/friends_tab.dart';
@@ -183,7 +184,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           child: TabBarView(
             children: [
               ChatTab(),
-              FriendsTab(),
+              MyFriends(),
+              // FriendsTab(),
               RequestsTab(),
             ],
           ),
