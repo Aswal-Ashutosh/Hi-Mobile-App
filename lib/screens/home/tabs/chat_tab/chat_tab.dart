@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hi/constants/constants.dart';
+import 'package:hi/constants/firestore_constants.dart';
 import 'package:hi/custom_widget/progressHud/progress_hud.dart';
 import 'package:hi/provider/selected_chats.dart';
 import 'package:hi/screens/group/group_chat_selection_screen.dart';
@@ -45,17 +46,32 @@ class _ChatTabState extends State<ChatTab> {
                 List<String> rooms = [];
 
                 if (chats != null) for (final chat in chats) rooms.add(chat.id);
-                List<ChatCard> chatCards = [];
-                for (final String roomId in rooms) {
-                  chatCards.add(
-                    ChatCard(
-                      roomId: roomId,
-                      selectionMode: selectionMode,
-                      selectionModeManager: selectionModeManager,
-                    ),
-                  );
-                }
-                return ListView(children: chatCards);
+
+                return StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseService.getStreamToChatDBWhereRoomIdIn(
+                      rooms: rooms),
+                  builder: (context, snapshots) {
+                    List<ChatCard> chatCards = [];
+
+                    if (snapshots.hasData &&
+                        snapshots.data != null &&
+                        snapshots.data!.docs.isNotEmpty) {
+                      final roomDocs = snapshots.data?.docs;
+                      if (roomDocs != null) {
+                        for (final doc in roomDocs) {
+                          chatCards.add(
+                            ChatCard(
+                              roomId: doc[ChatDBDocumentField.ROOM_ID],
+                              selectionMode: selectionMode,
+                              selectionModeManager: selectionModeManager,
+                            ),
+                          );
+                        }
+                      }
+                    }
+                    return ListView(children: chatCards);
+                  },
+                );
               } else {
                 return Center(
                   child: Text(

@@ -436,10 +436,10 @@ class FirebaseService {
       .where(ChatDocumentField.VISIBILITY, isEqualTo: true)
       .snapshots();
 
-  static getStreamToChatDBWhereRoomIdIn({required final List<String> roomId}) =>
+  static getStreamToChatDBWhereRoomIdIn({required final List<String> rooms}) =>
       _fStore
           .collection(Collections.CHAT_DB)
-          .where(ChatDBDocumentField.ROOM_ID, whereIn: roomId)
+          .where(ChatDBDocumentField.ROOM_ID, whereIn: rooms)
           .orderBy(ChatDBDocumentField.LAST_MESSAGE_TIME_STAMP,
               descending: true)
           .snapshots();
