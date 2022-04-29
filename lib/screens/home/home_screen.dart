@@ -11,7 +11,6 @@ import 'package:hi/screens/edit_profile/profile_view_screen.dart';
 import 'package:hi/screens/home/tabs/friends_tab/components/my_friends.dart';
 import 'package:hi/screens/home/tabs/requests_tab/requests_tab.dart';
 import 'package:hi/screens/home/tabs/chat_tab/chat_tab.dart';
-import 'package:hi/screens/home/tabs/friends_tab/friends_tab.dart';
 import 'package:hi/screens/welcome_screen.dart';
 import 'package:hi/services/firebase_service.dart';
 

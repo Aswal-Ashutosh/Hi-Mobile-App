@@ -86,7 +86,7 @@ class _MessageTextFieldState extends State<MessageTextField> {
               ),
             ),
           ),
-          RoundIconButton(icon: Icons.mic, onPressed: () {}, radius: 50.0),
+          // RoundIconButton(icon: Icons.mic, onPressed: () {}, radius: 50.0),
           SizedBox(width: kDefaultPadding / 4.0),
           RoundIconButton(
             icon: Icons.send,

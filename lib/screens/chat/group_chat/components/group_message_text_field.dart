@@ -83,7 +83,7 @@ class _GroupMessageTextFieldState extends State<GroupMessageTextField> {
               ),
             ),
           ),
-          RoundIconButton(icon: Icons.mic, onPressed: () {}, radius: 50.0),
+          // RoundIconButton(icon: Icons.mic, onPressed: () {}, radius: 50.0),
           SizedBox(width: kDefaultPadding / 4.0),
           RoundIconButton(
             icon: Icons.send,

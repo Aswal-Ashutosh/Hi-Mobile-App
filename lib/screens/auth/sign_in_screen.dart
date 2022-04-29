@@ -50,11 +50,11 @@ class _SignInScreenState extends State<SignInScreen> {
                   ],
                 ),
                 SizedBox(height: kDefaultPadding),
-                CircleAvatar(
-                  child: Image.asset('assets/google.png'),
-                  backgroundColor: Colors.grey,
-                ),
-                SizedBox(height: kDefaultPadding),
+                // CircleAvatar(
+                //   child: Image.asset('assets/google.png'),
+                //   backgroundColor: Colors.grey,
+                // ),
+                // SizedBox(height: kDefaultPadding),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

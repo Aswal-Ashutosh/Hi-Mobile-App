@@ -1,10 +1,8 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ConditionalStreamBuilder extends StatelessWidget {
-  ///[CoditionalStreamBuilder] will take a stream to firebase document and depending upon wether
+  ///[ConditionalStreamBuilder] will take a stream to firebase document and depending upon wether
   ///that document exist or not it will build one of the two child provided.
   const ConditionalStreamBuilder(
       {required final Stream<DocumentSnapshot<Object?>> stream,

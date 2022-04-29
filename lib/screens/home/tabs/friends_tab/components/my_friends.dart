@@ -25,7 +25,7 @@ class MyFriends extends StatelessWidget {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseService.currentUserStreamToFriends,
-        builder: (conext, snapshot) {
+        builder: (context, snapshot) {
           List<FriendCard> friendList = [];
           if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
             final friends = snapshot.data?.docs;
